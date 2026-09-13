@@ -20,10 +20,10 @@ function Strip({ stock, flex }: { stock: Stock; flex?: boolean }) {
         background: fillFor(stock.weight),
       }}
     >
-      <p className={cn("truncate font-mono text-xs font-semibold tracking-wide", minty ? "text-ink" : "text-paper")}>
+      <p className={cn("truncate font-mono text-xs font-semibold tracking-wide", minty ? "text-ink" : "text-ink/80")}>
         {stock.ticker}
       </p>
-      <p className={cn("num text-[11px]", minty ? "text-ink/70" : "text-muted")}>{stock.weight}%</p>
+      <p className={cn("num text-[11px]", minty ? "text-ink/70" : "text-ink/55")}>{stock.weight}%</p>
     </div>
   );
 }

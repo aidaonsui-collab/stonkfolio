@@ -140,7 +140,7 @@ function SleeveChip({ label, value }: { label: string; value: string }) {
 
 function Pulse({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="bg-bg px-5 py-6 sm:px-6">
+    <div className="bg-surface px-5 py-6 sm:px-6">
       <p className="kicker">{label}</p>
       <p className="mt-3 font-display text-2xl tracking-tight sm:text-3xl">{value}</p>
       <p className="mt-2 text-xs text-muted">{hint}</p>

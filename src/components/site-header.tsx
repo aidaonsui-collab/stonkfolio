@@ -51,7 +51,7 @@ export function SiteHeader() {
   );
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-bg/90 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border bg-paper/80 backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
         <Link href="/" className="flex items-center gap-2.5 pr-2">
           <FolioMark className="size-8" />

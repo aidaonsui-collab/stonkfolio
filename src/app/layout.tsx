@@ -28,6 +28,9 @@ export const metadata: Metadata = {
   },
   description:
     "Creator USDC from $STONK on eve.fun auto-buys tokenized stocks on Arc. Holders get the book. Farm it on Morpho, Aave, and Uniswap.",
+  other: {
+    "theme-color": "#eef6ef",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

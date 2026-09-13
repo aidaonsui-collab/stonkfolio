@@ -10,19 +10,19 @@
   --font-mono: "IBM Plex Mono", var(--font-plex), ui-monospace, Menlo, Consolas, monospace;
   --font-heading: "Fraunces", var(--font-fraunces), Palatino, Georgia, serif;
 
-  --color-bg: #111513;
-  --color-surface: #1b221e;
-  --color-elevated: #242c27;
-  --color-fg: #f4f0e6;
-  --color-muted: #8f978c;
-  --color-accent: #5ee4a3;
-  --color-accent-fg: #0e1511;
-  --color-paper: #f4f0e6;
-  --color-ink: #111513;
-  --color-border: color-mix(in oklab, #f4f0e6 12%, transparent);
-  --color-border-strong: color-mix(in oklab, #f4f0e6 22%, transparent);
-  --color-down: #e0725c;
-  --color-ring: #5ee4a3;
+  --color-bg: #eef6ef;
+  --color-surface: #ffffff;
+  --color-elevated: #dff3e6;
+  --color-fg: #142018;
+  --color-muted: #5a6b60;
+  --color-accent: #12b86a;
+  --color-accent-fg: #062016;
+  --color-paper: #f7faf6;
+  --color-ink: #142018;
+  --color-border: color-mix(in oklab, #142018 12%, transparent);
+  --color-border-strong: color-mix(in oklab, #142018 20%, transparent);
+  --color-down: #d4523c;
+  --color-ring: #12b86a;
 
   --color-background: var(--color-bg);
   --color-foreground: var(--color-fg);
@@ -37,7 +37,7 @@
   --color-muted-foreground: var(--color-muted);
   --color-accent-foreground: var(--color-accent-fg);
   --color-destructive: var(--color-down);
-  --color-input: color-mix(in oklab, #f4f0e6 14%, transparent);
+  --color-input: color-mix(in oklab, #142018 12%, transparent);
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -46,8 +46,8 @@
   --radius-xl: 24px;
   --radius: 0.75rem;
 
-  --shadow-border: 0 0 0 1px color-mix(in oklab, #f4f0e6 10%, transparent);
-  --shadow-border-hover: 0 0 0 1px color-mix(in oklab, #f4f0e6 18%, transparent);
+  --shadow-border: 0 0 0 1px color-mix(in oklab, #142018 10%, transparent);
+  --shadow-border-hover: 0 0 0 1px color-mix(in oklab, #142018 18%, transparent);
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -60,7 +60,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
   body {
-    background: var(--color-bg);
+    background-color: var(--color-bg);
+    background-image:
+      radial-gradient(1100px 520px at 88% -8%, rgba(18, 184, 106, 0.22), transparent 58%),
+      radial-gradient(820px 420px at -8% 12%, rgba(255, 206, 92, 0.18), transparent 52%);
     color: var(--color-fg);
     font-family: var(--font-sans);
     min-height: 100dvh;
@@ -105,7 +108,7 @@
 
 .panel {
   background: var(--color-surface);
-  box-shadow: var(--shadow-border);
+  box-shadow: var(--shadow-border), 0 18px 40px -28px rgba(20, 32, 24, 0.35);
   border-radius: var(--radius-xl);
 }
 

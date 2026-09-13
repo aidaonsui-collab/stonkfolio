@@ -30,7 +30,7 @@ export function StockMark({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-sm bg-elevated font-mono font-medium text-paper shadow-[var(--shadow-border)]",
+        "inline-flex shrink-0 items-center justify-center rounded-sm bg-ink font-mono font-medium text-paper",
         className,
       )}
       style={{
