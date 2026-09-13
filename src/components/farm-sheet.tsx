@@ -1,14 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import type { Market } from "@/lib/markets";
 import { VENUE_META } from "@/lib/markets";
 import { qty, usd } from "@/lib/format";
@@ -31,7 +26,6 @@ export function FarmSheet({
   const have = market ? (available[market.ticker] ?? 0) : 0;
   const staked = market ? (positions[market.id] ?? 0) : 0;
   const n = Number(amount);
-
   const max = mode === "in" ? have : staked;
   const notional = useMemo(() => {
     if (!market || !Number.isFinite(n)) return 0;
@@ -45,38 +39,54 @@ export function FarmSheet({
       setMsg(res.reason);
       return;
     }
-    setMsg(mode === "in" ? "Position marked on this board. Fills wait on Arc RWA + venue contracts." : "Pulled back to your folio.");
+    setMsg(
+      mode === "in"
+        ? "Position marked on this desk. Fills wait on Arc RWA + venue contracts."
+        : "Pulled back to your folio.",
+    );
     setAmount("");
   }
 
   return (
-    <Sheet open={Boolean(market)} onOpenChange={(o) => !o && onClose()}>
-      <SheetContent
-        side="right"
-        className="w-full border-[rgba(200,245,66,0.12)] bg-[#0e110e] data-[side=right]:w-full data-[side=right]:sm:max-w-[420px] sm:max-w-[420px]"
-      >
+    <Sheet
+      open={Boolean(market)}
+      onOpenChange={(o) => {
+        if (!o) {
+          onClose();
+          setMsg(null);
+          setAmount("");
+        }
+      }}
+    >
+      <SheetContent className="border-border bg-surface text-fg data-[side=right]:sm:max-w-[420px] sm:max-w-[420px]">
         {market ? (
           <>
-            <SheetHeader className="border-b border-white/5">
-              <SheetTitle className="flex items-center gap-3 text-[#eef6e6]">
+            <SheetHeader>
+              <SheetTitle className="flex items-center gap-3 text-fg">
                 {stock ? <StockMark stock={stock} size={40} /> : null}
                 <span>
                   {market.name}
-                  <span className="mt-0.5 block text-xs font-normal tracking-normal text-[#8a9480]">
+                  <span className="mt-0.5 block text-xs font-normal tracking-normal text-muted">
                     {VENUE_META[market.venue].label} · {VENUE_META[market.venue].posted}
                   </span>
                 </span>
               </SheetTitle>
-              <SheetDescription className="text-[#8a9480]">{market.blurb}</SheetDescription>
+              <SheetDescription className="text-muted">{market.blurb}</SheetDescription>
             </SheetHeader>
 
-            <div className="flex flex-col gap-4 px-4">
+            <div className="flex flex-col gap-4 px-5 pb-8">
               <div className="grid grid-cols-2 gap-2">
-                <Stat label="Your folio" value={seeing ? `${qty(have, 4)} ${market.ticker}` : "—"} />
-                <Stat label="In this market" value={staked > 0 ? `${qty(staked, 4)} ${market.ticker}` : "—"} />
+                <div className="rounded-md bg-elevated p-3 shadow-[var(--shadow-border)]">
+                  <p className="kicker">Your folio</p>
+                  <p className="mt-1 font-medium">{seeing ? `${qty(have, 4)} ${market.ticker}` : "—"}</p>
+                </div>
+                <div className="rounded-md bg-elevated p-3 shadow-[var(--shadow-border)]">
+                  <p className="kicker">In this market</p>
+                  <p className="mt-1 font-medium">{staked > 0 ? `${qty(staked, 4)} ${market.ticker}` : "—"}</p>
+                </div>
               </div>
 
-              <div className="flex rounded-xl bg-white/5 p-1">
+              <div className="flex rounded-md bg-elevated p-1">
                 {(["in", "out"] as const).map((m) => (
                   <button
                     key={m}
@@ -85,8 +95,8 @@ export function FarmSheet({
                       setMode(m);
                       setMsg(null);
                     }}
-                    className={`flex-1 rounded-lg py-2 text-xs font-semibold tracking-[0.12em] uppercase ${
-                      mode === m ? "bg-[#c8f542] text-[#0b1208]" : "text-[#9aa392]"
+                    className={`h-10 flex-1 rounded-sm text-xs font-medium tracking-wide uppercase ${
+                      mode === m ? "bg-accent text-accent-fg" : "text-muted"
                     }`}
                   >
                     {m === "in" ? "Supply" : "Withdraw"}
@@ -105,45 +115,28 @@ export function FarmSheet({
                       setMsg(null);
                     }}
                     placeholder="0.00"
-                    className="h-12 border-white/10 bg-[#0a0c0a] text-base text-[#eef6e6]"
+                    className="num h-11 border-border bg-bg text-fg"
                   />
-                  <button
-                    type="button"
-                    className="rounded-lg border border-white/10 px-3 text-xs font-semibold tracking-wider text-[#c8f542] uppercase"
-                    onClick={() => setAmount(String(max))}
-                  >
+                  <Button variant="outline" type="button" onClick={() => setAmount(String(max))}>
                     Max
-                  </button>
+                  </Button>
                 </div>
               </label>
-              <p className="text-xs text-[#6d7666]">
+              <p className="text-xs text-muted">
                 {Number.isFinite(n) && n > 0 ? `≈ ${usd(notional)} at mark.` : `Available ${qty(max, 4)} ${market.ticker}.`}
               </p>
 
-              <button
-                type="button"
-                onClick={submit}
-                className="h-12 rounded-xl bg-[#c8f542] text-sm font-semibold text-[#0b1208] hover:bg-[#d6ff6a]"
-              >
+              <Button variant="accent" onClick={submit}>
                 {mode === "in" ? `Supply ${market.ticker}` : `Withdraw ${market.ticker}`}
-              </button>
-              {msg ? <p className="text-xs text-[#c8f542]">{msg}</p> : null}
-              <p className="text-[11px] leading-relaxed text-[#6d7666]">
-                Markets are wired to the venues Arc and Circle posted: Morpho isolated / Midnight, Aave V4 hub + tokenized spoke, Uniswap on Arc. No fill until those contracts are public on 5042 and the stock token exists. Preview deposits stay on this device.
+              </Button>
+              {msg ? <p className="text-xs text-accent">{msg}</p> : null}
+              <p className="text-xs leading-relaxed text-muted">
+                Markets are wired to Morpho isolated / Midnight, Aave V4 hub + tokenized spoke, and Uniswap on Arc. No fill until those contracts are public on 5042 and the stock token exists. Preview deposits stay on this device.
               </p>
             </div>
           </>
         ) : null}
       </SheetContent>
     </Sheet>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-xl border border-white/5 bg-white/[0.02] p-3">
-      <p className="text-[10px] tracking-[0.14em] text-[#6d7666] uppercase">{label}</p>
-      <p className="mt-1 font-medium text-[#eef6e6]">{value}</p>
-    </div>
   );
 }

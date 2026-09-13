@@ -37,6 +37,16 @@ export const STOCKS: Stock[] = [
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
 
+export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
+  { id: "equity", label: "Equities", hint: "Tokenized names the keeper buys first." },
+  { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
+  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve while names queue." },
+];
+
+export function sleeveWeight(kind: StockKind) {
+  return STOCKS.filter((s) => s.kind === kind).reduce((n, s) => n + s.weight, 0);
+}
+
 export type Distribution = {
   id: string;
   received: string;

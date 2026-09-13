@@ -26,20 +26,20 @@ async function shot(name) {
 await page.goto(base, { waitUntil: "networkidle" });
 await shot("home-desktop.png");
 
-await page.getByRole("link", { name: "Distributions" }).first().click();
-await page.waitForURL("**/distributions");
-await shot("distributions-empty.png");
+await page.getByRole("link", { name: "Portfolio" }).first().click();
+await page.waitForURL("**/portfolio");
+await shot("portfolio-empty.png");
 
-await page.getByRole("button", { name: /preview/i }).click();
+await page.getByRole("button", { name: "Preview tape" }).click();
 await page.waitForTimeout(300);
-await shot("distributions-preview.png");
+await shot("portfolio-preview.png");
 
 const balance = await page.locator("text=$STONK").first().textContent();
 if (!balance || !balance.includes("STONK")) errors.push("preview did not fill $STONK balance");
 
 await page.getByRole("link", { name: "Farm these stocks" }).click();
 await page.waitForURL("**/yield");
-await shot("yield-grid.png");
+await shot("yield-desktop.png");
 
 await page.getByPlaceholder("Search markets").fill("CRCL");
 await page.waitForTimeout(200);
@@ -51,12 +51,7 @@ await page.waitForTimeout(200);
 await shot("yield-morpho.png");
 await page.locator("button[data-filter=all]").click();
 
-await page.getByRole("button", { name: "List" }).click();
-await page.waitForTimeout(200);
-await shot("yield-list.png");
-await page.getByRole("button", { name: "Grid" }).click();
-
-await page.locator("[data-market=morpho-crcl]").click();
+await page.locator("table").getByText("Circle LP").click();
 await page.waitForTimeout(400);
 await shot("yield-sheet.png");
 await page.getByPlaceholder("0.00").fill("0.02");
@@ -65,17 +60,17 @@ await page.waitForTimeout(300);
 await shot("yield-sheet-supplied.png");
 await page.keyboard.press("Escape");
 
-await page.getByRole("link", { name: "Basket" }).first().click();
-await page.waitForURL("**/basket");
-await shot("basket-desktop.png");
+await page.getByRole("link", { name: "Bundles" }).first().click();
+await page.waitForURL("**/bundles");
+await shot("bundles-desktop.png");
 
 await page.getByRole("link", { name: "Docs" }).first().click();
 await page.waitForURL("**/docs");
 await shot("docs-desktop.png");
 
 await page.setViewportSize({ width: 390, height: 844 });
-await page.goto(`${base}/distributions`, { waitUntil: "networkidle" });
-await shot("distributions-mobile.png");
+await page.goto(`${base}/portfolio`, { waitUntil: "networkidle" });
+await shot("portfolio-mobile.png");
 await page.goto(`${base}/yield`, { waitUntil: "networkidle" });
 await shot("yield-mobile.png");
 await page.goto(base, { waitUntil: "networkidle" });

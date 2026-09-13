@@ -50,3 +50,10 @@ export function qty(n: number, digits = 4) {
 export function dash(connected: boolean, value: string) {
   return connected ? value : "—";
 }
+
+export function daysToMainnet(at: Date) {
+  const ms = at.getTime() - Date.now();
+  if (ms <= 0) return "Arc public mainnet is open.";
+  const d = Math.ceil(ms / 86_400_000);
+  return d === 1 ? "1 day to Arc public mainnet." : `${d} days to Arc public mainnet.`;
+}

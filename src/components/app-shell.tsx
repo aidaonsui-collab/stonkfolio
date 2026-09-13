@@ -1,29 +1,41 @@
 "use client";
 
-import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { EVE_FUN } from "@/lib/chain";
 import { NetworkBanner } from "./network-banner";
 import { SiteHeader } from "./site-header";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const path = usePathname();
-  const farm = path.startsWith("/yield");
-
-  useEffect(() => {
-    const html = document.documentElement;
-    html.dataset.surface = farm ? "farm" : "folio";
-    html.classList.toggle("dark", farm);
-    return () => {
-      html.dataset.surface = "folio";
-      html.classList.remove("dark");
-    };
-  }, [farm]);
-
   return (
-    <div className={farm ? "farm-dots min-h-full" : "min-h-full"}>
-      <NetworkBanner tone={farm ? "farm" : "folio"} />
-      <SiteHeader tone={farm ? "farm" : "folio"} />
-      <main className="flex-1">{children}</main>
+    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-bg text-fg">
+      <NetworkBanner />
+      <SiteHeader />
+      <main className="min-w-0 flex-1">{children}</main>
+      <footer className="border-t border-border">
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-8 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p>
+            Pad:{" "}
+            <a className="text-fg underline-offset-2 hover:underline" href={EVE_FUN} target="_blank" rel="noreferrer">
+              eve.fun
+            </a>
+            . Settlement: Arc 5042. Gas: USDC.
+          </p>
+          <nav className="flex flex-wrap gap-4">
+            <Link href="/bundles" className="hover:text-fg">
+              Bundles
+            </Link>
+            <Link href="/portfolio" className="hover:text-fg">
+              Portfolio
+            </Link>
+            <Link href="/yield" className="hover:text-fg">
+              Yield
+            </Link>
+            <Link href="/docs" className="hover:text-fg">
+              Docs
+            </Link>
+          </nav>
+        </div>
+      </footer>
     </div>
   );
 }

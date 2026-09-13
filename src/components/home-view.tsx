@@ -1,103 +1,149 @@
 "use client";
 
 import Link from "next/link";
-import { EVE_FUN, EVE_LAUNCH, TOKEN } from "@/lib/chain";
-import { STOCKS } from "@/lib/stocks";
-import { StockMark } from "./stock-mark";
+import { ArrowUpRight } from "lucide-react";
+import { EVE_LAUNCH, TOKEN } from "@/lib/chain";
+import { compactUsd } from "@/lib/format";
+import { protocolPreview, sleeveWeight, STOCKS } from "@/lib/stocks";
+import { Button } from "./ui/button";
+import { BundleMap } from "./bundle-map";
+import { TickerTape } from "./ticker-tape";
+
+const CHAPTERS = [
+  {
+    title: "Launch.",
+    body: `Instant on eve.fun. 1B ${TOKEN.symbol} against USDC, LP locked. Point the rewards wallet at the Stonkfolio keeper — that 50% creator USDC is the only input.`,
+  },
+  {
+    title: "The buy.",
+    body: "The keeper spends only on this bundle. CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash — and only after those names list on Arc 5042.",
+  },
+  {
+    title: "The farm.",
+    body: "Distributed stocks land with holders. Put them to work on Morpho isolated markets, Aave V4, and Uniswap LPs Arc already posted.",
+  },
+];
 
 export function HomeView() {
+  const pulse = protocolPreview();
+  const equity = sleeveWeight("equity");
+  const index = sleeveWeight("index");
+  const cash = sleeveWeight("mmf");
+
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
-      <p className="text-[13px] tracking-[0.18em] text-[#8a8a8a] uppercase">Arc · eve.fun Instant</p>
-      <h1 className="display mt-4 max-w-3xl text-[44px] text-[#111] sm:text-7xl">
-        Creator fees.
-        <br />
-        Real stocks.
-      </h1>
-      <p className="mt-6 max-w-xl text-[16px] leading-relaxed text-[#5c5c5c]">
-        $STONK launches on eve.fun. The Instant creator USDC — 50% of the 1% quote-side fee — auto-buys a book you pick from whatever tokenized names Arc lists after September 16. Holders get those stocks. Then they farm them on Morpho, Aave, and Uniswap.
-      </p>
-      <div className="mt-8 flex flex-wrap gap-3">
-        <a
-          href={EVE_LAUNCH}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex h-12 items-center rounded-xl bg-[#111] px-5 text-sm font-semibold text-white"
-        >
-          Launch $STONK on eve.fun
-        </a>
-        <Link
-          href="/distributions"
-          className="inline-flex h-12 items-center rounded-xl bg-white px-5 text-sm font-semibold text-[#111] shadow-sm"
-        >
-          My distributions
-        </Link>
-        <Link
-          href="/yield"
-          className="inline-flex h-12 items-center rounded-xl px-5 text-sm font-semibold text-[#111]"
-        >
-          Yield board →
-        </Link>
-      </div>
+    <div>
+      <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+        <div className="stagger-in">
+          <p className="kicker">$STONK · Arc 5042 · eve.fun Instant</p>
+          <h1 className="display mt-5 text-fg">
+            The book
+            <br />
+            that buys
+            <span className="italic"> itself.</span>
+          </h1>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
+            Creator fees from Instant auto-buy a curated sleeve of tokenized names. Holders receive the stocks. Then they put the book to work.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild size="lg">
+              <a href={EVE_LAUNCH} target="_blank" rel="noreferrer">
+                Launch $STONK
+                <ArrowUpRight className="size-4" />
+              </a>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/bundles">Open the bundle</Link>
+            </Button>
+            <Button asChild variant="ghost" size="lg">
+              <Link href="/portfolio">Portfolio</Link>
+            </Button>
+          </div>
+        </div>
 
-      <div className="mt-14 grid gap-3 md:grid-cols-3">
-        <Step
-          n="01"
-          title="Launch"
-          body={`Instant on eve.fun. 1B ${TOKEN.symbol}, TOKEN/USDC, LP locked. Set the rewards wallet to the Stonkfolio keeper.`}
-        />
-        <Step
-          n="02"
-          title="Buy"
-          body="A keeper spends creator USDC only on the curated basket — CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash — once those tokens exist on 5042."
-        />
-        <Step
-          n="03"
-          title="Farm"
-          body="Distributed stocks go to holders. The yield tab is the clutch-style board for Morpho isolated markets, Aave V4, and Uniswap LPs Arc already posted."
-        />
-      </div>
+        <aside className="panel overflow-hidden p-3">
+          <div className="flex items-end justify-between px-3 pt-3 pb-2">
+            <div>
+              <p className="kicker">Active bundle</p>
+              <p className="mt-1 font-display text-2xl italic">Keeper book</p>
+            </div>
+            <Link href="/bundles" className="text-xs text-muted hover:text-fg">
+              Full weights →
+            </Link>
+          </div>
+          <BundleMap height={260} />
+          <div className="mt-3 grid grid-cols-3 gap-2 px-1 pb-1">
+            <SleeveChip label="Equities" value={`${equity}%`} />
+            <SleeveChip label="Index" value={`${index}%`} />
+            <SleeveChip label="Cash" value={`${cash}%`} />
+          </div>
+        </aside>
+      </section>
 
-      <section className="folio-shadow mt-10 rounded-2xl bg-white p-6 sm:p-8">
+      <TickerTape />
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+        <p className="kicker">How the loop closes</p>
+        <div className="mt-8 grid gap-10 md:grid-cols-3 md:gap-8">
+          {CHAPTERS.map((c) => (
+            <article key={c.title} className="border-t border-border pt-6">
+              <h2 className="font-display text-3xl italic tracking-tight">{c.title}</h2>
+              <p className="mt-4 text-sm leading-relaxed text-muted">{c.body}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border">
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
+          <Pulse label="USDC routed" value={compactUsd(pulse.usdcRouted)} hint="Preview tape" />
+          <Pulse label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
+          <Pulse label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
+          <Pulse label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
         <div className="flex items-end justify-between gap-4">
           <div>
-            <p className="kicker">/ Curated book</p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">What the keeper buys.</h2>
+            <p className="kicker">Inside the bundle</p>
+            <h2 className="display-md mt-2">What the keeper buys.</h2>
           </div>
-          <Link href="/basket" className="text-sm font-medium text-[#6b6b6b] hover:text-[#111]">
-            Full basket →
+          <Link href="/bundles" className="hidden text-sm text-muted hover:text-fg sm:inline">
+            All {STOCKS.length} names →
           </Link>
         </div>
-        <ul className="mt-6 grid gap-2 sm:grid-cols-2">
+        <ul className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2">
           {STOCKS.slice(0, 8).map((s) => (
-            <li key={s.ticker} className="flex items-center gap-3 rounded-xl px-2 py-2">
-              <StockMark stock={s} size={36} />
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold">{s.ticker}</p>
-                <p className="truncate text-xs text-[#8a8a8a]">{s.name}</p>
-              </div>
-              <p className="text-sm text-[#6b6b6b]">{s.weight}%</p>
+            <li key={s.ticker} className="flex items-center gap-4 border-b border-border py-3">
+              <span className="w-16 font-mono text-sm font-medium">{s.ticker}</span>
+              <span className="min-w-0 flex-1 truncate text-sm text-muted">{s.name}</span>
+              <span className="num text-sm text-accent">{s.weight}%</span>
             </li>
           ))}
         </ul>
+        <Link href="/bundles" className="mt-6 inline-flex text-sm text-muted hover:text-fg sm:hidden">
+          All {STOCKS.length} names →
+        </Link>
       </section>
-
-      <p className="mt-10 text-center text-sm text-[#8a8a8a]">
-        Pad:{" "}
-        <a className="underline-offset-2 hover:text-[#111] hover:underline" href={EVE_FUN} target="_blank" rel="noreferrer">
-          eve.fun
-        </a>
-        . Settlement: Arc 5042. Gas: USDC.
-      </p>
     </div>
   );
 }
 
-function Step({ n, title, body }: { n: string; title: string; body: string }) {
+function SleeveChip({ label, value }: { label: string; value: string }) {
   return (
-    <article className="folio-shadow rounded-2xl bg-white p-6 sm:p-8">
-      <p className="kicker">/ {n} / {title}</p>
-      <p className="mt-8 text-sm leading-relaxed text-[#5c5c5c]">{body}</p>
-    </article>
+    <div className="rounded-md bg-elevated px-3 py-2.5">
+      <p className="kicker">{label}</p>
+      <p className="num mt-1 text-sm text-fg">{value}</p>
+    </div>
+  );
+}
+
+function Pulse({ label, value, hint }: { label: string; value: string; hint: string }) {
+  return (
+    <div className="bg-bg px-5 py-6 sm:px-6">
+      <p className="kicker">{label}</p>
+      <p className="mt-3 font-display text-2xl tracking-tight sm:text-3xl">{value}</p>
+      <p className="mt-2 text-xs text-muted">{hint}</p>
+    </div>
   );
 }

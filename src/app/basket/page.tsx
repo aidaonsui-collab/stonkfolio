@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { BasketView } from "@/components/basket-view";
-
-export const metadata: Metadata = { title: "Basket" };
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <BasketView />;
+  redirect("/bundles");
 }

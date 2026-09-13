@@ -1,8 +1,5 @@
-import type { Metadata } from "next";
-import { DistributionsView } from "@/components/distributions-view";
-
-export const metadata: Metadata = { title: "Distributions" };
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <DistributionsView />;
+  redirect("/portfolio");
 }

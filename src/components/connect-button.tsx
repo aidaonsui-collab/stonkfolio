@@ -5,9 +5,9 @@ import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { ARC_CHAIN_ID } from "@/lib/chain";
 import { shortAddr } from "@/lib/format";
 import { addOrSwitchArc } from "@/lib/wagmi";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
-export function ConnectButton({ tone = "folio" }: { tone?: "folio" | "farm" }) {
+export function ConnectButton() {
   const { address, isConnected, chainId } = useAccount();
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
@@ -51,27 +51,22 @@ export function ConnectButton({ tone = "folio" }: { tone?: "folio" | "farm" }) {
     }
   }
 
-  const farm = tone === "farm";
-  const btn = farm
-    ? "h-10 rounded-xl bg-[#c8f542] px-4 text-sm font-semibold text-[#0b1208] hover:bg-[#d6ff6a]"
-    : "h-11 rounded-xl bg-[#f3f0e8] px-5 text-[13px] font-semibold tracking-[0.14em] text-[#111] hover:bg-[#ebe7dc]";
-
   return (
     <div ref={wrap} className="relative">
       {onArc && address ? (
-        <button type="button" onClick={() => setOpen((v) => !v)} className={cn(btn, "uppercase")}>
+        <Button variant="outline" size="sm" type="button" onClick={() => setOpen((v) => !v)}>
           {shortAddr(address)}
-        </button>
+        </Button>
       ) : (
-        <button type="button" onClick={go} disabled={isPending} className={cn(btn, "uppercase")}>
+        <Button variant="default" size="sm" type="button" onClick={go} disabled={isPending}>
           {isPending ? "…" : isConnected ? "Switch to Arc" : "Connect"}
-        </button>
+        </Button>
       )}
       {open && onArc && address ? (
-        <div className="absolute right-0 z-50 mt-2 min-w-44 overflow-hidden rounded-xl border border-border bg-card p-1 text-sm shadow-lg">
+        <div className="absolute right-0 z-50 mt-2 min-w-40 overflow-hidden rounded-md bg-surface p-1 text-sm shadow-[var(--shadow-border)]">
           <button
             type="button"
-            className="block w-full rounded-lg px-3 py-2 text-left hover:bg-muted"
+            className="block w-full rounded-sm px-3 py-2 text-left hover:bg-elevated"
             onClick={() => {
               disconnect();
               setOpen(false);
@@ -82,7 +77,7 @@ export function ConnectButton({ tone = "folio" }: { tone?: "folio" | "farm" }) {
         </div>
       ) : null}
       {hint ? (
-        <p className="absolute right-0 z-50 mt-2 w-64 rounded-xl border border-border bg-card p-3 text-xs text-muted-foreground shadow-lg">
+        <p className="absolute right-0 z-50 mt-2 w-64 rounded-md bg-surface p-3 text-xs text-muted shadow-[var(--shadow-border)]">
           {hint}
         </p>
       ) : null}
