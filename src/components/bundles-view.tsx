@@ -4,6 +4,7 @@ import { STOCKS, SLEEVES, sleeveWeight } from "@/lib/stocks";
 import { usd } from "@/lib/format";
 import { BundleMap } from "./bundle-map";
 import { StockMark } from "./stock-mark";
+import { DinariStatus } from "./dinari-status";
 import { cn } from "@/lib/utils";
 
 export function BundlesView() {
@@ -16,6 +17,8 @@ export function BundlesView() {
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         Creator-chosen. The keeper only buys names on this list, and only after they list on Arc. Weights are the split of Instant creator USDC — not a promise of fill. Change the book when Circle publishes contracts.
       </p>
+
+      <DinariStatus />
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         {SLEEVES.map((s) => (

@@ -14,17 +14,30 @@ Arc-native stock folio. $STONK launches on [eve.fun](https://www.eve.fun) Instan
 
 ```
 npm install
+cp .env.example .env.local
 npm run dev
 ```
 
 - `/` how it works
-- `/distributions` holder dashboard (theindex-style)
-- `/yield` farm board (clutch/anvil-style)
-- `/basket` curator weights
+- `/bundles` curator book + Dinari sandbox feed
+- `/portfolio` holder desk
+- `/yield` farm board
 - `/docs` fee path and venues
 
-**Preview** in the header fills the boards with sample size so the UI can ship before RWAs do. Preview deposits stay in `localStorage`. Nothing routes on-chain until issuer tokens and Morpho/Aave/Uniswap are public on chain 5042.
+**Preview** in the header fills the boards with sample size. Preview deposits stay in `localStorage`.
+
+## Dinari keys
+
+Do **not** paste the API secret into the website. Sandbox keys from [partners.dinari.com](https://partners.dinari.com) go in `.env.local`:
+
+```
+DINARI_API_KEY_ID=...
+DINARI_API_SECRET_KEY=...
+DINARI_ENVIRONMENT=sandbox
+```
+
+`/api/dinari/stocks` reads those server-side. "Test data only" is correct — sandbox cannot mint real dShares. Production keys need KYB, then set `DINARI_ENVIRONMENT=production` on Vercel (Project → Settings → Environment Variables). Never use `NEXT_PUBLIC_` for these.
 
 ## Stack
 
-Next.js 16 · Tailwind 4 · wagmi/viem on Arc (`5042`, gas USDC).
+Next.js 16 · Tailwind 4 · wagmi/viem on Arc (`5042`, gas USDC) · `@dinari/api-sdk` (sandbox).
