@@ -95,7 +95,7 @@ export function YieldView() {
                 }}
                 formatter={(v) => [`${Number(v).toFixed(1)}%`, "APR"]}
               />
-              <Bar dataKey="apr" fill="#12b86a" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false} />
+              <Bar dataKey="apr" fill="#2b6cff" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

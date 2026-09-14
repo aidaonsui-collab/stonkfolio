@@ -10,19 +10,19 @@
   --font-mono: "IBM Plex Mono", var(--font-plex), ui-monospace, Menlo, Consolas, monospace;
   --font-heading: "Fraunces", var(--font-fraunces), Palatino, Georgia, serif;
 
-  --color-bg: #eef6ef;
+  --color-bg: #eef3fb;
   --color-surface: #ffffff;
-  --color-elevated: #dff3e6;
-  --color-fg: #142018;
-  --color-muted: #5a6b60;
-  --color-accent: #12b86a;
-  --color-accent-fg: #062016;
-  --color-paper: #f7faf6;
-  --color-ink: #142018;
-  --color-border: color-mix(in oklab, #142018 12%, transparent);
-  --color-border-strong: color-mix(in oklab, #142018 20%, transparent);
+  --color-elevated: #dce8f8;
+  --color-fg: #141a22;
+  --color-muted: #5a6573;
+  --color-accent: #2b6cff;
+  --color-accent-fg: #071225;
+  --color-paper: #f5f8fc;
+  --color-ink: #141a22;
+  --color-border: color-mix(in oklab, #141a22 12%, transparent);
+  --color-border-strong: color-mix(in oklab, #141a22 20%, transparent);
   --color-down: #d4523c;
-  --color-ring: #12b86a;
+  --color-ring: #2b6cff;
 
   --color-background: var(--color-bg);
   --color-foreground: var(--color-fg);
@@ -62,8 +62,8 @@
   body {
     background-color: var(--color-bg);
     background-image:
-      radial-gradient(1100px 520px at 88% -8%, rgba(18, 184, 106, 0.22), transparent 58%),
-      radial-gradient(820px 420px at -8% 12%, rgba(255, 206, 92, 0.18), transparent 52%);
+      radial-gradient(1100px 520px at 88% -8%, rgba(43, 108, 255, 0.22), transparent 58%),
+      radial-gradient(820px 420px at -8% 12%, rgba(90, 160, 255, 0.14), transparent 52%);
     color: var(--color-fg);
     font-family: var(--font-sans);
     min-height: 100dvh;
