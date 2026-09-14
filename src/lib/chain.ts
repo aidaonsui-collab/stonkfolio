@@ -33,7 +33,9 @@ export const TOKEN = {
   launchpad: "eve.fun Instant v4",
   pair: "STONK / USDC",
   poolFeeBps: 100,
-  holdersBps: 7_000,
-  creatorBps: 2_000,
+  holdersBps: 0,
+  creatorBps: 7_000,
+  burnBps: 1_000,
+  autoLpBps: 1_000,
   platformBps: 1_000,
 } as const;

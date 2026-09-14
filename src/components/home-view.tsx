@@ -13,15 +13,15 @@ import { TickerTape } from "./ticker-tape";
 const CHAPTERS = [
   {
     title: "Launch.",
-    body: `Reflect on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Holders take ${pctOfFee(LAUNCH.split.holdersBps)} of that fee in USDC. Claim on the desk after the pad keeper runs reflect().`,
+    body: `Creator preset on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Creator ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the rewards wallet. That wallet is the keeper. There is no Keeper row on the fee card.`,
   },
   {
     title: "The buy.",
-    body: `The remaining creator slice (${pctOfFee(LAUNCH.split.creatorBps)} of the pool fee) is the keeper input. It buys the Dinari book: CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash, once those names list on Arc 5042.`,
+    body: "The keeper spends that 70% on the Dinari book: CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash, once those names list on Arc 5042. Holders get stocks, not a USDC reflect claim.",
   },
   {
     title: "The farm.",
-    body: "Stocks from the keeper land with holders. Put them to work on Morpho, Aave V4, and Uniswap on Arc. The 70% USDC leg stays cash. The 20% keeper leg is the book you farm.",
+    body: "Those stocks land with $STONK holders. Put them to work on Morpho, Aave V4, and Uniswap on Arc.",
   },
 ];
 
@@ -35,7 +35,7 @@ export function HomeView() {
     <div>
       <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div className="stagger-in">
-          <p className="kicker">$STONK · Arc 5042 · eve.fun v4 · 70% holders</p>
+          <p className="kicker">$STONK · Arc 5042 · eve.fun v4 · 70% creator</p>
           <h1 className="display mt-5 text-fg">
             The book
             <br />
@@ -43,7 +43,7 @@ export function HomeView() {
             <span className="italic"> itself.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to $STONK holders. 20% buys the curated stock book. 10% is eve.fun. Then holders farm the stocks.
+            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to the creator rewards wallet. That wallet is the keeper that buys the stock book. Holders get the stocks, then farm them.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -83,9 +83,9 @@ export function HomeView() {
       <TickerTape />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <p className="kicker">Fee card · 1.0% pool · buys and sells</p>
+        <p className="kicker">Fee card · 1.0% pool · Creator preset</p>
         <h2 className="display-md mt-2">Where the cut goes.</h2>
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {FEE_LEGS.map((leg) => (
             <div key={leg.key} className="panel-tight p-5">
               <p className="kicker">{leg.label}</p>
@@ -110,10 +110,10 @@ export function HomeView() {
 
       <section className="border-t border-border">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
-          <Pulse label="USDC to holders" value={compactUsd(pulse.usdcToHolders)} hint="70% of the 1% fee" />
-          <Pulse label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="20% buys the book" />
+          <Pulse label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="70% of the 1% fee" />
           <Pulse label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
           <Pulse label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
+          <Pulse label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
         </div>
       </section>
 

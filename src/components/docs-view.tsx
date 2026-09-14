@@ -15,19 +15,16 @@ export function DocsView() {
               <a className="text-fg underline-offset-2 hover:underline" href={EVE_LAUNCH} target="_blank" rel="noreferrer">
                 eve.fun
               </a>{" "}
-              as <strong className="text-fg">Reflect</strong>, Uniswap v4, TOKEN/USDC, 1B supply, LP locked. Set the pool fee to {LAUNCH.feeBps / 100}%.
+              with the <strong className="text-fg">Creator</strong> fee preset, Uniswap v4, TOKEN/USDC, 1B supply, LP locked. Pool fee {LAUNCH.feeBps / 100}%.
             </li>
             <li>
-              On the fee card set Custom: Holders {pctOfFee(LAUNCH.split.holdersBps)} · Keeper/creator {pctOfFee(LAUNCH.split.creatorBps)} · eve.fun {pctOfFee(LAUNCH.split.platformBps)}. Burn 0. Auto-LP 0. Platform cannot go below 10%.
+              Fee card: Creator {pctOfFee(LAUNCH.split.creatorBps)} · Burn {pctOfFee(LAUNCH.split.burnBps)} · Holders {pctOfFee(LAUNCH.split.holdersBps)} · Auto-LP {pctOfFee(LAUNCH.split.autoLpBps)} · eve.fun {pctOfFee(LAUNCH.split.platformBps)}. There is no Keeper row. Creator is the keeper.
             </li>
             <li>
-              Point the <strong className="text-fg">creator rewards wallet</strong> at the Stonkfolio keeper. That 20% is the only USDC that buys dShares.
+              Set <strong className="text-fg">creator rewards</strong> to the Stonkfolio keeper wallet (or an X-handle vault that pays that wallet). That 70% USDC is what buys dShares.
             </li>
             <li>
-              Holder USDC is not streamed per swap. The pad keeper collects the locked v4 position, forwards USDC, then calls <code className="font-mono text-fg">reflect()</code>. Claim from eve.fun Profile or this desk once we index claims.
-            </li>
-            <li>
-              After Arc RWAs list, the keeper spends the creator slice on the Dinari book and distributes stocks. Holders farm those on Morpho, Aave V4, and Uniswap.
+              After Arc RWAs list, the keeper spends that USDC on the Dinari book and distributes stocks to $STONK holders. Holders farm those on Morpho, Aave V4, and Uniswap.
             </li>
           </ol>
         </section>
@@ -43,13 +40,13 @@ export function DocsView() {
             ))}
           </ul>
           <p className="mt-3">
-            On a $100 swap the trader pays $1. Holders share $0.70. The keeper gets $0.20 to buy stocks. eve.fun gets $0.10. Same cut on buys and sells.
+            On a $100 swap the trader pays $1. Creator/keeper gets $0.70 to buy stocks. $0.10 burns $STONK. $0.10 stays as LP. $0.10 is eve.fun. Holders get 0% as USDC on this card. They get the stocks the keeper buys.
           </p>
         </section>
         <section>
-          <h2 className="font-display text-2xl italic tracking-tight text-fg">Why Reflect, not Meme</h2>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">Creator vs Holders on the card</h2>
           <p className="mt-3">
-            Meme Instant can send the whole fee to creator, burn, or the pool. Reflect is the type that pays holders, with a 20% floor on that slice. 70% is a custom Reflect card. Holders get USDC. The 20% creator slice still funds the stock book. Two legs, one token.
+            Holders on the fee card is a USDC reflect claim, pro rata $STONK. That is not the stock buy. The stock buy is Creator, paid to the rewards wallet. Use the Creator preset (70%) if the product is fees → dShares → holders.
           </p>
         </section>
         <section>

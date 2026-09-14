@@ -10,8 +10,7 @@ import { StockMark } from "./stock-mark";
 import { ConnectButton } from "./connect-button";
 
 export function PortfolioView() {
-  const { seeing, stonk, sharePct, holderUsdc, stocksEarnedUsd, history, earned, connected, preview, setPreview } =
-    useFolio();
+  const { seeing, stonk, sharePct, stocksEarnedUsd, history, earned, connected, preview, setPreview } = useFolio();
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
@@ -19,10 +18,10 @@ export function PortfolioView() {
       <h1 className="display-md mt-3">Your folio.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         {preview
-          ? "Preview tape. Sample holder, not your wallet. 70% of the v4 pool fee is USDC you claim. 20% is the stock book below."
+          ? "Preview tape. Sample holder, not your wallet. The 70% creator fee buys the stock book below."
           : connected
-            ? "Desk is open. Holder USDC waits on the eve.fun reflect sweep. Stocks wait until the keeper buys on Dinari."
-            : "Connect a desk or flip on the preview tape to read USDC claims, balances, and the stock ledger."}
+            ? "Desk is open. Stocks wait until the keeper spends creator USDC on Dinari."
+            : "Connect a desk or flip on the preview tape to read balances and the stock ledger."}
       </p>
       {!seeing ? (
         <div className="mt-6 flex flex-wrap gap-3">
@@ -33,7 +32,7 @@ export function PortfolioView() {
         </div>
       ) : null}
 
-      <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">
         <Metric
           label="Balance"
           value={dash(seeing, `${(stonk / 1_000_000).toFixed(2)}M $STONK`)}
@@ -41,14 +40,9 @@ export function PortfolioView() {
         />
         <Metric label="Your share" value={dash(seeing, `${sharePct.toFixed(3)}%`)} hint="of eligible supply" />
         <Metric
-          label="Holder USDC"
-          value={dash(seeing, usd(holderUsdc))}
-          hint="70% of the 1% v4 fee. Claim after reflect()."
-        />
-        <Metric
           label="Stocks earned"
           value={dash(seeing, usd(stocksEarnedUsd))}
-          hint="20% keeper slice, bought as dShares."
+          hint="70% creator fee, bought as dShares."
         />
       </div>
 

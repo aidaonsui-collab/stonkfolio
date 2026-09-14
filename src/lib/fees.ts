@@ -2,23 +2,24 @@
 
 export const LAUNCH = {
   venue: "eve.fun",
-  type: "Reflect",
+  type: "Creator",
   pair: "STONK / USDC",
   uniswap: "v4",
   /** Pool fee in bps of notional. 100 = 1.0%. */
   feeBps: 100,
   split: {
-    holdersBps: 7_000,
-    creatorBps: 2_000,
+    creatorBps: 7_000,
+    burnBps: 1_000,
+    holdersBps: 0,
+    autoLpBps: 1_000,
     platformBps: 1_000,
-    burnBps: 0,
-    autoLpBps: 0,
   },
 } as const;
 
 export const FEE_LEGS = [
-  { key: "holders", label: "Holders", bps: LAUNCH.split.holdersBps, hint: "USDC claim, pro rata $STONK" },
-  { key: "creator", label: "Keeper", bps: LAUNCH.split.creatorBps, hint: "Buys the Dinari book" },
+  { key: "creator", label: "Creator", bps: LAUNCH.split.creatorBps, hint: "Rewards wallet. This is the keeper that buys dShares." },
+  { key: "burn", label: "Burn", bps: LAUNCH.split.burnBps, hint: "Launch token to dead" },
+  { key: "autoLp", label: "Auto-LP", bps: LAUNCH.split.autoLpBps, hint: "Stays in the STONK/USDC pool" },
   { key: "platform", label: "eve.fun", bps: LAUNCH.split.platformBps, hint: "Pad floor" },
 ] as const;
 

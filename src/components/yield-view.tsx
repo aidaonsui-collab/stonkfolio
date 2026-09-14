@@ -53,7 +53,7 @@ export function YieldView() {
           <p className="kicker">Venues on Arc</p>
           <h1 className="display-md mt-3">Put the book to work.</h1>
           <p className="mt-3 max-w-xl text-sm text-muted">
-            {MARKETS.length} markets · Morpho · Aave V4 · Uniswap on Arc. You farm the stocks bought with the 20% keeper slice. The 70% holder fee is USDC on Portfolio, not here.
+            {MARKETS.length} markets · Morpho · Aave V4 · Uniswap on Arc. You farm the stocks bought with the 70% creator fee.
           </p>
         </div>
         <button

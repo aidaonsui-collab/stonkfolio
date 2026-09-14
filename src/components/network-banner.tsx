@@ -9,7 +9,7 @@ export function NetworkBanner() {
       <span className="mt-1 size-1.5 shrink-0 rounded-full bg-accent sm:mt-0" />
       <p className="min-w-0">
         <span className="mr-2 font-mono tracking-[0.14em] text-fg uppercase">Network</span>
-        {daysToMainnet(MAINNET_AT)} 70% of the v4 pool fee is holder USDC. 20% waits on the keeper until Arc RWAs list.
+        {daysToMainnet(MAINNET_AT)} 70% of the v4 pool fee is creator USDC to the keeper. It waits until Arc RWAs list.
       </p>
     </div>
   );
