@@ -30,9 +30,10 @@ export const TOKEN = {
   name: "Stonkfolio",
   symbol: "STONK",
   supply: 1_000_000_000,
-  launchpad: "eve.fun Instant",
+  launchpad: "eve.fun Instant v4",
   pair: "STONK / USDC",
-  /** Instant quote-side split: creator 50 of the 1% Uniswap V3 fee. */
-  creatorFeeBpsOfVolume: 50,
   poolFeeBps: 100,
+  holdersBps: 7_000,
+  creatorBps: 2_000,
+  platformBps: 1_000,
 } as const;

@@ -71,6 +71,8 @@ export const PREVIEW_DISTRIBUTIONS: Distribution[] = [
 export const PREVIEW_HOLDER = {
   stonk: 12_480_000,
   sharePct: 1.248,
+  /** 70% holder leg, claimable USDC after the eve.fun keeper reflect(). */
+  holderUsdc: 42.18,
   /** Units of each stock sitting in the wallet from distributions, not yet farmed. */
   earned: {
     CRCL: 0.0842,
@@ -96,6 +98,7 @@ export function earnedValue(earned: Record<string, number>) {
 
 export function protocolPreview() {
   return {
+    usdcToHolders: 64_470,
     usdcRouted: 18_420,
     stocksBoughtUsd: 17_980,
     holders: 1_842,

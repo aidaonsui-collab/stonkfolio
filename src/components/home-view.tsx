@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { EVE_LAUNCH, TOKEN } from "@/lib/chain";
+import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { protocolPreview, sleeveWeight, STOCKS } from "@/lib/stocks";
 import { Button } from "./ui/button";
@@ -12,15 +13,15 @@ import { TickerTape } from "./ticker-tape";
 const CHAPTERS = [
   {
     title: "Launch.",
-    body: `Instant on eve.fun. 1B ${TOKEN.symbol} against USDC, LP locked. Point the rewards wallet at the Stonkfolio keeper — that 50% creator USDC is the only input.`,
+    body: `Reflect on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Holders take ${pctOfFee(LAUNCH.split.holdersBps)} of that fee in USDC. Claim on the desk after the pad keeper runs reflect().`,
   },
   {
     title: "The buy.",
-    body: "The keeper spends only on this bundle. CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash — and only after those names list on Arc 5042.",
+    body: `The remaining creator slice (${pctOfFee(LAUNCH.split.creatorBps)} of the pool fee) is the keeper input. It buys the Dinari book: CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash, once those names list on Arc 5042.`,
   },
   {
     title: "The farm.",
-    body: "Distributed stocks land with holders. Put them to work on Morpho isolated markets, Aave V4, and Uniswap LPs Arc already posted.",
+    body: "Stocks from the keeper land with holders. Put them to work on Morpho, Aave V4, and Uniswap on Arc. The 70% USDC leg stays cash. The 20% keeper leg is the book you farm.",
   },
 ];
 
@@ -34,7 +35,7 @@ export function HomeView() {
     <div>
       <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div className="stagger-in">
-          <p className="kicker">$STONK · Arc 5042 · eve.fun Instant</p>
+          <p className="kicker">$STONK · Arc 5042 · eve.fun v4 · 70% holders</p>
           <h1 className="display mt-5 text-fg">
             The book
             <br />
@@ -42,7 +43,7 @@ export function HomeView() {
             <span className="italic"> itself.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Creator fees from Instant auto-buy a curated sleeve of tokenized names. Holders receive the stocks. Then they put the book to work.
+            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to $STONK holders. 20% buys the curated stock book. 10% is eve.fun. Then holders farm the stocks.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
@@ -82,6 +83,20 @@ export function HomeView() {
       <TickerTape />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
+        <p className="kicker">Fee card · 1.0% pool · buys and sells</p>
+        <h2 className="display-md mt-2">Where the cut goes.</h2>
+        <div className="mt-8 grid gap-3 sm:grid-cols-3">
+          {FEE_LEGS.map((leg) => (
+            <div key={leg.key} className="panel-tight p-5">
+              <p className="kicker">{leg.label}</p>
+              <p className="num mt-3 font-display text-3xl">{pctOfFee(leg.bps)}</p>
+              <p className="mt-2 text-xs leading-relaxed text-muted">{leg.hint}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
         <p className="kicker">How the loop closes</p>
         <div className="mt-8 grid gap-10 md:grid-cols-3 md:gap-8">
           {CHAPTERS.map((c) => (
@@ -95,10 +110,10 @@ export function HomeView() {
 
       <section className="border-t border-border">
         <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
-          <Pulse label="USDC routed" value={compactUsd(pulse.usdcRouted)} hint="Preview tape" />
+          <Pulse label="USDC to holders" value={compactUsd(pulse.usdcToHolders)} hint="70% of the 1% fee" />
+          <Pulse label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="20% buys the book" />
           <Pulse label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
           <Pulse label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
-          <Pulse label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
         </div>
       </section>
 

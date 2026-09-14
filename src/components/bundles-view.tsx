@@ -15,7 +15,7 @@ export function BundlesView() {
       <p className="kicker">The keeper book</p>
       <h1 className="display-md mt-3">The bundle.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-        Creator-chosen. The keeper only buys names on this list, and only after they list on Arc. Weights are the split of Instant creator USDC — not a promise of fill. Change the book when Circle publishes contracts.
+        Creator-chosen. The keeper only buys names on this list, and only after they list on Arc. Weights split the 20% creator slice of the 1% Uniswap v4 fee (the other 70% is USDC to holders). Not a promise of fill.
       </p>
 
       <DinariStatus />

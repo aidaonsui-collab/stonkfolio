@@ -1,4 +1,5 @@
 import { EVE_FUN, EVE_LAUNCH, TOKEN } from "@/lib/chain";
+import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 
 export function DocsView() {
   return (
@@ -12,42 +13,58 @@ export function DocsView() {
             <li>
               Launch $STONK on{" "}
               <a className="text-fg underline-offset-2 hover:underline" href={EVE_LAUNCH} target="_blank" rel="noreferrer">
-                eve.fun Instant
-              </a>
-              . Full 1B float on Uniswap V3, quoted in Arc USDC, LP locked.
+                eve.fun
+              </a>{" "}
+              as <strong className="text-fg">Reflect</strong>, Uniswap v4, TOKEN/USDC, 1B supply, LP locked. Set the pool fee to {LAUNCH.feeBps / 100}%.
             </li>
             <li>
-              Instant takes a 1% pool fee. Quote-side USDC splits creator 50 · Crucible 30 · project burn 10 · platform 10. The launch-token side burns.
+              On the fee card set Custom: Holders {pctOfFee(LAUNCH.split.holdersBps)} · Keeper/creator {pctOfFee(LAUNCH.split.creatorBps)} · eve.fun {pctOfFee(LAUNCH.split.platformBps)}. Burn 0. Auto-LP 0. Platform cannot go below 10%.
             </li>
             <li>
-              Point the Instant <strong className="text-fg">rewards wallet</strong> at the Stonkfolio keeper. That 50% creator USDC is the only input.
+              Point the <strong className="text-fg">creator rewards wallet</strong> at the Stonkfolio keeper. That 20% is the only USDC that buys dShares.
             </li>
             <li>
-              After Arc public RWAs list (Circle window Sept 16), the keeper buys the curated bundle and distributes the stocks to $STONK holders.
+              Holder USDC is not streamed per swap. The pad keeper collects the locked v4 position, forwards USDC, then calls <code className="font-mono text-fg">reflect()</code>. Claim from eve.fun Profile or this desk once we index claims.
             </li>
             <li>
-              Holders farm those stocks on the venues Arc posted: Morpho (isolated + Midnight), Aave V4 (core hub + tokenized spoke), Uniswap on Arc.
+              After Arc RWAs list, the keeper spends the creator slice on the Dinari book and distributes stocks. Holders farm those on Morpho, Aave V4, and Uniswap.
             </li>
           </ol>
         </section>
         <section>
-          <h2 className="font-display text-2xl italic tracking-tight text-fg">Why Instant, not Reflection</h2>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">Fee card</h2>
+          <ul className="mt-3 list-disc space-y-1 pl-5">
+            {FEE_LEGS.map((leg) => (
+              <li key={leg.key}>
+                <strong className="text-fg">{leg.label} {pctOfFee(leg.bps)}</strong>
+                {" · "}
+                {leg.hint}
+              </li>
+            ))}
+          </ul>
           <p className="mt-3">
-            Reflection already pays holders 20% of quote-side USDC. Stonkfolio wants that USDC converted into equities instead. Instant keeps the creator leg intact so the keeper can buy the book. Holders are paid in stocks, not a second USDC stream.
+            On a $100 swap the trader pays $1. Holders share $0.70. The keeper gets $0.20 to buy stocks. eve.fun gets $0.10. Same cut on buys and sells.
+          </p>
+        </section>
+        <section>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">Why Reflect, not Meme</h2>
+          <p className="mt-3">
+            Meme Instant can send the whole fee to creator, burn, or the pool. Reflect is the type that pays holders, with a 20% floor on that slice. 70% is a custom Reflect card. Holders get USDC. The 20% creator slice still funds the stock book. Two legs, one token.
           </p>
         </section>
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">What is live today</h2>
           <p className="mt-3">
-            The pad ({TOKEN.launchpad}) is live on Arc 5042. Public tokenized stocks, BUIDL, and the Morpho / Aave deployments are still in the Circle window. This desk shows the holder folio and the yield ladder in the formats they will use. Preview tape fills the ledger with sample size so the UI can ship before the names do.
+            The pad ({TOKEN.launchpad}) is live on Arc 5042. Dinari sandbox lists the basket. Public Arc dShares, BUIDL, and Morpho / Aave are still in the Circle window. Preview tape fills the desk with sample size.
           </p>
         </section>
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">Venues</h2>
           <ul className="mt-3 list-disc space-y-1 pl-5">
-            <li>Uniswap on Arc — @arc, 17 Aug 2026. Same AMM eve.fun already uses.</li>
-            <li>Morpho / Midnight — @arc, 26 Aug and 3 Sep 2026. Isolated markets, fixed-rate terms.</li>
-            <li>Aave V4 — @arc, 8–10 Sep 2026. USDC / EURC / cirBTC hub plus a tokenized spoke.</li>
+            <li>Uniswap v4 on Arc. The launch pool and later stock/USDC LPs.</li>
+            <li>Morpho / Midnight. Isolated markets, fixed-rate terms.</li>
+            <li>Aave V4. USDC / EURC / cirBTC hub plus a tokenized spoke.</li>
+            <li>Dinari dShares. Fill path for the 20% keeper slice.</li>
           </ul>
         </section>
         <p>

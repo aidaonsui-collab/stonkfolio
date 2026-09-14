@@ -28,6 +28,7 @@ type FolioState = {
   seeing: boolean;
   stonk: number;
   sharePct: number;
+  holderUsdc: number;
   earned: Record<string, number>;
   available: Record<string, number>;
   positions: Positions;
@@ -73,6 +74,7 @@ export function FolioProvider({ children }: { children: ReactNode }) {
   const earned = demo ? PREVIEW_HOLDER.earned : {};
   const stonk = demo ? PREVIEW_HOLDER.stonk : 0;
   const sharePct = demo ? PREVIEW_HOLDER.sharePct : 0;
+  const holderUsdc = demo ? PREVIEW_HOLDER.holderUsdc : 0;
   const history = demo ? PREVIEW_DISTRIBUTIONS : [];
 
   const available = useMemo(() => {
@@ -125,6 +127,7 @@ export function FolioProvider({ children }: { children: ReactNode }) {
     seeing,
     stonk,
     sharePct,
+    holderUsdc,
     earned,
     available,
     positions,

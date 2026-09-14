@@ -4,11 +4,11 @@ Arc-native stock folio. $STONK launches on [eve.fun](https://www.eve.fun) Instan
 
 ## Loop
 
-1. Instant launch on eve.fun: 1B $STONK / USDC, 1% Uniswap V3, LP locked.
-2. Quote-side USDC: creator **50** · Crucible 30 · project burn 10 · platform 10.
-3. Point the Instant rewards wallet at the Stonkfolio keeper.
-4. Keeper buys only the book in `src/lib/stocks.ts`.
-5. Stocks distribute to $STONK holders. Yield tab is the clutch-style market grid.
+1. Reflect launch on eve.fun: 1B $STONK / USDC, Uniswap **v4**, LP locked, 1% pool fee.
+2. Fee card: holders **70** · keeper/creator **20** · eve.fun **10**.
+3. Point the creator rewards wallet at the Stonkfolio keeper (the 20% slice).
+4. Holder USDC claims after `reflect()`. Keeper USDC buys the book in `src/lib/stocks.ts`.
+5. Yield tab farms the stocks. Portfolio shows both USDC claims and the stock ledger.
 
 ## App
 
