@@ -17,7 +17,7 @@ const CHAPTERS = [
   },
   {
     title: "The buy.",
-    body: "The keeper spends that 70% on the Dinari book: CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash, once those names list on Arc 5042. Holders get stocks, not a USDC reflect claim.",
+    body: "The keeper spends that 70% on the Dinari book: BUIDL/USYC cash is live for eligible users on Arc 5042; CRCL, NVDA, AAPL, and the index sleeve wait on public ticker listings. Holders get stocks, not a USDC reflect claim.",
   },
   {
     title: "The farm.",
