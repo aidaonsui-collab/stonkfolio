@@ -71,7 +71,11 @@ export function BundlesView() {
                 <span
                   className={cn(
                     "inline-flex rounded-full px-2 py-0.5 font-mono text-[10px] tracking-wider uppercase",
-                    s.status === "candidate" ? "bg-elevated text-muted" : "bg-accent/15 text-accent",
+                    s.status === "live"
+                      ? "bg-accent/15 text-accent"
+                      : s.status === "candidate"
+                        ? "bg-elevated text-muted"
+                        : "bg-elevated/80 text-muted",
                   )}
                 >
                   {s.status}
@@ -84,7 +88,7 @@ export function BundlesView() {
           ))}
         </ul>
         <p className="mt-4 text-xs text-muted">
-          Weights sum to {total}%. Nothing is live on 5042 until the issuer token exists.
+          Weights sum to {total}%. Cash sleeve (BUIDL / USYC) is live for eligible users; equities wait on issuer token addresses.
         </p>
       </div>
     </div>
