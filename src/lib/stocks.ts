@@ -1,6 +1,9 @@
 export type StockKind = "equity" | "index" | "mmf";
 export type ListingStatus = "queued" | "candidate" | "live";
 
+/** Optional Arc (5042) token address. Null means announced/live status but address not published yet. */
+export type ArcAddress = `0x${string}` | null;
+
 export type Stock = {
   ticker: string;
   name: string;
@@ -12,10 +15,14 @@ export type Stock = {
   status: ListingStatus;
   color: string;
   letter: string;
+  /** Arc mainnet ERC-20 when known. Cash sleeve first; equities stay unset until tickers publish. */
+  address?: ArcAddress;
 };
 
 /**
- * Creator-chosen book. Names wait on public Arc RWA listings after Sept 16.
+ * Creator-chosen book.
+ * Cash sleeve (BUIDL / USYC): Arc named these live for eligible users on Sep 16.
+ * Equities / index: still wait on public ticker + contract listings (xStocks on Arc announced; addresses TBD).
  * Swap weights here — the dashboard, keeper copy, and yield markets all read this list.
  */
 export const STOCKS: Stock[] = [
@@ -31,8 +38,32 @@ export const STOCKS: Stock[] = [
   { ticker: "COIN", name: "Coinbase", issuer: "xStocks", kind: "equity", weight: 4, price: 274.07, status: "queued", color: "#0052ff", letter: "C" },
   { ticker: "SPY", name: "S&P 500", issuer: "xStocks / Ondo", kind: "index", weight: 8, price: 770.25, status: "queued", color: "#1b4dff", letter: "S" },
   { ticker: "BE", name: "Bloom Energy", issuer: "xStocks", kind: "equity", weight: 3, price: 271.14, status: "candidate", color: "#111111", letter: "BE" },
-  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "queued", color: "#000000", letter: "BU" },
-  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "queued", color: "#4e2eff", letter: "US" },
+  {
+    ticker: "BUIDL",
+    name: "BlackRock USD Institutional Digital Liquidity Fund",
+    issuer: "BlackRock / Securitize",
+    kind: "mmf",
+    weight: 3,
+    price: 1,
+    status: "live",
+    color: "#000000",
+    letter: "BU",
+    // Arc named BUIDL live Sep 16; mainnet address not in docs.arc.io contract list yet.
+    address: null,
+  },
+  {
+    ticker: "USYC",
+    name: "Hashnote Short Duration Yield",
+    issuer: "Hashnote / Circle",
+    kind: "mmf",
+    weight: 2,
+    price: 1,
+    status: "live",
+    color: "#4e2eff",
+    letter: "US",
+    // Arc mainnet — docs.arc.io/arc/references/contract-addresses (USYC section).
+    address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490",
+  },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -40,11 +71,15 @@ export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
   { id: "equity", label: "Equities", hint: "Tokenized names the keeper buys first." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
-  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve while names queue." },
+  { id: "mmf", label: "Cash", hint: "BUIDL / USYC live for eligible users; equities still queue." },
 ];
 
 export function sleeveWeight(kind: StockKind) {
   return STOCKS.filter((s) => s.kind === kind).reduce((n, s) => n + s.weight, 0);
+}
+
+export function liveCashSleeve() {
+  return STOCKS.filter((s) => s.kind === "mmf" && s.status === "live");
 }
 
 export type Distribution = {
