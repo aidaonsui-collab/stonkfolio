@@ -16,6 +16,7 @@ const LINKS = [
   { href: "/bundles", label: "Bundles" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/yield", label: "Yield" },
+  { href: "/keeper", label: "Keeper" },
   { href: "/docs", label: "Docs" },
 ] as const;
 

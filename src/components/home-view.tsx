@@ -13,15 +13,15 @@ import { TickerTape } from "./ticker-tape";
 const CHAPTERS = [
   {
     title: "Launch.",
-    body: `Creator preset on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Creator ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the rewards wallet. That wallet is the keeper. There is no Keeper row on the fee card.`,
+    body: `Creator preset on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Creator ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the Circle agent wallet on the keeper page.`,
   },
   {
     title: "The buy.",
-    body: "The keeper spends that 70% on the Dinari book: CRCL, NVDA, AAPL, the index sleeve, BUIDL/USYC cash, once those names list on Arc 5042. Holders get stocks, not a USDC reflect claim.",
+    body: "That wallet parks USDC in USYC while names queue. When they list on Arc it buys the book. Holders get stocks, not a USDC reflect claim.",
   },
   {
     title: "The farm.",
-    body: "Those stocks land with $STONK holders. Put them to work on Morpho, Aave V4, and Uniswap on Arc.",
+    body: "Holders farm those stocks on Morpho, Aave V4, and Uniswap — or put idle USDC in Circle Earn vaults on Yield.",
   },
 ];
 
@@ -35,7 +35,7 @@ export function HomeView() {
     <div>
       <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div className="stagger-in">
-          <p className="kicker">$STONK · Arc 5042 · eve.fun v4 · 70% creator</p>
+          <p className="kicker">{`$${TOKEN.symbol} · Arc 5042 · eve.fun v4 · 70% creator`}</p>
           <h1 className="display mt-5 text-fg">
             The book
             <br />
@@ -43,12 +43,12 @@ export function HomeView() {
             <span className="italic"> itself.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to the creator rewards wallet. That wallet is the keeper that buys the stock book. Holders get the stocks, then farm them.
+            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to the keeper. It parks in USYC, then buys the stock book. Holders get the stocks, then farm them.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
               <a href={EVE_LAUNCH} target="_blank" rel="noreferrer">
-                Launch $STONK
+                {`Launch $${TOKEN.symbol}`}
                 <ArrowUpRight className="size-4" />
               </a>
             </Button>

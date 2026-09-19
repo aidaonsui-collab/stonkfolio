@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s · StonkFolio",
   },
   description:
-    "Creator USDC from $STONK on eve.fun auto-buys tokenized stocks on Arc. Holders get the book. Farm it on Morpho, Aave, and Uniswap.",
+    "Creator USDC from $SFOLIO on eve.fun parks in USYC, then buys tokenized stocks on Arc. Holders get the book. Farm it on Morpho, Aave, Uniswap, or Circle Earn.",
   other: {
     "theme-color": "#eef3fb",
   },

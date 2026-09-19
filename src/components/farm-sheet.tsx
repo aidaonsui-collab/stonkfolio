@@ -131,7 +131,7 @@ export function FarmSheet({
               </Button>
               {msg ? <p className="text-xs text-accent">{msg}</p> : null}
               <p className="text-xs leading-relaxed text-muted">
-                Markets are wired to Morpho isolated / Midnight, Aave V4 hub + tokenized spoke, and Uniswap on Arc. No fill until those contracts are public on 5042 and the stock token exists. Preview deposits stay on this device.
+                Stock markets wait on listed names. Circle Earn USDC vaults on this page are live separately. Preview supplies stay on this device.
               </p>
             </div>
           </>

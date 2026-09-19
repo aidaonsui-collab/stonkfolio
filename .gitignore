@@ -44,3 +44,9 @@ next-env.d.ts
 # local verification dumps
 /screenshots
 .env*.local
+
+# foundry
+/contracts/out
+/contracts/cache
+/data
+

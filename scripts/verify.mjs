@@ -34,11 +34,13 @@ await page.getByRole("button", { name: "Preview tape" }).click();
 await page.waitForTimeout(300);
 await shot("portfolio-preview.png");
 
-const balance = await page.locator("text=$STONK").first().textContent();
-if (!balance || !balance.includes("STONK")) errors.push("preview did not fill $STONK balance");
+const balance = await page.locator("text=$SFOLIO").first().textContent();
+if (!balance || !balance.includes("SFOLIO")) errors.push("preview did not fill $SFOLIO balance");
 
 await page.getByRole("link", { name: "Farm these stocks" }).click();
 await page.waitForURL("**/yield");
+await page.getByRole("heading", { name: "USDC vaults." }).waitFor({ timeout: 10_000 });
+await page.getByText(/Steakhouse|Keyrock|Bitwise|active of/).first().waitFor({ timeout: 20_000 });
 await shot("yield-desktop.png");
 
 await page.getByPlaceholder("Search markets").fill("CRCL");
@@ -64,9 +66,28 @@ await page.getByRole("link", { name: "Bundles" }).first().click();
 await page.waitForURL("**/bundles");
 await shot("bundles-desktop.png");
 
+await page.getByRole("link", { name: "Keeper" }).first().click();
+await page.waitForURL("**/keeper");
+await page.getByText("Park, then buy").waitFor({ timeout: 10_000 });
+await shot("keeper-desktop.png");
+const keeperCopy = await page.locator("body").textContent();
+if (!keeperCopy || !keeperCopy.includes("Agent wallet")) errors.push("keeper page missing agent wallet");
+if (!keeperCopy || !keeperCopy.toLowerCase().includes("80aa")) errors.push("keeper page missing Eve agent address");
+
 await page.getByRole("link", { name: "Docs" }).first().click();
 await page.waitForURL("**/docs");
 await shot("docs-desktop.png");
+const docsCopy = await page.locator("body").textContent();
+if (!docsCopy || !docsCopy.toLowerCase().includes("usyc")) errors.push("docs missing USYC park loop");
+if (docsCopy && docsCopy.includes(".env.local")) errors.push("docs leaked .env.local");
+if (docsCopy && docsCopy.includes("DINARI_API")) errors.push("docs leaked API key names");
+
+await page.getByRole("link", { name: "Bundles" }).first().click();
+await page.waitForURL("**/bundles");
+const bundlesCopy = await page.locator("body").textContent();
+if (bundlesCopy && (bundlesCopy.includes(".env.local") || bundlesCopy.includes("DINARI_API_KEY"))) {
+  errors.push("bundles leaked env key copy");
+}
 
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(`${base}/portfolio`, { waitUntil: "networkidle" });

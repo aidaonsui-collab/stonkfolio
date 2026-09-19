@@ -1,5 +1,8 @@
+import Link from "next/link";
 import { EVE_FUN, EVE_LAUNCH, TOKEN } from "@/lib/chain";
 import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { EVE_AGENT_WALLET } from "@/lib/keeper";
+import { shortAddr } from "@/lib/format";
 
 export function DocsView() {
   return (
@@ -11,7 +14,7 @@ export function DocsView() {
           <h2 className="font-display text-2xl italic tracking-tight text-fg">The path</h2>
           <ol className="mt-4 list-decimal space-y-3 pl-5">
             <li>
-              Launch $STONK on{" "}
+              {`Launch $${TOKEN.symbol} on `}
               <a className="text-fg underline-offset-2 hover:underline" href={EVE_LAUNCH} target="_blank" rel="noreferrer">
                 eve.fun
               </a>{" "}
@@ -21,49 +24,90 @@ export function DocsView() {
               Fee card: Creator {pctOfFee(LAUNCH.split.creatorBps)} · Burn {pctOfFee(LAUNCH.split.burnBps)} · Holders {pctOfFee(LAUNCH.split.holdersBps)} · Auto-LP {pctOfFee(LAUNCH.split.autoLpBps)} · eve.fun {pctOfFee(LAUNCH.split.platformBps)}. There is no Keeper row. Creator is the keeper.
             </li>
             <li>
-              Set <strong className="text-fg">creator rewards</strong> to the Stonkfolio keeper wallet (or an X-handle vault that pays that wallet). That 70% USDC is what buys dShares.
+              Creator rewards go to the Circle agent wallet on{" "}
+              <Link href="/keeper" className="text-fg underline-offset-2 hover:underline">
+                the keeper page
+              </Link>
+              . That 70% of the 1% pool fee is USDC.
             </li>
             <li>
-              After Arc RWAs list, the keeper spends that USDC on the Dinari book and distributes stocks to $STONK holders. Holders farm those on Morpho, Aave V4, and Uniswap.
+              While names are queued, that USDC parks in USYC. When a name lists on Arc, the keeper buys the book and holders receive stocks — not a USDC reflect.
+            </li>
+            <li>
+              Holders can farm those stocks on Morpho, Aave V4, and Uniswap, or put idle USDC in Circle Earn vaults on{" "}
+              <Link href="/yield" className="text-fg underline-offset-2 hover:underline">
+                Yield
+              </Link>
+              .
             </li>
           </ol>
         </section>
+
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">Fee card</h2>
           <ul className="mt-3 list-disc space-y-1 pl-5">
             {FEE_LEGS.map((leg) => (
               <li key={leg.key}>
-                <strong className="text-fg">{leg.label} {pctOfFee(leg.bps)}</strong>
+                <strong className="text-fg">
+                  {leg.label} {pctOfFee(leg.bps)}
+                </strong>
                 {" · "}
                 {leg.hint}
               </li>
             ))}
           </ul>
           <p className="mt-3">
-            On a $100 swap the trader pays $1. Creator/keeper gets $0.70 to buy stocks. $0.10 burns $STONK. $0.10 stays as LP. $0.10 is eve.fun. Holders get 0% as USDC on this card. They get the stocks the keeper buys.
+            {`On a $100 swap the trader pays $1. The keeper gets $0.70. Until names list, that $0.70 sits in USYC. Then it buys stocks. $0.10 burns $${TOKEN.symbol}. $0.10 stays as LP. $0.10 is eve.fun. Holders get 0% as USDC on this card.`}
           </p>
         </section>
+
         <section>
-          <h2 className="font-display text-2xl italic tracking-tight text-fg">Creator vs Holders on the card</h2>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">Creator vs Holders</h2>
           <p className="mt-3">
-            Holders on the fee card is a USDC reflect claim, pro rata $STONK. That is not the stock buy. The stock buy is Creator, paid to the rewards wallet. Use the Creator preset (70%) if the product is fees → dShares → holders.
+            {`Holders on the eve.fun card is a USDC reflect, pro rata $${TOKEN.symbol}. That is not how this folio pays. The stock buy is the Creator row, paid to the rewards wallet. Use the Creator preset (70%) so fees become dShares for holders.`}
           </p>
         </section>
+
+        <section>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">The keeper</h2>
+          <p className="mt-3">
+            The rewards wallet is a Circle agent wallet on Arc ({shortAddr(EVE_AGENT_WALLET)}). Instant USDC lands there, parks in Hashnote USYC (the cash sleeve of the book), then buys listed names. Holders see those fills on Portfolio.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">Yield</h2>
+          <p className="mt-3">
+            Two boards. Stock markets (Morpho, Aave V4, Uniswap) are for names the keeper already bought. Circle Earn is Morpho USDC and EURC vaults on Arc — optional, for idle cash, not a second rewards stream.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl italic tracking-tight text-fg">For agents</h2>
+          <p className="mt-3">
+            <code className="font-mono text-fg">GET /api/book</code> is free: weights, listing status, keeper address.{" "}
+            <code className="font-mono text-fg">GET /api/nav</code> and <code className="font-mono text-fg">GET /api/distributions</code> are paid in USDC on Arc (x402). Catalog: <code className="font-mono text-fg">GET /api/openapi</code>.
+          </p>
+        </section>
+
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">What is live today</h2>
           <p className="mt-3">
-            The pad ({TOKEN.launchpad}) is live on Arc 5042. Dinari sandbox lists the basket. Public Arc dShares, BUIDL, and Morpho / Aave are still in the Circle window. Preview tape fills the desk with sample size.
+            {TOKEN.launchpad} is live on Arc 5042. The keeper wallet is on Arc. Earn Kit lists Morpho vaults on Yield. The stock book is still queued on public Arc listings — Portfolio preview shows sample size until those names fill.
           </p>
         </section>
+
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">Venues</h2>
           <ul className="mt-3 list-disc space-y-1 pl-5">
-            <li>Uniswap v4 on Arc. The launch pool and later stock/USDC LPs.</li>
-            <li>Morpho / Midnight. Isolated markets, fixed-rate terms.</li>
-            <li>Aave V4. USDC / EURC / cirBTC hub plus a tokenized spoke.</li>
-            <li>Dinari dShares. Fill path for the 20% keeper slice.</li>
+            <li>{`eve.fun Instant · Uniswap v4 · $${TOKEN.symbol}/USDC`}</li>
+            <li>Circle agent wallet · creator USDC and USYC park</li>
+            <li>Dinari dShares · the book the keeper buys</li>
+            <li>Morpho, Aave V4, Uniswap · farm the stocks</li>
+            <li>Circle Earn Kit · USDC/EURC vaults on Yield</li>
           </ul>
         </section>
+
         <p>
           Pad docs:{" "}
           <a className="text-fg underline-offset-2 hover:underline" href={`${EVE_FUN}/docs`} target="_blank" rel="noreferrer">

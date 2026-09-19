@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ARC_EXPLORER } from "@/lib/chain";
+import { ARC_EXPLORER, TOKEN } from "@/lib/chain";
 import { dash, qty, shortAddr, usd } from "@/lib/format";
 import { useFolio } from "@/lib/folio";
 import { STOCKS, stockByTicker } from "@/lib/stocks";
@@ -35,8 +35,8 @@ export function PortfolioView() {
       <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">
         <Metric
           label="Balance"
-          value={dash(seeing, `${(stonk / 1_000_000).toFixed(2)}M $STONK`)}
-          hint={seeing ? "Eligible $STONK in this wallet." : "Connect to read your balance."}
+          value={dash(seeing, `${(stonk / 1_000_000).toFixed(2)}M $${TOKEN.symbol}`)}
+          hint={seeing ? `Eligible $${TOKEN.symbol} in this wallet.` : "Connect to read your balance."}
         />
         <Metric label="Your share" value={dash(seeing, `${sharePct.toFixed(3)}%`)} hint="of eligible supply" />
         <Metric

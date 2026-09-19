@@ -7,6 +7,7 @@ import { useFolio } from "@/lib/folio";
 import { compactQty, pct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { FarmSheet } from "./farm-sheet";
+import { EarnVaults } from "./earn-vaults";
 import { StockMark, markFor } from "./stock-mark";
 import { Input } from "./ui/input";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts";
@@ -53,7 +54,7 @@ export function YieldView() {
           <p className="kicker">Venues on Arc</p>
           <h1 className="display-md mt-3">Put the book to work.</h1>
           <p className="mt-3 max-w-xl text-sm text-muted">
-            {MARKETS.length} markets · Morpho · Aave V4 · Uniswap on Arc. You farm the stocks bought with the 70% creator fee.
+            {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit lists live USDC vaults below. Stocks come from the 70% creator fee; USDC vaults are optional extra.
           </p>
         </div>
         <button
@@ -64,6 +65,8 @@ export function YieldView() {
           Request a market
         </button>
       </div>
+
+      <EarnVaults />
 
       <div className="panel mt-8 overflow-hidden p-4 sm:p-5">
         <p className="kicker">APR ladder · %</p>

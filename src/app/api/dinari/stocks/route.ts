@@ -10,7 +10,7 @@ export async function GET() {
       ok: false,
       configured: false,
       environment,
-      reason: "Missing DINARI_API_KEY_ID / DINARI_API_SECRET_KEY. Put them in .env.local.",
+      reason: "Issuer catalog not configured.",
     });
   }
 

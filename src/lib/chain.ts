@@ -28,10 +28,10 @@ export const arc = defineChain({
 
 export const TOKEN = {
   name: "Stonkfolio",
-  symbol: "STONK",
+  symbol: "SFOLIO",
   supply: 1_000_000_000,
   launchpad: "eve.fun Instant v4",
-  pair: "STONK / USDC",
+  pair: "SFOLIO / USDC",
   poolFeeBps: 100,
   holdersBps: 0,
   creatorBps: 7_000,

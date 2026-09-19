@@ -6,9 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:contracts": "forge test --root contracts -vv",
+    "test:api": "node scripts/test-api.mjs",
+    "keeper:tick": "node scripts/keeper/tick.mjs"
   },
   "dependencies": {
+    "@circle-fin/adapter-viem-v2": "^1.18.0",
+    "@circle-fin/earn-kit": "^1.7.0",
     "@dinari/api-sdk": "^0.15.0",
     "@tanstack/react-query": "^5.102.8",
     "class-variance-authority": "^0.7.1",
