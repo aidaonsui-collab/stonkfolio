@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { pct } from "@/lib/format";
+import { EarnFarmSheet } from "./earn-farm-sheet";
 
 type EarnVaultRow = {
   name: string;
@@ -19,6 +20,7 @@ type Payload = { ok: boolean; chain: string; vaults: EarnVaultRow[]; reason?: st
 
 export function EarnVaults() {
   const [data, setData] = useState<Payload | null>(null);
+  const [open, setOpen] = useState<EarnVaultRow | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -75,7 +77,13 @@ export function EarnVaults() {
             </thead>
             <tbody>
               {vaults.map((v) => (
-                <tr key={v.vaultAddress} className="border-b border-border last:border-0">
+                <tr
+                  key={v.vaultAddress}
+                  className={v.status === "active" ? "cursor-pointer border-b border-border last:border-0 hover:bg-elevated/60" : "border-b border-border last:border-0"}
+                  onClick={() => {
+                    if (v.status === "active") setOpen(v);
+                  }}
+                >
                   <td className="py-3.5">
                     <span className="block font-medium">{v.name}</span>
                     <span className="block font-mono text-xs text-muted">{v.asset}</span>
@@ -96,12 +104,19 @@ export function EarnVaults() {
 
       <ul className="mt-6 flex flex-col divide-y divide-border md:hidden">
         {vaults.map((v) => (
-          <li key={v.vaultAddress} className="flex items-center gap-3 py-3.5">
-            <span className="min-w-0 flex-1">
-              <span className="block truncate font-medium">{v.name}</span>
-              <span className="block text-xs text-muted">{v.protocol}</span>
-            </span>
-            <span className="num text-sm font-medium text-accent">{pct(v.apy * 100, 2)}</span>
+          <li key={v.vaultAddress}>
+            <button
+              type="button"
+              disabled={v.status !== "active"}
+              onClick={() => setOpen(v)}
+              className="flex w-full items-center gap-3 py-3.5 text-left disabled:opacity-70"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-medium">{v.name}</span>
+                <span className="block text-xs text-muted">{v.protocol}</span>
+              </span>
+              <span className="num text-sm font-medium text-accent">{pct(v.apy * 100, 2)}</span>
+            </button>
           </li>
         ))}
       </ul>
@@ -110,6 +125,7 @@ export function EarnVaults() {
           {active.length} active of {vaults.length} on {data.chain}. Only deposit active vaults.
         </p>
       ) : null}
+      <EarnFarmSheet vault={open} onClose={() => setOpen(null)} />
     </section>
   );
 }
