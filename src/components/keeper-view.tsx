@@ -48,7 +48,7 @@ export function KeeperView() {
       <p className="kicker">Creator rewards · Arc</p>
       <h1 className="display-md mt-3">The keeper.</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-        70% of the Uniswap v4 fee is USDC to this Circle agent wallet. While the book is queued, that USDC parks in USYC. When names list, it buys stocks and holders receive them — not a USDC claim.
+        70% of the Uniswap v4 fee is USDC to this Circle agent wallet. A cash sleeve stays in USYC. The rest buys the book. Holders receive stocks — not a USDC claim.
       </p>
 
       <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">
@@ -66,7 +66,7 @@ export function KeeperView() {
         <Metric
           label="USYC parked"
           value={bal ? `${Number(bal.keeperUsyc).toLocaleString()} USYC` : "—"}
-          hint="Cash sleeve until names list"
+          hint="Cash sleeve of the book"
         />
       </div>
 
@@ -76,7 +76,8 @@ export function KeeperView() {
         <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">{plan.reason}</p>
         <p className="mt-2 text-xs text-muted">
           <span className="font-mono text-fg uppercase">{plan.action}</span>
-          {" · "}cash sleeve {plan.cashSleeveBps / 100}%{" · "}listed {plan.listedWeight}%{" · "}queued {plan.queuedWeight}%
+          {" · "}cash sleeve {plan.cashSleeveBps / 100}%{" · "}listed {plan.listedWeight}%
+          {plan.queuedWeight > 0 ? ` · queued ${plan.queuedWeight}%` : ""}
         </p>
       </section>
 

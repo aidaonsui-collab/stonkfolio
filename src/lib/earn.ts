@@ -1,15 +1,18 @@
 import { EarnChain, EarnKit } from "@circle-fin/earn-kit";
+import { arcStableAddress } from "./chain";
 
 export type EarnVaultRow = {
   name: string;
   protocol: string;
   asset: string;
+  assetAddress: string;
   vaultAddress: string;
   apy: number;
   status: string;
   circleGuarded: boolean;
   totalDeposits: string;
   liquidity: string;
+  depositable: boolean;
 };
 
 let kit: EarnKit | null = null;
@@ -35,19 +38,32 @@ export async function exploreEarnVaults(): Promise<{
       chain,
       sortBy: "apy",
     });
-    const vaults: EarnVaultRow[] = (result.vaults ?? [])
-      .map((v) => ({
+    const seen = new Set<string>();
+    const vaults: EarnVaultRow[] = [];
+    for (const v of result.vaults ?? []) {
+      const vaultAddress = v.vaultAddress;
+      if (!vaultAddress || seen.has(vaultAddress.toLowerCase())) continue;
+      if (/\btest\b/i.test(v.name) || /^pjv4$/i.test(v.name)) continue;
+      seen.add(vaultAddress.toLowerCase());
+      const asset = String(v.asset ?? "USDC");
+      const assetAddress = (v.assetAddress && /^0x[a-fA-F0-9]{40}$/.test(v.assetAddress)
+        ? v.assetAddress
+        : arcStableAddress(asset) ?? "") as string;
+      const status = String(v.status ?? "unknown");
+      vaults.push({
         name: v.name,
         protocol: String(v.protocol ?? "MORPHO"),
-        asset: String(v.asset ?? "USDC"),
-        vaultAddress: v.vaultAddress,
+        asset,
+        assetAddress,
+        vaultAddress,
         apy: Number(v.currentApy ?? 0),
-        status: String(v.status ?? "unknown"),
+        status,
         circleGuarded: Boolean(v.circleGuarded),
         totalDeposits: String(v.totalDeposits ?? "0"),
         liquidity: String(v.liquidity ?? "0"),
-      }))
-      .filter((v) => !/\btest\b/i.test(v.name) && !/^pjv4$/i.test(v.name));
+        depositable: status === "active" && Boolean(arcStableAddress(asset) && assetAddress),
+      });
+    }
     return { ok: true, chain, vaults };
   } catch (err) {
     const reason = err instanceof Error ? err.message : "Earn Kit explore failed";

@@ -8,12 +8,14 @@ type EarnVaultRow = {
   name: string;
   protocol: string;
   asset: string;
+  assetAddress: string;
   vaultAddress: string;
   apy: number;
   status: string;
   circleGuarded: boolean;
   totalDeposits: string;
   liquidity: string;
+  depositable: boolean;
 };
 
 type Payload = { ok: boolean; chain: string; vaults: EarnVaultRow[]; reason?: string };
@@ -45,9 +47,9 @@ export function EarnVaults() {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="kicker">Circle Earn Kit · Morpho on Arc</p>
-          <h2 className="display-md mt-2">USDC vaults.</h2>
+          <h2 className="display-md mt-2">Earn vaults.</h2>
           <p className="mt-2 max-w-xl text-sm text-muted">
-            Live from Earn Kit. Deposit USDC here — not the stock book. The keeper parks idle creator USDC in USYC; this board is for holders who want Morpho USDC yield in-app.
+            Morpho vaults via Circle Earn Kit. Supply USDC or EURC from your wallet — not the stock book. The keeper never touches this path.
           </p>
         </div>
         <a
@@ -79,9 +81,9 @@ export function EarnVaults() {
               {vaults.map((v) => (
                 <tr
                   key={v.vaultAddress}
-                  className={v.status === "active" ? "cursor-pointer border-b border-border last:border-0 hover:bg-elevated/60" : "border-b border-border last:border-0"}
+                  className={v.depositable ? "cursor-pointer border-b border-border last:border-0 hover:bg-elevated/60" : "border-b border-border last:border-0"}
                   onClick={() => {
-                    if (v.status === "active") setOpen(v);
+                    if (v.depositable) setOpen(v);
                   }}
                 >
                   <td className="py-3.5">
@@ -107,7 +109,7 @@ export function EarnVaults() {
           <li key={v.vaultAddress}>
             <button
               type="button"
-              disabled={v.status !== "active"}
+              disabled={!v.depositable}
               onClick={() => setOpen(v)}
               className="flex w-full items-center gap-3 py-3.5 text-left disabled:opacity-70"
             >

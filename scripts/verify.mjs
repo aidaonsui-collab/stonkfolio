@@ -39,7 +39,7 @@ if (!balance || !balance.includes("SFOLIO")) errors.push("preview did not fill $
 
 await page.getByRole("link", { name: "Farm these stocks" }).click();
 await page.waitForURL("**/yield");
-await page.getByRole("heading", { name: "USDC vaults." }).waitFor({ timeout: 10_000 });
+await page.getByRole("heading", { name: "Earn vaults." }).waitFor({ timeout: 10_000 });
 await page.getByText(/Steakhouse|Keyrock|Bitwise|active of/).first().waitFor({ timeout: 20_000 });
 await shot("yield-desktop.png");
 
@@ -79,6 +79,7 @@ await page.waitForURL("**/docs");
 await shot("docs-desktop.png");
 const docsCopy = await page.locator("body").textContent();
 if (!docsCopy || !docsCopy.toLowerCase().includes("usyc")) errors.push("docs missing USYC park loop");
+if (docsCopy && /queued/i.test(docsCopy)) errors.push("docs still has pre-launch queued copy");
 if (docsCopy && docsCopy.includes(".env.local")) errors.push("docs leaked .env.local");
 if (docsCopy && docsCopy.includes("DINARI_API")) errors.push("docs leaked API key names");
 

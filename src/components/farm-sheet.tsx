@@ -131,7 +131,7 @@ export function FarmSheet({
               </Button>
               {msg ? <p className="text-xs text-accent">{msg}</p> : null}
               <p className="text-xs leading-relaxed text-muted">
-                Stock markets wait on listed names. Circle Earn USDC vaults on this page are live separately. Preview supplies stay on this device.
+                Stock markets on Morpho, Aave V4, and Uniswap. Circle Earn vaults on this page are a separate USDC/EURC path. Preview tape supplies stay on this device.
               </p>
             </div>
           </>

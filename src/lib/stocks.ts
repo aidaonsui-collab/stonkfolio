@@ -15,24 +15,23 @@ export type Stock = {
 };
 
 /**
- * Creator-chosen book. Names wait on public Arc RWA listings after Sept 16.
- * Swap weights here — the dashboard, keeper copy, and yield markets all read this list.
+ * Creator-chosen book. Swap weights here — dashboard, keeper, and yield all read this list.
  */
 export const STOCKS: Stock[] = [
-  { ticker: "CRCL", name: "Circle Internet Group", issuer: "xStocks / Ondo", kind: "equity", weight: 16, price: 124.0, status: "queued", color: "#5b4dff", letter: "C" },
-  { ticker: "NVDA", name: "NVIDIA", issuer: "xStocks / Ondo", kind: "equity", weight: 12, price: 218.29, status: "queued", color: "#76b900", letter: "N" },
-  { ticker: "AAPL", name: "Apple", issuer: "xStocks", kind: "equity", weight: 10, price: 332.52, status: "queued", color: "#111111", letter: "" },
-  { ticker: "MSFT", name: "Microsoft", issuer: "xStocks", kind: "equity", weight: 9, price: 428.1, status: "queued", color: "#00a4ef", letter: "M" },
-  { ticker: "GOOGL", name: "Alphabet", issuer: "xStocks", kind: "equity", weight: 8, price: 198.4, status: "queued", color: "#4285f4", letter: "G" },
-  { ticker: "AMZN", name: "Amazon", issuer: "xStocks", kind: "equity", weight: 8, price: 257.13, status: "queued", color: "#ff9900", letter: "a" },
-  { ticker: "META", name: "Meta Platforms", issuer: "xStocks", kind: "equity", weight: 6, price: 612.2, status: "queued", color: "#0668e1", letter: "∞" },
-  { ticker: "TSLA", name: "Tesla", issuer: "xStocks", kind: "equity", weight: 6, price: 367.6, status: "queued", color: "#cc0000", letter: "T" },
-  { ticker: "AMD", name: "AMD", issuer: "xStocks", kind: "equity", weight: 5, price: 515.94, status: "queued", color: "#000000", letter: "▶" },
-  { ticker: "COIN", name: "Coinbase", issuer: "xStocks", kind: "equity", weight: 4, price: 274.07, status: "queued", color: "#0052ff", letter: "C" },
-  { ticker: "SPY", name: "S&P 500", issuer: "xStocks / Ondo", kind: "index", weight: 8, price: 770.25, status: "queued", color: "#1b4dff", letter: "S" },
-  { ticker: "BE", name: "Bloom Energy", issuer: "xStocks", kind: "equity", weight: 3, price: 271.14, status: "candidate", color: "#111111", letter: "BE" },
-  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "queued", color: "#000000", letter: "BU" },
-  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "queued", color: "#4e2eff", letter: "US" },
+  { ticker: "CRCL", name: "Circle Internet Group", issuer: "xStocks / Ondo", kind: "equity", weight: 16, price: 124.0, status: "live", color: "#5b4dff", letter: "C" },
+  { ticker: "NVDA", name: "NVIDIA", issuer: "xStocks / Ondo", kind: "equity", weight: 12, price: 218.29, status: "live", color: "#76b900", letter: "N" },
+  { ticker: "AAPL", name: "Apple", issuer: "xStocks", kind: "equity", weight: 10, price: 332.52, status: "live", color: "#111111", letter: "" },
+  { ticker: "MSFT", name: "Microsoft", issuer: "xStocks", kind: "equity", weight: 9, price: 428.1, status: "live", color: "#00a4ef", letter: "M" },
+  { ticker: "GOOGL", name: "Alphabet", issuer: "xStocks", kind: "equity", weight: 8, price: 198.4, status: "live", color: "#4285f4", letter: "G" },
+  { ticker: "AMZN", name: "Amazon", issuer: "xStocks", kind: "equity", weight: 8, price: 257.13, status: "live", color: "#ff9900", letter: "a" },
+  { ticker: "META", name: "Meta Platforms", issuer: "xStocks", kind: "equity", weight: 6, price: 612.2, status: "live", color: "#0668e1", letter: "∞" },
+  { ticker: "TSLA", name: "Tesla", issuer: "xStocks", kind: "equity", weight: 6, price: 367.6, status: "live", color: "#cc0000", letter: "T" },
+  { ticker: "AMD", name: "AMD", issuer: "xStocks", kind: "equity", weight: 5, price: 515.94, status: "live", color: "#000000", letter: "▶" },
+  { ticker: "COIN", name: "Coinbase", issuer: "xStocks", kind: "equity", weight: 4, price: 274.07, status: "live", color: "#0052ff", letter: "C" },
+  { ticker: "SPY", name: "S&P 500", issuer: "xStocks / Ondo", kind: "index", weight: 8, price: 770.25, status: "live", color: "#1b4dff", letter: "S" },
+  { ticker: "BE", name: "Bloom Energy", issuer: "xStocks", kind: "equity", weight: 3, price: 271.14, status: "live", color: "#111111", letter: "BE" },
+  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU" },
+  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US" },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -40,7 +39,7 @@ export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
   { id: "equity", label: "Equities", hint: "Tokenized names the keeper buys first." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
-  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve while names queue." },
+  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve of the book." },
 ];
 
 export function sleeveWeight(kind: StockKind) {

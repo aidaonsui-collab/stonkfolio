@@ -48,7 +48,6 @@ export function DinariStatus() {
       <p className="kicker">Issuer feed</p>
       <p className="mt-2 font-medium">
         Dinari · {data.count ?? names.length} names in the book
-        {data.testData ? " · preview catalog" : ""}
       </p>
       {names.length ? (
         <p className="mt-2 font-mono text-xs text-muted">{names.map((s) => s.symbol).join(" · ")}</p>

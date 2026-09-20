@@ -15,7 +15,7 @@ export function BundlesView() {
       <p className="kicker">The keeper book</p>
       <h1 className="display-md mt-3">The bundle.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-        Creator-chosen. The keeper only buys names on this list, and only after they list on Arc. Until then, creator USDC parks in USYC. Weights split the 70% Creator slice of the 1% Uniswap v4 fee. Not a promise of fill.
+        Creator-chosen. The keeper buys names on this list. Weights split the 70% Creator slice of the 1% Uniswap v4 fee. USYC is the cash sleeve.
       </p>
 
       <DinariStatus />
@@ -84,7 +84,7 @@ export function BundlesView() {
           ))}
         </ul>
         <p className="mt-4 text-xs text-muted">
-          Weights sum to {total}%. Nothing is live on 5042 until the issuer token exists.
+          Weights sum to {total}%.
         </p>
       </div>
     </div>

@@ -16,10 +16,10 @@ export function DistributionsView() {
       <h1 className="display mt-3 text-[42px] text-[#111] sm:text-6xl">My distributions.</h1>
       <p className="mt-4 max-w-xl text-[15px] text-[#6b6b6b]">
         {preview
-          ? "Preview board — sample holder, not your wallet. Connect on Arc to read the real balances once the keeper is live."
+          ? "Preview tape. Sample holder, not your wallet."
           : connected
-            ? "Wallet on Arc. Distributions stay empty until tokenized names list and the keeper buys."
-            : "Connect a wallet to view balances and distribution history."}
+            ? "Wallet on Arc. Distributions from the keeper book."
+            : "Connect a wallet or flip on the preview tape."}
       </p>
 
       <div className="mt-8 grid gap-3 md:grid-cols-3">

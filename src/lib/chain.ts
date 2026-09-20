@@ -3,6 +3,14 @@ import { defineChain } from "viem";
 /** Arc mainnet. Native gas is USDC at 18dp; ERC-20 USDC is 6dp at the precompile. */
 export const ARC_CHAIN_ID = 5042;
 export const ARC_USDC_ERC20 = "0x3600000000000000000000000000000000000000" as const;
+export const ARC_EURC = "0xbEf5f6d51CB62b58e6A8f77868681825C6fe21c1" as const;
+
+export function arcStableAddress(asset: string) {
+  const a = asset.trim().toUpperCase();
+  if (a === "USDC") return ARC_USDC_ERC20;
+  if (a === "EURC") return ARC_EURC;
+  return null;
+}
 export const ARC_EXPLORER = "https://arc-scan.org";
 export const EVE_FUN = "https://www.eve.fun";
 export const EVE_LAUNCH = "https://www.eve.fun/create";

@@ -125,7 +125,7 @@ export function MarketCard({
       <div className="mt-3 flex items-center justify-between text-[11px] text-[#6d7666]">
         <span>{venue.label}</span>
         <span className={cn(market.status === "live" ? "text-[#c8f542]" : "text-[#9aa392]")}>
-          {staked && staked > 0 ? `Your stake ${staked.toFixed(4)}` : "Queued · Sept 16"}
+          {staked && staked > 0 ? `Your stake ${staked.toFixed(4)}` : "Open"}
         </span>
       </div>
     </button>
@@ -164,7 +164,7 @@ export function MarketRow({
         {market.utilization}%
       </p>
       <p className="hidden text-right text-[12px] text-[#9aa392] sm:block">
-        {staked && staked > 0 ? `Yours ${staked.toFixed(4)}` : "Queued"}
+        {staked && staked > 0 ? `Yours ${staked.toFixed(4)}` : "Open"}
       </p>
     </button>
   );

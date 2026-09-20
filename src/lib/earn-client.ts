@@ -23,15 +23,31 @@ export type VaultPosition = {
   apy: number;
 };
 
+/** Earn Kit wants a positive decimal string, ≤6 dp, no leading zeros, no leading dot. */
+export function formatEarnAmount(raw: string) {
+  const trimmed = raw.trim().replace(/,/g, "");
+  if (!trimmed) throw new Error("Enter an amount.");
+  const n = Number(trimmed);
+  if (!Number.isFinite(n) || n <= 0) throw new Error("Enter a positive amount.");
+  const rounded = Math.round(n * 1_000_000) / 1_000_000;
+  if (rounded <= 0) throw new Error("Amount too small.");
+  let out = rounded.toFixed(6).replace(/\.?0+$/, "");
+  if (out.startsWith(".")) out = `0${out}`;
+  out = out.replace(/^0+(?=\d)/, "");
+  if (!out || out.startsWith(".")) out = out ? `0${out}` : "0";
+  if (out === "0") throw new Error("Amount too small.");
+  return out;
+}
+
 /** User-signed deposit: wallet -> vault, direct. The keeper never touches this. */
 export async function depositToVault(connector: Connector, vaultAddress: string, amount: string) {
   const adapter = await adapterFrom(connector);
-  return getKit().deposit({ from: { adapter, chain: EarnChain.Arc }, vaultAddress, amount });
+  return getKit().deposit({ from: { adapter, chain: EarnChain.Arc }, vaultAddress, amount: formatEarnAmount(amount) });
 }
 
 export async function withdrawFromVault(connector: Connector, vaultAddress: string, amount: string) {
   const adapter = await adapterFrom(connector);
-  return getKit().withdraw({ from: { adapter, chain: EarnChain.Arc }, vaultAddress, amount });
+  return getKit().withdraw({ from: { adapter, chain: EarnChain.Arc }, vaultAddress, amount: formatEarnAmount(amount) });
 }
 
 export async function getVaultPosition(connector: Connector, vaultAddress: string): Promise<VaultPosition | null> {

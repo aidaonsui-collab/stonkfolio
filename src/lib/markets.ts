@@ -29,8 +29,7 @@ export type Market = {
 };
 
 /**
- * Yield venues Circle / Arc posted about ahead of Sept 16:
- * Uniswap on Arc (Aug 17), Morpho Midnight (Aug 26 / Sep 3), Aave V4 (Sep 8–10).
+ * Yield venues on Arc: Uniswap, Morpho Midnight, Aave V4.
  * Cards are the clutch/anvil market format, pointed at tokenized stocks instead of NFTs.
  */
 export const MARKETS: Market[] = [
@@ -54,7 +53,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: true,
-    status: "queued",
+    status: "live",
     blurb: "Morpho isolated market. Supply CRCL, borrow USDC. Fees skim back to the folio keeper.",
   },
   {
@@ -77,7 +76,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: true,
-    status: "queued",
+    status: "live",
     blurb: "Morpho isolated NVDA/USDC. High utilisation, fixed-term Midnight quotes when they list.",
   },
   {
@@ -100,7 +99,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "Supply distributed AAPL as collateral. Borrow USDC against it on Morpho.",
   },
   {
@@ -123,7 +122,7 @@ export const MARKETS: Market[] = [
     liqLocked: false,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "Aave V4 core hub on Arc. USDC lenders. Posted by @arc Sep 8–10.",
   },
   {
@@ -146,7 +145,7 @@ export const MARKETS: Market[] = [
     liqLocked: false,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "Aave V4 tokenized spoke — supply-only wrapper so distributed stocks can sit in the hub without extra borrow risk.",
   },
   {
@@ -169,7 +168,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: true,
-    status: "queued",
+    status: "live",
     blurb: "Uniswap V3 CRCL/USDC 1% — the same venue eve.fun Instant already uses. LP fees, plus a skim to the folio.",
   },
   {
@@ -192,7 +191,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: true,
-    status: "queued",
+    status: "live",
     blurb: "Uniswap V3 NVDA/USDC. Tight execution on a USDC-gas chain, as @arc framed it Aug 17.",
   },
   {
@@ -215,7 +214,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "SPY/USDC on Uniswap. Broad book for holders who want index exposure working overnight.",
   },
   {
@@ -238,7 +237,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "Morpho Midnight — fixed-rate, fixed-term lending against TSLA. Arc x Morpho session Sep 3.",
   },
   {
@@ -261,7 +260,7 @@ export const MARKETS: Market[] = [
     liqLocked: false,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "BlackRock BUIDL as Aave collateral once it lists on Arc. Cash sleeve of the folio.",
   },
   {
@@ -284,7 +283,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: false,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "USYC isolated market. Circle-adjacent T-bill yield, Morpho utilisation.",
   },
   {
@@ -307,7 +306,7 @@ export const MARKETS: Market[] = [
     liqLocked: true,
     special: true,
     hot: false,
-    status: "queued",
+    status: "live",
     blurb: "AAPL/USDC Uniswap V3. Deposit distributed Apple, earn the 1% fee tier.",
   },
 ];

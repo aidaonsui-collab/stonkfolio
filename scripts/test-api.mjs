@@ -19,7 +19,7 @@ assert.equal(book.res.status, 200, "book should be free");
 assert.equal(book.json.chainId, 5042);
 assert.equal(book.json.keeper.kind, "circle-agent-wallet");
 assert.match(book.json.keeper.address, /^0x80aa/i);
-assert.equal(book.json.keeper.plan.action, "park");
+assert.ok(["park", "buy", "hold"].includes(book.json.keeper.plan.action));
 assert.ok(book.json.stocks.length >= 10);
 
 const nav = await get("/api/nav");

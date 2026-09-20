@@ -7,8 +7,8 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "./connect-button";
-import { ARC_CHAIN_ID, ARC_USDC_ERC20 } from "@/lib/chain";
-import { depositToVault, withdrawFromVault, getVaultPosition, type VaultPosition } from "@/lib/earn-client";
+import { ARC_CHAIN_ID, arcStableAddress } from "@/lib/chain";
+import { depositToVault, withdrawFromVault, getVaultPosition, formatEarnAmount, type VaultPosition } from "@/lib/earn-client";
 import { pct, qty } from "@/lib/format";
 import type { EarnVaultRow } from "@/lib/earn";
 
@@ -37,13 +37,15 @@ export function EarnFarmSheet({
 function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
   const { address, isConnected, chainId, connector } = useAccount();
   const onArc = isConnected && chainId === ARC_CHAIN_ID;
-  const { data: usdcRaw, refetch: refetchBalance } = useReadContract({
-    address: ARC_USDC_ERC20,
+  const token = (vault.assetAddress || arcStableAddress(vault.asset) || undefined) as `0x${string}` | undefined;
+  const asset = vault.asset || "USDC";
+  const { data: walletRaw, refetch: refetchBalance } = useReadContract({
+    address: token,
     abi: erc20Abi,
     functionName: "balanceOf",
     args: address ? [address] : undefined,
     chainId: ARC_CHAIN_ID,
-    query: { enabled: Boolean(address && onArc) },
+    query: { enabled: Boolean(address && onArc && token) },
   });
 
   const [mode, setMode] = useState<"in" | "out">("in");
@@ -64,20 +66,23 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
     };
   }, [vault.vaultAddress, connector, onArc]);
 
-  const have = usdcRaw !== undefined ? Number(formatUnits(usdcRaw, 6)) : 0;
+  const have = walletRaw !== undefined ? Number(formatUnits(walletRaw, 6)) : 0;
   const staked = position?.balance ?? 0;
   const max = mode === "in" ? have : staked;
-  const n = Number(amount);
 
   async function submit() {
     if (!connector) return;
-    if (!(n > 0)) {
-      setMsg("Enter an amount.");
+    let normalized: string;
+    try {
+      normalized = formatEarnAmount(amount);
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Enter an amount.");
       setStatus("error");
       return;
     }
+    const n = Number(normalized);
     if (n > max + 1e-9) {
-      setMsg(mode === "in" ? `Only ${qty(have, 4)} USDC in your wallet.` : `Only ${qty(staked, 4)} supplied here.`);
+      setMsg(mode === "in" ? `Only ${qty(have, 4)} ${asset} in your wallet.` : `Only ${qty(staked, 4)} supplied here.`);
       setStatus("error");
       return;
     }
@@ -87,8 +92,8 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
     try {
       const res =
         mode === "in"
-          ? await depositToVault(connector, vault.vaultAddress, amount)
-          : await withdrawFromVault(connector, vault.vaultAddress, amount);
+          ? await depositToVault(connector, vault.vaultAddress, normalized)
+          : await withdrawFromVault(connector, vault.vaultAddress, normalized);
       setStatus("success");
       setMsg(mode === "in" ? "Supplied." : "Withdrawn.");
       setTxUrl(res.explorerUrl);
@@ -127,7 +132,7 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-md bg-elevated p-3 shadow-[var(--shadow-border)]">
                 <p className="kicker">Wallet</p>
-                <p className="mt-1 font-medium">{qty(have, 4)} USDC</p>
+                <p className="mt-1 font-medium">{qty(have, 4)} {asset}</p>
               </div>
               <div className="rounded-md bg-elevated p-3 shadow-[var(--shadow-border)]">
                 <p className="kicker">Supplied</p>
@@ -155,7 +160,7 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
             </div>
 
             <label className="block">
-              <span className="kicker">Amount · USDC</span>
+              <span className="kicker">Amount · {asset}</span>
               <div className="mt-2 flex gap-2">
                 <Input
                   inputMode="decimal"
@@ -168,14 +173,24 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
                   placeholder="0.00"
                   className="num h-11 border-border bg-bg text-fg"
                 />
-                <Button variant="outline" type="button" onClick={() => setAmount(String(max))}>
+                <Button
+                  variant="outline"
+                  type="button"
+                  onClick={() => {
+                    try {
+                      setAmount(formatEarnAmount(String(max)));
+                    } catch {
+                      setAmount("");
+                    }
+                  }}
+                >
                   Max
                 </Button>
               </div>
             </label>
 
             <Button variant="accent" onClick={submit} disabled={status === "pending"}>
-              {status === "pending" ? "Confirming…" : mode === "in" ? "Supply USDC" : "Withdraw"}
+              {status === "pending" ? "Confirming…" : mode === "in" ? `Supply ${asset}` : "Withdraw"}
             </Button>
             {msg ? (
               <p className={`text-xs ${status === "error" ? "text-down" : "text-accent"}`}>

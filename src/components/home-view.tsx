@@ -17,7 +17,7 @@ const CHAPTERS = [
   },
   {
     title: "The buy.",
-    body: "That wallet parks USDC in USYC while names queue. When they list on Arc it buys the book. Holders get stocks, not a USDC reflect claim.",
+    body: "That wallet keeps a USYC cash sleeve and buys the book. Holders get stocks, not a USDC reflect claim.",
   },
   {
     title: "The farm.",

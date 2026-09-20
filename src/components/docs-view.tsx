@@ -31,7 +31,7 @@ export function DocsView() {
               . That 70% of the 1% pool fee is USDC.
             </li>
             <li>
-              While names are queued, that USDC parks in USYC. When a name lists on Arc, the keeper buys the book and holders receive stocks — not a USDC reflect.
+              The keeper parks a cash sleeve in USYC and buys the book. Holders receive stocks — not a USDC reflect.
             </li>
             <li>
               Holders can farm those stocks on Morpho, Aave V4, and Uniswap, or put idle USDC in Circle Earn vaults on{" "}
@@ -57,7 +57,7 @@ export function DocsView() {
             ))}
           </ul>
           <p className="mt-3">
-            {`On a $100 swap the trader pays $1. The keeper gets $0.70. Until names list, that $0.70 sits in USYC. Then it buys stocks. $0.10 burns $${TOKEN.symbol}. $0.10 stays as LP. $0.10 is eve.fun. Holders get 0% as USDC on this card.`}
+            {`On a $100 swap the trader pays $1. The keeper gets $0.70, keeps the cash sleeve in USYC, and buys stocks. $0.10 burns $${TOKEN.symbol}. $0.10 stays as LP. $0.10 is eve.fun. Holders get 0% as USDC on this card.`}
           </p>
         </section>
 
@@ -78,7 +78,7 @@ export function DocsView() {
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">Yield</h2>
           <p className="mt-3">
-            Two boards. Stock markets (Morpho, Aave V4, Uniswap) are for names the keeper already bought. Circle Earn is Morpho USDC and EURC vaults on Arc — optional, for idle cash, not a second rewards stream. Supply and withdraw straight from your wallet on the vault card; the keeper never touches this path.
+            Two boards. Stock markets (Morpho, Aave V4, Uniswap) are for names the keeper bought. Circle Earn is Morpho USDC and EURC vaults — optional idle cash, not a second rewards stream. Supply and withdraw from your wallet on the vault card; the keeper never touches this path.
           </p>
         </section>
 
@@ -87,13 +87,6 @@ export function DocsView() {
           <p className="mt-3">
             <code className="font-mono text-fg">GET /api/book</code> is free: weights, listing status, keeper address.{" "}
             <code className="font-mono text-fg">GET /api/nav</code> and <code className="font-mono text-fg">GET /api/distributions</code> are paid in USDC on Arc (x402). Catalog: <code className="font-mono text-fg">GET /api/openapi</code>.
-          </p>
-        </section>
-
-        <section>
-          <h2 className="font-display text-2xl italic tracking-tight text-fg">What is live today</h2>
-          <p className="mt-3">
-            {TOKEN.launchpad} is live on Arc 5042. The keeper wallet is on Arc. Earn Kit vaults on Yield take real wallet-signed deposits and withdrawals. The stock book is still queued on public Arc listings — Portfolio preview shows sample size until those names fill.
           </p>
         </section>
 

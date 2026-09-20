@@ -54,7 +54,7 @@ export function YieldView() {
           <p className="kicker">Venues on Arc</p>
           <h1 className="display-md mt-3">Put the book to work.</h1>
           <p className="mt-3 max-w-xl text-sm text-muted">
-            {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit lists live USDC vaults below. Stocks come from the 70% creator fee; USDC vaults are optional extra.
+            {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit vaults below. Stocks come from the 70% creator fee; Earn vaults are optional extra.
           </p>
         </div>
         <button
@@ -188,7 +188,7 @@ export function YieldView() {
                     </span>
                   </td>
                   <td className="py-3.5 text-right text-xs text-muted">
-                    {staked && staked > 0 ? `Yours ${staked.toFixed(4)}` : "Queued · Sep 16"}
+                    {staked && staked > 0 ? `Yours ${staked.toFixed(4)}` : "Open"}
                   </td>
                 </tr>
               );

@@ -18,9 +18,9 @@ export function PortfolioView() {
       <h1 className="display-md mt-3">Your folio.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         {preview
-          ? "Preview tape. Sample holder, not your wallet. The 70% creator fee buys the stock book below."
+          ? "Preview tape. Sample holder, not your wallet."
           : connected
-            ? "Desk is open. Stocks wait until the keeper spends creator USDC on Dinari."
+            ? "Desk is open. Stocks from the 70% creator fee."
             : "Connect a desk or flip on the preview tape to read balances and the stock ledger."}
       </p>
       {!seeing ? (
