@@ -78,7 +78,7 @@ export function DocsView() {
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">Yield</h2>
           <p className="mt-3">
-            Two boards. Stock markets (Morpho, Aave V4, Uniswap) are for names the keeper already bought. Circle Earn is Morpho USDC and EURC vaults on Arc — optional, for idle cash, not a second rewards stream.
+            Two boards. Stock markets (Morpho, Aave V4, Uniswap) are for names the keeper already bought. Circle Earn is Morpho USDC and EURC vaults on Arc — optional, for idle cash, not a second rewards stream. Supply and withdraw straight from your wallet on the vault card; the keeper never touches this path.
           </p>
         </section>
 
@@ -93,7 +93,7 @@ export function DocsView() {
         <section>
           <h2 className="font-display text-2xl italic tracking-tight text-fg">What is live today</h2>
           <p className="mt-3">
-            {TOKEN.launchpad} is live on Arc 5042. The keeper wallet is on Arc. Earn Kit lists Morpho vaults on Yield. The stock book is still queued on public Arc listings — Portfolio preview shows sample size until those names fill.
+            {TOKEN.launchpad} is live on Arc 5042. The keeper wallet is on Arc. Earn Kit vaults on Yield take real wallet-signed deposits and withdrawals. The stock book is still queued on public Arc listings — Portfolio preview shows sample size until those names fill.
           </p>
         </section>
 
