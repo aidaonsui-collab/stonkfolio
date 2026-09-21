@@ -7,7 +7,10 @@ import { ARC_X402_NETWORK, type PaymentRequirements, X402_VERSION } from "./x402
 const FACILITATOR = (process.env.CIRCLE_FACILITATOR_URL || "https://api.circle.com/v1/facilitator").replace(/\/$/, "");
 
 export function settleConfigured() {
-  return Boolean(process.env.X402_SELLER_PRIVATE_KEY?.trim() || process.env.CIRCLE_API_KEY?.trim());
+  if (process.env.X402_SETTLE === "0") return false;
+  const hasSecret = Boolean(process.env.X402_SELLER_PRIVATE_KEY?.trim() || process.env.CIRCLE_API_KEY?.trim());
+  if (process.env.X402_SETTLE === "1") return hasSecret;
+  return hasSecret;
 }
 
 function decodePayload(header: string): Record<string, unknown> {
