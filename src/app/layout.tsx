@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   description:
     "Creator USDC from $SFOLIO buys tokenized stocks on Arc. A small slice stays in USYC. Holders get the book.",
   other: {
-    "theme-color": "#eef3fb",
+    "theme-color": "#07111f",
   },
 };
 
@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${figtree.variable} ${fraunces.variable} ${plex.variable} ${figtree.className} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col bg-bg text-fg">
+      <body className="min-h-full bg-bg text-fg">
         <Providers>
           <AppShell>{children}</AppShell>
         </Providers>

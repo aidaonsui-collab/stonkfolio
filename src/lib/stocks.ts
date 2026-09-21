@@ -36,6 +36,12 @@ export const STOCKS: Stock[] = [
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
 
+export const SLEEVE_TONE: Record<StockKind, string> = {
+  equity: "var(--color-equity)",
+  index: "var(--color-index)",
+  mmf: "var(--color-cash)",
+};
+
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
   { id: "equity", label: "Equities", hint: "Tokenized names the keeper buys first." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },

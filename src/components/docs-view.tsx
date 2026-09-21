@@ -54,7 +54,7 @@ const FAQ = [
 export function DocsView() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
-      <p className="kicker">How it works</p>
+      <p className="kicker text-accent">How it works</p>
       <h1 className="display-md mt-3">
         How distributions
         <br />
@@ -69,11 +69,11 @@ export function DocsView() {
         <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {STEPS.map((s) => (
             <div key={s.n} className="panel-tight flex gap-4 p-5">
-              <span className="font-mono text-[11px] tracking-[0.14em] text-muted">{s.n}</span>
+              <span className="font-mono text-[11px] tracking-[0.14em] text-accent">{s.n}</span>
               <div className="min-w-0">
                 <p className="font-medium text-fg">{s.title}</p>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{s.body}</p>
-                <p className="mt-3 font-mono text-[10px] tracking-[0.14em] text-muted">{s.stat}</p>
+                <p className="mt-3 font-mono text-[10px] tracking-[0.14em] text-accent">{s.stat}</p>
               </div>
             </div>
           ))}

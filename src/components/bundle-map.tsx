@@ -1,14 +1,14 @@
-import { STOCKS, type Stock } from "@/lib/stocks";
+import { SLEEVE_TONE, STOCKS, type Stock } from "@/lib/stocks";
 import { cn } from "@/lib/utils";
 
-function fillFor(weight: number) {
-  const t = Math.max(0, Math.min(1, (weight - 2) / 14));
-  const mint = Math.round(14 + t * 70);
-  return `color-mix(in oklab, var(--color-accent) ${mint}%, var(--color-elevated))`;
+function fillFor(stock: Stock) {
+  const t = Math.max(0.28, Math.min(0.92, stock.weight / 16));
+  const mix = Math.round(t * 100);
+  return `color-mix(in oklab, ${SLEEVE_TONE[stock.kind]} ${mix}%, var(--color-elevated))`;
 }
 
 function Strip({ stock, flex }: { stock: Stock; flex?: boolean }) {
-  const minty = stock.weight >= 8;
+  const ink = stock.weight >= 8;
   return (
     <div
       className={cn(
@@ -17,13 +17,13 @@ function Strip({ stock, flex }: { stock: Stock; flex?: boolean }) {
       )}
       style={{
         flex: flex ? Math.max(stock.weight, 3.5) : undefined,
-        background: fillFor(stock.weight),
+        background: fillFor(stock),
       }}
     >
-      <p className={cn("truncate font-mono text-xs font-semibold tracking-wide", minty ? "text-ink" : "text-ink/80")}>
+      <p className={cn("truncate font-mono text-xs font-semibold tracking-wide", ink ? "text-ink" : "text-fg")}>
         {stock.ticker}
       </p>
-      <p className={cn("num text-[11px]", minty ? "text-ink/70" : "text-ink/55")}>{stock.weight}%</p>
+      <p className={cn("num text-xs", ink ? "text-ink/70" : "text-fg/80")}>{stock.weight}%</p>
     </div>
   );
 }

@@ -3,21 +3,25 @@
 import Link from "next/link";
 import { FEE_LEGS, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
-import { protocolPreview, sleeveWeight, STOCKS } from "@/lib/stocks";
+import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
 import { Button } from "./ui/button";
-import { BundleMap } from "./bundle-map";
 import { TickerTape } from "./ticker-tape";
+import { WeightBar } from "./page-hero";
+import { StockMark } from "./stock-mark";
 
 const CHAPTERS = [
   {
+    n: "01",
     title: "Funding.",
     body: "Every trade takes 1%. 70% of that fee is USDC and goes to the Circle agent wallet — the keeper.",
   },
   {
+    n: "02",
     title: "The buy.",
-    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO. Not USDC.",
+    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO.",
   },
   {
+    n: "03",
     title: "The farm.",
     body: "Holders farm those stocks on Morpho, Aave V4, and Uniswap — or put idle USDC in Circle Earn vaults on Yield.",
   },
@@ -27,127 +31,163 @@ export function HomeView() {
   const pulse = protocolPreview();
   const equity = sleeveWeight("equity");
   const index = sleeveWeight("index");
-  const cash = sleeveWeight("mmf");
+  const iEnd = equity + index;
 
   return (
     <div>
-      <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
-        <div className="stagger-in">
-          <h1 className="display text-fg">
-            The book
-            <br />
-            that buys
-            <span className="italic"> itself.</span>
-          </h1>
-          <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the stocks, then farm them.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+      <section className="page pb-8 sm:pb-8">
+        <div className="stagger-in flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-xl">
+            <p className="kicker text-accent">$SFOLIO · eve.fun Instant</p>
+            <h1 className="display mt-3 text-fg">
+              The book that
+              <span className="italic text-accent"> buys itself.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted sm:text-base">
+              Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the
+              stocks, then farm them.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
             <Button asChild size="lg">
               <Link href="/bundles">Open the Book</Link>
             </Button>
-            <Button asChild variant="ghost" size="lg">
-              <Link href="/portfolio">Portfolio</Link>
+            <Button asChild variant="outline" size="lg">
+              <Link href="/portfolio">Open desk</Link>
             </Button>
           </div>
         </div>
 
-        <aside className="panel overflow-hidden p-3">
-          <div className="flex items-end justify-between px-3 pt-3 pb-2">
-            <div>
-              <p className="kicker">Active bundle</p>
-              <p className="mt-1 font-display text-2xl italic">The book</p>
+        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Kpi label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="70% of the 1% fee" />
+          <Kpi label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
+          <Kpi label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
+          <Kpi label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
+        </div>
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <aside className="panel p-5 sm:p-6">
+            <p className="kicker">Allocation</p>
+            <div className="mt-6 flex flex-col items-center gap-6 sm:flex-row sm:items-center">
+              <div className="relative size-40 shrink-0">
+                <div
+                  className="size-full rounded-full"
+                  style={{
+                    background: `conic-gradient(${SLEEVE_TONE.equity} 0 ${equity}%, ${SLEEVE_TONE.index} ${equity}% ${iEnd}%, ${SLEEVE_TONE.mmf} ${iEnd}% 100%)`,
+                  }}
+                />
+                <div className="absolute inset-6 flex flex-col items-center justify-center rounded-full bg-surface">
+                  <p className="kicker">Book</p>
+                  <p className="font-display text-2xl">100%</p>
+                </div>
+              </div>
+              <ul className="w-full space-y-3">
+                {SLEEVES.map((s) => (
+                  <li key={s.id} className="flex items-center justify-between gap-3">
+                    <span className="flex items-center gap-2 text-sm">
+                      <span className="size-2.5 rounded-full" style={{ background: SLEEVE_TONE[s.id] }} />
+                      {s.label}
+                    </span>
+                    <span className="num text-sm">{sleeveWeight(s.id)}%</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <Link href="/bundles" className="text-xs text-muted hover:text-fg">
-              Full weights →
-            </Link>
-          </div>
-          <BundleMap height={260} />
-          <div className="mt-3 grid grid-cols-3 gap-2 px-1 pb-1">
-            <SleeveChip label="Equities" value={`${equity}%`} />
-            <SleeveChip label="Index" value={`${index}%`} />
-            <SleeveChip label="Cash" value={`${cash}%`} />
-          </div>
-        </aside>
+          </aside>
+
+          <section className="panel overflow-hidden p-5 sm:p-6">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className="kicker">Top of book</p>
+                <h2 className="mt-1 font-display text-2xl italic">What the keeper buys.</h2>
+              </div>
+              <Link href="/bundles" className="text-xs text-accent hover:underline">
+                All {STOCKS.length} names
+              </Link>
+            </div>
+            <ul className="mt-4">
+              {STOCKS.slice(0, 8).map((s) => (
+                <li key={s.ticker} className="flex items-center gap-3 border-b border-border py-2.5 last:border-0">
+                  <StockMark stock={s} size={32} />
+                  <span className="w-14 font-mono text-sm">{s.ticker}</span>
+                  <span className="min-w-0 flex-1 truncate text-sm text-muted">{s.name}</span>
+                  <span className="h-1.5 w-16 overflow-hidden rounded-full bg-elevated">
+                    <span
+                      className="block h-full"
+                      style={{
+                        width: `${(s.weight / 16) * 100}%`,
+                        background: SLEEVE_TONE[s.kind],
+                      }}
+                    />
+                  </span>
+                  <span className="num w-10 text-right text-sm">{s.weight}%</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        </div>
       </section>
 
       <TickerTape />
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <h2 className="display-md">Where the cut goes.</h2>
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="page pt-12">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="display-md">Where the cut goes.</h2>
+          <p className="max-w-xs text-sm text-muted">1% on every trade. Split on the eve.fun Instant card.</p>
+        </div>
+        <div className="mt-6">
+          <WeightBar
+            parts={FEE_LEGS.map((leg) => ({
+              key: leg.key,
+              label: leg.label,
+              value: leg.bps / 100,
+            }))}
+          />
+        </div>
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {FEE_LEGS.map((leg) => (
-            <div key={leg.key} className="panel-tight p-5">
+            <div key={leg.key} className="panel-tight relative overflow-hidden p-5">
+              <span
+                className="absolute inset-y-0 left-0 w-1"
+                style={{
+                  background:
+                    leg.key === "creator"
+                      ? "var(--color-accent)"
+                      : leg.key === "burn"
+                        ? "var(--color-down)"
+                        : leg.key === "autoLp"
+                          ? "var(--color-up)"
+                          : "var(--color-cash)",
+                }}
+              />
               <p className="kicker">{leg.label}</p>
               <p className="num mt-3 font-display text-3xl">{pctOfFee(leg.bps)}</p>
               <p className="mt-2 text-xs leading-relaxed text-muted">{leg.hint}</p>
             </div>
           ))}
         </div>
-      </section>
 
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <p className="kicker">How the loop closes</p>
-        <div className="mt-8 grid gap-10 md:grid-cols-3 md:gap-8">
+        <p className="kicker mt-14">How the loop closes</p>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
           {CHAPTERS.map((c) => (
-            <article key={c.title} className="border-t border-border pt-6">
-              <h2 className="font-display text-3xl italic tracking-tight">{c.title}</h2>
-              <p className="mt-4 text-sm leading-relaxed text-muted">{c.body}</p>
+            <article key={c.title} className="panel-tight p-5">
+              <span className="font-mono text-xs tracking-widest text-accent">{c.n}</span>
+              <h2 className="font-display mt-3 text-2xl italic tracking-tight">{c.title}</h2>
+              <p className="mt-3 text-sm leading-relaxed text-muted">{c.body}</p>
             </article>
           ))}
         </div>
       </section>
-
-      <section className="border-t border-border">
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-px bg-border sm:grid-cols-4">
-          <Pulse label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="70% of the 1% fee" />
-          <Pulse label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
-          <Pulse label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
-          <Pulse label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
-        </div>
-      </section>
-
-      <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <div className="flex items-end justify-between gap-4">
-          <div>
-            <p className="kicker">Inside the bundle</p>
-            <h2 className="display-md mt-2">What the keeper buys.</h2>
-          </div>
-          <Link href="/bundles" className="hidden text-sm text-muted hover:text-fg sm:inline">
-            All {STOCKS.length} names →
-          </Link>
-        </div>
-        <ul className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2">
-          {STOCKS.slice(0, 8).map((s) => (
-            <li key={s.ticker} className="flex items-center gap-4 border-b border-border py-3">
-              <span className="w-16 font-mono text-sm font-medium">{s.ticker}</span>
-              <span className="min-w-0 flex-1 truncate text-sm text-muted">{s.name}</span>
-              <span className="num text-sm text-accent">{s.weight}%</span>
-            </li>
-          ))}
-        </ul>
-        <Link href="/bundles" className="mt-6 inline-flex text-sm text-muted hover:text-fg sm:hidden">
-          All {STOCKS.length} names →
-        </Link>
-      </section>
     </div>
   );
 }
 
-function SleeveChip({ label, value }: { label: string; value: string }) {
+function Kpi({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="rounded-md bg-elevated px-3 py-2.5">
+    <div className="panel-tight relative overflow-hidden p-5">
+      <span className="absolute inset-x-0 top-0 h-0.5 bg-accent" />
       <p className="kicker">{label}</p>
-      <p className="num mt-1 text-sm text-fg">{value}</p>
-    </div>
-  );
-}
-
-function Pulse({ label, value, hint }: { label: string; value: string; hint: string }) {
-  return (
-    <div className="bg-surface px-5 py-6 sm:px-6">
-      <p className="kicker">{label}</p>
-      <p className="mt-3 font-display text-2xl tracking-tight sm:text-3xl">{value}</p>
+      <p className="mt-3 font-display text-2xl tracking-tight">{value}</p>
       <p className="mt-2 text-xs text-muted">{hint}</p>
     </div>
   );

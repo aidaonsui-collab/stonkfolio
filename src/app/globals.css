@@ -10,19 +10,24 @@
   --font-mono: "IBM Plex Mono", var(--font-plex), ui-monospace, Menlo, Consolas, monospace;
   --font-heading: "Fraunces", var(--font-fraunces), Palatino, Georgia, serif;
 
-  --color-bg: #eef3fb;
-  --color-surface: #ffffff;
-  --color-elevated: #dce8f8;
-  --color-fg: #141a22;
-  --color-muted: #5a6573;
-  --color-accent: #2b6cff;
-  --color-accent-fg: #071225;
-  --color-paper: #f5f8fc;
-  --color-ink: #141a22;
-  --color-border: color-mix(in oklab, #141a22 12%, transparent);
-  --color-border-strong: color-mix(in oklab, #141a22 20%, transparent);
-  --color-down: #d4523c;
-  --color-ring: #2b6cff;
+  --color-bg: #07111f;
+  --color-surface: #0d1a2e;
+  --color-elevated: #15243c;
+  --color-fg: #e8eef8;
+  --color-muted: #8b9bb3;
+  --color-subtle: #5c6d86;
+  --color-accent: #3d7eff;
+  --color-accent-fg: #f4f8ff;
+  --color-ink: #07111f;
+  --color-paper: #e8eef8;
+  --color-up: #2ec9b0;
+  --color-down: #ef6b62;
+  --color-equity: #4d8dff;
+  --color-index: #2ec9b0;
+  --color-cash: #8fa3c2;
+  --color-border: color-mix(in oklab, #9eb6d8 16%, transparent);
+  --color-border-strong: color-mix(in oklab, #9eb6d8 28%, transparent);
+  --color-ring: #3d7eff;
 
   --color-background: var(--color-bg);
   --color-foreground: var(--color-fg);
@@ -30,14 +35,14 @@
   --color-card-foreground: var(--color-fg);
   --color-popover: var(--color-surface);
   --color-popover-foreground: var(--color-fg);
-  --color-primary: var(--color-paper);
-  --color-primary-foreground: var(--color-ink);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: var(--color-accent-fg);
   --color-secondary: var(--color-elevated);
   --color-secondary-foreground: var(--color-fg);
   --color-muted-foreground: var(--color-muted);
   --color-accent-foreground: var(--color-accent-fg);
   --color-destructive: var(--color-down);
-  --color-input: color-mix(in oklab, #142018 12%, transparent);
+  --color-input: color-mix(in oklab, #9eb6d8 16%, transparent);
 
   --radius-xs: 4px;
   --radius-sm: 8px;
@@ -46,8 +51,8 @@
   --radius-xl: 24px;
   --radius: 0.75rem;
 
-  --shadow-border: 0 0 0 1px color-mix(in oklab, #142018 10%, transparent);
-  --shadow-border-hover: 0 0 0 1px color-mix(in oklab, #142018 18%, transparent);
+  --shadow-border: 0 0 0 1px color-mix(in oklab, #9eb6d8 16%, transparent);
+  --shadow-border-hover: 0 0 0 1px color-mix(in oklab, #4d8dff 45%, transparent);
   --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -58,12 +63,13 @@
   html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    background-color: var(--color-bg);
   }
   body {
     background-color: var(--color-bg);
     background-image:
-      radial-gradient(1100px 520px at 88% -8%, rgba(43, 108, 255, 0.22), transparent 58%),
-      radial-gradient(820px 420px at -8% 12%, rgba(90, 160, 255, 0.14), transparent 52%);
+      radial-gradient(900px 420px at 88% -10%, color-mix(in oklab, var(--color-accent) 22%, transparent), transparent 58%),
+      linear-gradient(180deg, #0a1628 0%, #07111f 46%);
     color: var(--color-fg);
     font-family: var(--font-sans);
     min-height: 100dvh;
@@ -87,15 +93,15 @@
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 0.96;
-  font-size: clamp(2.75rem, 1.2rem + 5vw, 5.25rem);
+  font-size: clamp(2.4rem, 1rem + 4.2vw, 4.4rem);
 }
 
 .display-md {
   font-family: var(--font-display);
   font-weight: 500;
   letter-spacing: -0.03em;
-  line-height: 1.02;
-  font-size: clamp(2rem, 1.1rem + 2.4vw, 3.25rem);
+  line-height: 1.04;
+  font-size: clamp(1.75rem, 1rem + 1.8vw, 2.6rem);
 }
 
 .kicker {
@@ -108,7 +114,7 @@
 
 .panel {
   background: var(--color-surface);
-  box-shadow: var(--shadow-border), 0 18px 40px -28px rgba(20, 32, 24, 0.35);
+  box-shadow: var(--shadow-border);
   border-radius: var(--radius-xl);
 }
 
@@ -121,6 +127,21 @@
 .num {
   font-variant-numeric: tabular-nums;
   font-family: var(--font-mono);
+}
+
+.page {
+  margin-inline: auto;
+  width: 100%;
+  max-width: 72rem;
+  padding-inline: 1rem;
+  padding-block: 1.75rem 5.5rem;
+}
+
+@media (min-width: 640px) {
+  .page {
+    padding-inline: 1.5rem;
+    padding-block: 2rem 3rem;
+  }
 }
 
 .tape-track {
@@ -138,7 +159,7 @@
 
 .stagger-in > * {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(8px);
   animation: rise 500ms var(--ease-smooth-out) forwards;
 }
 .stagger-in > *:nth-child(1) {

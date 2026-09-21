@@ -45,7 +45,8 @@ export function KeeperView() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <h1 className="display-md">The keeper.</h1>
+      <p className="kicker text-accent">Circle agent wallet</p>
+      <h1 className="display-md mt-3">The keeper.</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
         70% of the trading fee is USDC to this Circle agent wallet. Most of it buys the book. 5% stays in USYC and BUIDL. The stocks are sent to people who hold $SFOLIO, in the same proportion.
       </p>
