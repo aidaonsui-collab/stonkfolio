@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { navPayload } from "@/lib/book";
-import { corsHeaders, hasPaymentSignature, paymentGateOpen, paymentRequired, priceUsd } from "@/lib/x402";
+import { paidOrReject } from "@/lib/paid";
+import { corsHeaders, priceUsd } from "@/lib/x402";
 
 export const dynamic = "force-dynamic";
 
@@ -8,27 +9,13 @@ export function OPTIONS() {
   return new NextResponse(null, { status: 204, headers: corsHeaders() });
 }
 
-export function GET(request: Request) {
-  if (!hasPaymentSignature(request) || !paymentGateOpen()) {
-    const gate = paymentRequired(request, {
-      usd: priceUsd("distributions"),
-      description: "Stonkfolio stock distributions for a holder wallet.",
-      hint: "Retry with PAYMENT-SIGNATURE. $0.05 USDC on Arc. PayTo is Eve's Arc Facilitator wallet.",
-    });
-    return NextResponse.json(gate.body, { status: gate.status, headers: gate.headers });
-  }
+export async function GET(request: Request) {
+  const denied = await paidOrReject(request, priceUsd("distributions"), "Stonkfolio stock distributions for a wallet.");
+  if (denied) return denied;
   const url = new URL(request.url);
-  const wallet = url.searchParams.get("wallet") ?? undefined;
-  const preview = url.searchParams.get("preview") === "1";
-  const nav = navPayload({ wallet, preview });
+  const nav = navPayload({ wallet: url.searchParams.get("wallet") ?? undefined, preview: url.searchParams.get("preview") === "1" });
   return NextResponse.json(
-    {
-      wallet: nav.wallet,
-      preview: nav.preview,
-      earned: nav.earned,
-      history: nav.history,
-      markUsd: nav.markUsd,
-    },
+    { wallet: nav.wallet, preview: nav.preview, earned: nav.earned, history: nav.history, markUsd: nav.markUsd },
     { headers: corsHeaders() },
   );
 }

@@ -11,8 +11,11 @@ export const EVE_ARC_FACILITATOR = getAddress("0x0e56d191219fa7a4a8a50d17d4ce838
 /** Hashnote / Circle USYC on Arc mainnet. */
 export const ARC_USYC = getAddress("0x8a5D989Bbb96929F689B0200f435f53dA42bF490");
 
-/** FolioTreasury on Arc. Owner is the Air EOA; keeper is Eve's agent wallet. */
+/** FolioTreasury on Arc. Owner is the Air EOA. On-chain keeper is the distributor. */
 export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881D05F9215e");
+
+/** Pushes a merkle round of stocks to holders. Treasury.keeper. */
+export const FOLIO_DISTRIBUTOR = getAddress("0xFc667eCE5db05bc2Cc771D05B416c96eA2500B49");
 
 const ZERO = "0x0000000000000000000000000000000000000000";
 

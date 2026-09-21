@@ -53,17 +53,26 @@ try {
   err = e instanceof Error ? e.message : String(e);
 }
 
+const buy = (usdc * 95n) / 100n;
+const sleeve = usdc - buy;
 const action = usdc > 0n ? "buy" : "hold";
 const status = {
   at: now,
   host: process.env.INDEXER_WORKER || "jessica-air",
   keeper: KEEPER,
+  distributor: "0xFc667eCE5db05bc2Cc771D05B416c96eA2500B49",
   live: LIVE,
   action,
   usdc: fmt(usdc),
+  buyUsdc: fmt(buy),
+  sleeveUsdc: fmt(sleeve),
   usyc: fmt(usyc),
+  spend: false,
   error: err,
 };
+if (LIVE && usdc > 0n && !process.env.BOOK_TOKENS) {
+  appendFileSync(join(dataDir, "tick.err.log"), `${now} buy planned ${fmt(buy)} USDC but BOOK_TOKENS is unset, not spending\n`);
+}
 writeFileSync(join(dataDir, "keeper-status.json"), JSON.stringify(status, null, 2));
 appendFileSync(join(dataDir, "tick.out.log"), `${now} action=${action} usdc=${status.usdc} usyc=${status.usyc}${err ? ` err=${err}` : ""}\n`);
 

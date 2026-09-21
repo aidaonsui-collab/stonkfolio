@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ARC_EXPLORER, ARC_USDC_ERC20 } from "@/lib/chain";
-import { EVE_AGENT_WALLET, keeperPlan, usycAddress } from "@/lib/keeper";
+import { EVE_AGENT_WALLET, FOLIO_DISTRIBUTOR, keeperPlan, usycAddress } from "@/lib/keeper";
 import { shortAddr } from "@/lib/format";
 
 type Status = {
@@ -87,6 +87,7 @@ export function KeeperView() {
           <AllowRow label="Keeper" addr={keeper} />
           <AllowRow label="USDC" addr={ARC_USDC_ERC20} />
           <AllowRow label="USYC" addr={usyc} />
+          <AllowRow label="Distributor" addr={FOLIO_DISTRIBUTOR} />
           {status?.treasury ? <AllowRow label="Treasury" addr={status.treasury} /> : null}
         </ul>
       </section>

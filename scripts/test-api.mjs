@@ -41,6 +41,11 @@ if (earn.res.status === 200) {
   console.log("earn vaults", earn.json.vaults.length, earn.json.chain);
 }
 
+const market = await get("/api/marketplace");
+assert.equal(market.res.status, 200);
+assert.equal(market.json.resources.length, 3);
+assert.match(market.json.payTo, /^0x0e56/i);
+
 const spec = await get("/api/openapi");
 assert.equal(spec.res.status, 200);
 assert.ok(spec.json.paths["/api/book"]);
