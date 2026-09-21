@@ -110,3 +110,14 @@ export function protocolPreview() {
     lastCycle: "Sep 18, 11:02",
   };
 }
+
+/** Mark value sent to holders, split by book weight. Rows sum to the total. */
+export function cumulativeDistributed() {
+  const budget = protocolPreview().stocksBoughtUsd;
+  const rows = STOCKS.map((stock) => ({
+    stock,
+    usd: (budget * stock.weight) / 100,
+  })).sort((a, b) => b.usd - a.usd || a.stock.ticker.localeCompare(b.stock.ticker));
+  const totalUsd = rows.reduce((sum, row) => sum + row.usd, 0);
+  return { totalUsd, rows };
+}

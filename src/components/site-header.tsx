@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useFolio } from "@/lib/folio";
 import { cn } from "@/lib/utils";
 import { FolioMark, Wordmark } from "./logo";
@@ -72,49 +73,52 @@ export function SiteHeader() {
           </Button>
         </div>
       </div>
-      {open ? (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          <button
-            type="button"
-            className="absolute inset-0 bg-black/55"
-            aria-label="Close menu"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute top-0 right-0 flex h-full w-72 max-w-[85vw] flex-col border-l border-border bg-surface px-4 py-5 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <span className="text-sm font-medium">Menu</span>
-              <Button variant="ghost" size="icon-sm" aria-label="Close menu" onClick={() => setOpen(false)}>
-                <X className="size-5" />
-              </Button>
-            </div>
-            <nav className="flex flex-col gap-1">
-              {LINKS.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  onClick={() => setOpen(false)}
-                  className={cn(
-                    "rounded-md px-3 py-3 text-sm font-medium tracking-wide uppercase",
-                    isActive(pathname, l.href) ? "bg-accent/15 text-accent" : "text-muted hover:text-fg",
-                  )}
+      {open
+        ? createPortal(
+            <div role="dialog" aria-modal="true" aria-label="Menu" className="fixed inset-0 z-50 lg:hidden">
+              <button
+                type="button"
+                className="absolute inset-0 bg-[#07111f]/70"
+                aria-label="Close menu"
+                onClick={() => setOpen(false)}
+              />
+              <div className="absolute inset-y-0 right-0 flex h-dvh w-72 max-w-[85vw] flex-col border-l border-border bg-[#0d1a2e] px-4 py-5 shadow-2xl">
+                <div className="mb-6 flex items-center justify-between">
+                  <span className="text-sm font-medium">Menu</span>
+                  <Button variant="ghost" size="icon-sm" aria-label="Close menu" onClick={() => setOpen(false)}>
+                    <X className="size-5" />
+                  </Button>
+                </div>
+                <nav className="flex flex-col gap-1">
+                  {LINKS.map((l) => (
+                    <Link
+                      key={l.href}
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className={cn(
+                        "rounded-md px-3 py-3 text-sm font-medium tracking-wide uppercase",
+                        isActive(pathname, l.href) ? "bg-accent/15 text-accent" : "text-muted hover:text-fg",
+                      )}
+                    >
+                      {l.label}
+                    </Link>
+                  ))}
+                </nav>
+                <button
+                  type="button"
+                  className="mt-4 rounded-md px-3 py-3 text-left text-sm font-medium tracking-wide text-fg uppercase"
+                  onClick={() => {
+                    setPreview(!preview);
+                    setOpen(false);
+                  }}
                 >
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
-            <button
-              type="button"
-              className="mt-4 rounded-md px-3 py-3 text-left text-sm font-medium tracking-wide text-fg uppercase"
-              onClick={() => {
-                setPreview(!preview);
-                setOpen(false);
-              }}
-            >
-              {preview ? "Tape on" : "Preview tape"}
-            </button>
-          </div>
-        </div>
-      ) : null}
+                  {preview ? "Tape on" : "Preview tape"}
+                </button>
+              </div>
+            </div>,
+            document.body,
+          )
+        : null}
     </header>
   );
 }

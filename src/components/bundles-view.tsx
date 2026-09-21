@@ -4,7 +4,7 @@ import { STOCKS, SLEEVES, SLEEVE_TONE, sleeveWeight } from "@/lib/stocks";
 import { usd } from "@/lib/format";
 import { BundleMap } from "./bundle-map";
 import { StockMark } from "./stock-mark";
-import { DinariStatus } from "./dinari-status";
+import { DistributedBoard } from "./distributed-board";
 import { WeightBar } from "./page-hero";
 import { cn } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export function BundlesView() {
         The keeper buys these names with fee USDC. 5% of the book stays in USYC and BUIDL.
       </p>
 
-      <DinariStatus />
+      <DistributedBoard />
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
         {SLEEVES.map((s) => (

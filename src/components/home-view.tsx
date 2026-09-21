@@ -4,6 +4,7 @@ import Link from "next/link";
 import { FEE_LEGS, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
+import { AddUsdc, AddUsdcButton } from "./add-usdc";
 import { Button } from "./ui/button";
 import { TickerTape } from "./ticker-tape";
 import { WeightBar } from "./page-hero";
@@ -36,26 +37,29 @@ export function HomeView() {
   return (
     <div>
       <section className="page pb-8 sm:pb-8">
-        <div className="stagger-in flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-xl">
-            <h1 className="display text-fg">
-              The book that
-              <span className="italic text-accent"> buys itself.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-              Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the
-              stocks, then farm them.
-            </p>
+        <AddUsdc>
+          <div className="stagger-in flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="max-w-xl">
+              <h1 className="display text-fg">
+                The book that
+                <span className="italic text-accent"> buys itself.</span>
+              </h1>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-muted sm:text-base">
+                Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the
+                stocks, then farm them.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button asChild size="lg">
+                <Link href="/bundles">Open the Book</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg">
+                <Link href="/portfolio">Open desk</Link>
+              </Button>
+              <AddUsdcButton />
+            </div>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg">
-              <Link href="/bundles">Open the Book</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/portfolio">Open desk</Link>
-            </Button>
-          </div>
-        </div>
+        </AddUsdc>
 
         <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Kpi label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="70% of the 1% fee" />
