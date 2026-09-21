@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
-import { EVE_LAUNCH } from "@/lib/chain";
 import { useFolio } from "@/lib/folio";
 import { cn } from "@/lib/utils";
 import { FolioMark, Wordmark } from "./logo";
@@ -60,14 +59,6 @@ export function SiteHeader() {
         </Link>
         <div className="hidden min-w-0 flex-1 md:block">{nav}</div>
         <div className="ml-auto flex items-center gap-2">
-          <a
-            href={EVE_LAUNCH}
-            target="_blank"
-            rel="noreferrer"
-            className="hidden h-11 items-center px-3 text-xs font-medium tracking-wide text-muted uppercase hover:text-fg sm:inline-flex"
-          >
-            Launch
-          </a>
           <Button
             variant={preview ? "accent" : "ghost"}
             size="sm"
