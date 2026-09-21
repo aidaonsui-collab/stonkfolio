@@ -40,7 +40,7 @@ export function HomeView() {
             <span className="italic"> itself.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Every swap pays a 1% fee. 70% of that is USDC to the keeper. It buys the book. A small slice stays in USYC. Holders get the stocks, then farm them.
+            Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the stocks, then farm them.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
