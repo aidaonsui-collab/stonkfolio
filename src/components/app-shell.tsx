@@ -51,10 +51,21 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
         <SiteHeader />
         <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
-        <footer className="hidden border-t border-border lg:block">
-          <div className="flex items-center justify-between gap-4 px-6 py-5 text-xs text-muted">
+        <footer className="border-t border-border pb-20 lg:pb-0">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-5 text-xs text-muted sm:px-6">
             <p>Keeper wallet and Earn vaults use Circle on Arc.</p>
-            <p className="font-mono">SFOLIO / USDC · Uniswap v4</p>
+            <div className="flex items-center gap-4">
+              <a
+                href="https://x.com/StonkfolioArc"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Stonkfolio on X"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center font-medium text-fg hover:text-accent"
+              >
+                X
+              </a>
+              <p className="font-mono">SFOLIO / USDC · Uniswap v4</p>
+            </div>
           </div>
         </footer>
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
