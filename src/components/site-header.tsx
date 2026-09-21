@@ -10,57 +10,41 @@ import { FolioMark, Wordmark } from "./logo";
 import { Button } from "./ui/button";
 import { ConnectButton } from "./connect-button";
 
-const LINKS = [
+export const LINKS = [
   { href: "/", label: "Home" },
-  { href: "/bundles", label: "Bundles" },
-  { href: "/portfolio", label: "Portfolio" },
+  { href: "/bundles", label: "Book" },
+  { href: "/portfolio", label: "Desk" },
   { href: "/yield", label: "Yield" },
   { href: "/keeper", label: "Keeper" },
   { href: "/docs", label: "Docs" },
 ] as const;
+
+export function isActive(pathname: string, href: string) {
+  if (href === "/") return pathname === "/";
+  if (href === "/portfolio") return pathname.startsWith("/portfolio") || pathname.startsWith("/distributions");
+  if (href === "/bundles") return pathname.startsWith("/bundles") || pathname.startsWith("/basket");
+  return pathname.startsWith(href);
+}
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { preview, setPreview } = useFolio();
   const [open, setOpen] = useState(false);
 
-  const nav = (
-    <nav className="flex flex-col gap-1 md:flex-row md:items-center md:gap-0">
-      {LINKS.map((l) => {
-        const active =
-          l.href === "/"
-            ? pathname === "/"
-            : pathname.startsWith(l.href) ||
-              (l.href === "/portfolio" && pathname.startsWith("/distributions")) ||
-              (l.href === "/bundles" && pathname.startsWith("/basket"));
-        return (
-          <Link
-            key={l.href}
-            href={l.href}
-            onClick={() => setOpen(false)}
-            className={cn(
-              "rounded-sm px-3 py-2 text-xs font-medium tracking-wide uppercase",
-              active ? "text-fg" : "text-muted hover:text-fg",
-            )}
-          >
-            {l.label}
-          </Link>
-        );
-      })}
-    </nav>
-  );
-
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-paper/80 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-2.5 pr-2">
+    <header className="sticky top-0 z-30 border-b border-border bg-bg/85 backdrop-blur-md">
+      <div className="flex items-center gap-3 px-4 py-3 lg:px-6">
+        <Link href="/" className="flex items-center gap-2.5 lg:hidden">
           <FolioMark className="size-8" />
-          <Wordmark className="hidden sm:flex" />
+          <Wordmark />
         </Link>
-        <div className="hidden min-w-0 flex-1 md:block">{nav}</div>
         <div className="ml-auto flex items-center gap-2">
+          <span className="hidden items-center gap-1.5 rounded-full bg-elevated px-2.5 py-1 font-mono text-xs tracking-wide text-up sm:inline-flex">
+            <span className="size-1.5 rounded-full bg-up" />
+            Arc live
+          </span>
           <Button
-            variant={preview ? "accent" : "ghost"}
+            variant={preview ? "accent" : "outline"}
             size="sm"
             className="hidden sm:inline-flex"
             onClick={() => setPreview(!preview)}
@@ -70,8 +54,8 @@ export function SiteHeader() {
           <ConnectButton />
           <Button
             variant="ghost"
-            size="icon"
-            className="md:hidden"
+            size="icon-sm"
+            className="lg:hidden"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
           >
@@ -80,8 +64,22 @@ export function SiteHeader() {
         </div>
       </div>
       {open ? (
-        <div className="border-t border-border bg-surface px-4 py-3 md:hidden">
-          {nav}
+        <div className="border-t border-border bg-surface px-4 py-3 lg:hidden">
+          <nav className="flex flex-col gap-1">
+            {LINKS.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className={cn(
+                  "rounded-sm px-3 py-2 text-xs font-medium tracking-wide uppercase",
+                  isActive(pathname, l.href) ? "bg-accent/15 text-accent" : "text-muted hover:text-fg",
+                )}
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
           <button
             type="button"
             className="mt-2 w-full rounded-sm px-3 py-2 text-left text-xs font-medium tracking-wide text-fg uppercase"

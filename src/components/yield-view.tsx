@@ -51,7 +51,7 @@ export function YieldView() {
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="kicker">Venues on Arc</p>
+          <p className="kicker text-accent">Venues on Arc</p>
           <h1 className="display-md mt-3">Put the book to work.</h1>
           <p className="mt-3 max-w-xl text-sm text-muted">
             {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit vaults below. Stocks come from the 70% creator fee; Earn vaults are optional extra.
@@ -98,7 +98,7 @@ export function YieldView() {
                 }}
                 formatter={(v) => [`${Number(v).toFixed(1)}%`, "APR"]}
               />
-              <Bar dataKey="apr" fill="#2b6cff" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false} />
+              <Bar dataKey="apr" fill="var(--color-accent)" radius={[4, 4, 0, 0]} maxBarSize={48} isAnimationActive={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

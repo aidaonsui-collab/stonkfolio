@@ -14,7 +14,7 @@ export function PortfolioView() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <p className="kicker">Holder desk</p>
+      <p className="kicker text-accent">Holder desk</p>
       <h1 className="display-md mt-3">Your folio.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         {preview

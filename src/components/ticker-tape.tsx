@@ -4,7 +4,7 @@ import { usd } from "@/lib/format";
 export function TickerTape() {
   const row = [...STOCKS, ...STOCKS];
   return (
-    <div className="overflow-hidden border-y border-border bg-elevated">
+    <div className="overflow-hidden border-y border-border bg-surface">
       <div className="tape-track flex w-max gap-8 px-4 py-3">
         {row.map((s, i) => (
           <span key={`${s.ticker}-${i}`} className="flex items-baseline gap-2 whitespace-nowrap">
