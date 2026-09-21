@@ -13,11 +13,13 @@ const bars = [
 ];
 
 export async function shareCard() {
-  const [figtree, fraunces, frauncesItalic] = await Promise.all([
+  const [figtree, fraunces, frauncesItalic, arcLogo] = await Promise.all([
     readFile(new URL("../assets/fonts/figtree-500.ttf", import.meta.url)),
     readFile(new URL("../assets/fonts/fraunces-500.ttf", import.meta.url)),
     readFile(new URL("../assets/fonts/fraunces-500-italic.ttf", import.meta.url)),
+    readFile(new URL("../assets/arc-logo-light.png", import.meta.url)),
   ]);
+  const arcSrc = `data:image/png;base64,${arcLogo.toString("base64")}`;
 
   return new ImageResponse(
     <div
@@ -33,18 +35,8 @@ export async function shareCard() {
         fontFamily: "Figtree",
       }}
     >
-      <div
-        style={{
-          position: "absolute",
-          top: -180,
-          right: -80,
-          width: 560,
-          height: 560,
-          borderRadius: 280,
-          background: "rgba(61, 126, 255, 0.22)",
-        }}
-      />
-      <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
         <div
           style={{
             display: "flex",
@@ -73,6 +65,8 @@ export async function shareCard() {
           <span style={{ fontWeight: 500 }}>Stonk</span>
           <span style={{ fontFamily: "Fraunces", fontStyle: "italic", fontSize: 36 }}>Folio</span>
         </div>
+        </div>
+        <img src={arcSrc} width={320} height={110} alt="" />
       </div>
       <div style={{ display: "flex", flexDirection: "column", maxWidth: 920 }}>
         <div
