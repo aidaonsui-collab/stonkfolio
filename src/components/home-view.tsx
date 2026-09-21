@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { TOKEN } from "@/lib/chain";
-import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { FEE_LEGS, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { protocolPreview, sleeveWeight, STOCKS } from "@/lib/stocks";
 import { Button } from "./ui/button";
@@ -11,8 +10,8 @@ import { TickerTape } from "./ticker-tape";
 
 const CHAPTERS = [
   {
-    title: "Launch.",
-    body: `Creator preset on eve.fun, Uniswap v4, 1B ${TOKEN.symbol} / USDC, LP locked. Pool fee ${LAUNCH.feeBps / 100}%. Creator ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the Circle agent wallet on the keeper page.`,
+    title: "Funding.",
+    body: "Every trade takes 1%. 70% of that fee is USDC and goes to the Circle agent wallet — the keeper.",
   },
   {
     title: "The buy.",
@@ -75,8 +74,7 @@ export function HomeView() {
       <TickerTape />
 
       <section className="mx-auto w-full max-w-6xl px-4 py-14 sm:px-6">
-        <p className="kicker">Fee card · 1.0% pool · Creator preset</p>
-        <h2 className="display-md mt-2">Where the cut goes.</h2>
+        <h2 className="display-md">Where the cut goes.</h2>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {FEE_LEGS.map((leg) => (
             <div key={leg.key} className="panel-tight p-5">

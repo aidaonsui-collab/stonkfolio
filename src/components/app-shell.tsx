@@ -1,13 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { NetworkBanner } from "./network-banner";
 import { SiteHeader } from "./site-header";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col overflow-x-hidden bg-bg text-fg">
-      <NetworkBanner />
       <SiteHeader />
       <main className="min-w-0 flex-1">{children}</main>
       <footer className="border-t border-border">
