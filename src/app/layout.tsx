@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   description,
   openGraph: {
-    title: "StonkFolio",
+    title: "The book that buys itself.",
     description,
     url: "https://www.stonkfolio.me",
     siteName: "StonkFolio",
@@ -50,7 +50,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "StonkFolio",
+    title: "The book that buys itself.",
     description,
     site: "@StonkfolioArc",
     creator: "@StonkfolioArc",
@@ -72,6 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      prefix="og: http://ogp.me/ns#"
       className={`${figtree.variable} ${fraunces.variable} ${plex.variable} ${figtree.className} h-full antialiased`}
     >
       <body className="min-h-full bg-bg text-fg">
