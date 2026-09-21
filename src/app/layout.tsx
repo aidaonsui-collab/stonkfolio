@@ -21,13 +21,30 @@ const plex = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
+const description = "Every trade buys the book. A small slice stays in USYC. Holders get the stocks.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.stonkfolio.me"),
   title: {
     default: "StonkFolio",
     template: "%s · StonkFolio",
   },
-  description:
-    "Creator USDC from $SFOLIO buys tokenized stocks on Arc. A small slice stays in USYC. Holders get the book.",
+  description,
+  openGraph: {
+    title: "StonkFolio",
+    description,
+    url: "https://www.stonkfolio.me",
+    siteName: "StonkFolio",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "StonkFolio",
+    description,
+    site: "@StonkfolioArc",
+    creator: "@StonkfolioArc",
+  },
   other: {
     "theme-color": "#07111f",
   },
