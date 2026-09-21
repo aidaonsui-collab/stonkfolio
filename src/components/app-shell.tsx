@@ -22,8 +22,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-dvh overflow-x-hidden bg-bg text-fg">
-      <aside className="sticky top-0 hidden h-dvh w-56 shrink-0 flex-col border-r border-border bg-surface/80 px-3 py-5 lg:flex">
+    <div className="flex min-h-dvh bg-bg text-fg">
+      <aside className="sticky top-0 hidden h-dvh w-56 shrink-0 flex-col self-start border-r border-border bg-surface/80 px-3 py-5 lg:flex">
         <Link href="/" className="mb-8 flex items-center gap-2.5 px-2">
           <FolioMark className="size-8" />
           <Wordmark />
@@ -47,13 +47,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <p className="px-2 pt-4 font-mono text-xs leading-relaxed text-subtle">
-          $SFOLIO · 1% fee
-          <br />
-          Circle on Arc
-        </p>
       </aside>
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col overflow-x-hidden">
         <SiteHeader />
         <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
         <footer className="hidden border-t border-border lg:block">

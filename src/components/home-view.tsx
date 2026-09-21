@@ -38,8 +38,7 @@ export function HomeView() {
       <section className="page pb-8 sm:pb-8">
         <div className="stagger-in flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-xl">
-            <p className="kicker text-accent">$SFOLIO · eve.fun Instant</p>
-            <h1 className="display mt-3 text-fg">
+            <h1 className="display text-fg">
               The book that
               <span className="italic text-accent"> buys itself.</span>
             </h1>
