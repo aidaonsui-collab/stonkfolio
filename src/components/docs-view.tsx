@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EVE_FUN, EVE_LAUNCH, TOKEN } from "@/lib/chain";
+import { EVE_FUN, TOKEN } from "@/lib/chain";
 
 const STEPS = [
   {
@@ -23,7 +23,7 @@ const STEPS = [
   {
     n: "04",
     title: "Holders get the stocks",
-    body: `Tokens land in $${TOKEN.symbol} wallets. Nothing to claim.`,
+    body: `The book sends them to $${TOKEN.symbol} wallets. Your share matches how much you hold. Nothing to claim.`,
     stat: "YOUR WALLET",
   },
 ] as const;
@@ -31,15 +31,23 @@ const STEPS = [
 const FAQ = [
   {
     q: "Where do the stocks arrive?",
-    a: "In your wallet. Portfolio shows the same fills.",
+    a: "In your wallet. Portfolio shows the same stocks.",
+  },
+  {
+    q: "How much do I get?",
+    a: `The same share of each stock as your share of $${TOKEN.symbol}. Hold more, receive more.`,
   },
   {
     q: "Do I stake or claim?",
-    a: `No. Hold $${TOKEN.symbol}. Distributions are pushed.`,
+    a: `No. Hold $${TOKEN.symbol}. The stocks are sent to you.`,
+  },
+  {
+    q: "Can another app read the book?",
+    a: "The list of names is free. A wallet’s stocks and value cost a small USDC payment.",
   },
   {
     q: "Can I earn extra?",
-    a: "Yield is optional. Farm the stocks, or put idle USDC in Earn vaults. It is not how the 70% is paid.",
+    a: "Yield is optional. Farm the stocks, or put spare USDC in Earn vaults. That is not how the 70% is paid.",
   },
 ] as const;
 
@@ -93,17 +101,6 @@ export function DocsView() {
             <span className="font-medium">$0.10</span>
           </li>
         </ul>
-        <p className="mt-4 text-sm text-muted">
-          Launch on{" "}
-          <a className="text-fg underline-offset-2 hover:underline" href={EVE_LAUNCH} target="_blank" rel="noreferrer">
-            eve.fun
-          </a>
-          . Point creator rewards at the{" "}
-          <Link href="/keeper" className="text-fg underline-offset-2 hover:underline">
-            keeper
-          </Link>
-          .
-        </p>
       </section>
 
       <section className="mt-14">

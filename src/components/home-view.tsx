@@ -15,7 +15,7 @@ const CHAPTERS = [
   },
   {
     title: "The buy.",
-    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks, not USDC.",
+    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO. Not USDC.",
   },
   {
     title: "The farm.",
