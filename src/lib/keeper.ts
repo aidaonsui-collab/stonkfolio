@@ -65,7 +65,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (listedWeight === 0) {
     return {
       action: "park",
-      reason: "No names listed on Arc yet. Park creator USDC in USYC until the book is live.",
+      reason: "Nothing listed yet. Fee USDC waits in the wallet.",
       cashSleeveBps,
       listedWeight,
       queuedWeight,
@@ -74,7 +74,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (queuedWeight > 0) {
     return {
       action: "buy",
-      reason: `Buy listed names (${listedWeight}%). Keep the cash sleeve (${cashSleeveBps / 100}%) in USYC. Leave queued weight parked.`,
+      reason: `Buy the listed names. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
       cashSleeveBps,
       listedWeight,
       queuedWeight,
@@ -82,7 +82,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   }
   return {
     action: "buy",
-    reason: `Book is live. Spend listed weight. Hold ${cashSleeveBps / 100}% as USYC/BUIDL.`,
+    reason: `Spend fee USDC on the book. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
     cashSleeveBps,
     listedWeight,
     queuedWeight,

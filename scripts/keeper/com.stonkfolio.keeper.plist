@@ -12,7 +12,7 @@
     <string>/Users/hectorhernandez/code/stonkfolio/scripts/keeper/run.sh</string>
   </array>
   <key>StartInterval</key>
-  <integer>900</integer>
+  <integer>1800</integer>
   <key>RunAtLoad</key>
   <true/>
   <key>Nice</key>

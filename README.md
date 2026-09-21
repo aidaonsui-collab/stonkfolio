@@ -1,13 +1,13 @@
 # Stonkfolio
 
-Arc-native stock folio. $SFOLIO launches on [eve.fun](https://www.eve.fun) Instant. Creator USDC parks a USYC sleeve and buys a curated RWA book. Holders see those stocks on the distributions board. They farm them on Morpho, Aave V4, Uniswap, or Circle Earn.
+Arc-native stock folio. $SFOLIO launches on [eve.fun](https://www.eve.fun) Instant. Creator USDC buys a curated RWA book. 5% stays in USYC and BUIDL. Holders see those stocks on the distributions board.
 
 ## Loop
 
 1. Creator preset on eve.fun: 1B $SFOLIO / USDC, Uniswap **v4**, LP locked, 1% pool fee.
 2. Fee card: creator **70** · burn **10** · holders **0** · auto-LP **10** · eve.fun **10**.
 3. Creator rewards wallet = Eve's existing Circle Agent Wallet (`0x80aa…e3f`). Same SCA as x402. No second wallet.
-4. That USDC keeps a USYC sleeve and buys the book in `src/lib/stocks.ts`. Keeper tick runs on Jessica's Air (`com.stonkfolio.keeper`).
+4. That USDC buys the book in `src/lib/stocks.ts`. 5% stays in USYC and BUIDL. The keeper checks every 30 minutes on Jessica's Air (`com.stonkfolio.keeper`).
 5. `FolioTreasury` distributes stocks to holders. Holders farm on Morpho / Aave / Uniswap, or Circle Earn Kit USDC vaults on `/yield`.
 6. `GET /api/book` is free. `GET /api/nav` and `/api/distributions` are x402 (Arc USDC, Eve's Arc Facilitator payTo).
 

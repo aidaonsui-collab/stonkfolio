@@ -19,7 +19,7 @@ export function GET(request: Request) {
       "/api/book": {
         get: {
           summary: "Keeper book (free)",
-          description: "Weights, listing status, Circle Agent Wallet, USYC park plan. No payment.",
+          description: "Weights, listing status, and the keeper wallet. No payment.",
           responses: { "200": { description: "Book JSON" } },
         },
       },

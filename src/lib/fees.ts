@@ -17,7 +17,7 @@ export const LAUNCH = {
 } as const;
 
 export const FEE_LEGS = [
-  { key: "creator", label: "Creator", bps: LAUNCH.split.creatorBps, hint: "Keeper wallet. Parks USDC in USYC, then buys the book." },
+  { key: "creator", label: "Creator", bps: LAUNCH.split.creatorBps, hint: "Keeper wallet. Buys the book. A small slice stays in USYC." },
   { key: "burn", label: "Burn", bps: LAUNCH.split.burnBps, hint: "Launch token to dead" },
   { key: "autoLp", label: "Auto-LP", bps: LAUNCH.split.autoLpBps, hint: "Stays in the SFOLIO/USDC pool" },
   { key: "platform", label: "eve.fun", bps: LAUNCH.split.platformBps, hint: "Pad floor" },

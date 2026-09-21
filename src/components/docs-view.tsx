@@ -17,7 +17,7 @@ const STEPS = [
   {
     n: "03",
     title: "The keeper buys stocks",
-    body: "That USDC buys the names in the bundle. A slice stays in USYC.",
+    body: "Most of that USDC buys the names in the bundle. 5% stays in USYC and BUIDL.",
     stat: "THE BOOK",
   },
   {

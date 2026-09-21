@@ -15,7 +15,7 @@ const CHAPTERS = [
   },
   {
     title: "The buy.",
-    body: "That wallet keeps a USYC cash sleeve and buys the book. Holders get stocks, not a USDC reflect claim.",
+    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks, not USDC.",
   },
   {
     title: "The farm.",
@@ -40,7 +40,7 @@ export function HomeView() {
             <span className="italic"> itself.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-muted">
-            Every swap pays a 1% Uniswap v4 fee. 70% of that fee is USDC to the keeper. It parks in USYC, then buys the stock book. Holders get the stocks, then farm them.
+            Every swap pays a 1% fee. 70% of that is USDC to the keeper. It buys the book. A small slice stays in USYC. Holders get the stocks, then farm them.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">

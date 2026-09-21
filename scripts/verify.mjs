@@ -68,7 +68,7 @@ await shot("bundles-desktop.png");
 
 await page.getByRole("link", { name: "Keeper" }).first().click();
 await page.waitForURL("**/keeper");
-await page.getByText("Park, then buy").waitFor({ timeout: 10_000 });
+await page.getByText("Buy the book").waitFor({ timeout: 10_000 });
 await shot("keeper-desktop.png");
 const keeperCopy = await page.locator("body").textContent();
 if (!keeperCopy || !keeperCopy.includes("Agent wallet")) errors.push("keeper page missing agent wallet");

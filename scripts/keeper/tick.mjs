@@ -53,7 +53,7 @@ try {
   err = e instanceof Error ? e.message : String(e);
 }
 
-const action = usdc > 0n ? "park" : "hold";
+const action = usdc > 0n ? "buy" : "hold";
 const status = {
   at: now,
   host: process.env.INDEXER_WORKER || "jessica-air",

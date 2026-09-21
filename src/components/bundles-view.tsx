@@ -15,7 +15,7 @@ export function BundlesView() {
       <p className="kicker">The keeper book</p>
       <h1 className="display-md mt-3">The bundle.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-        Creator-chosen. The keeper buys names on this list. Weights split the 70% Creator slice of the 1% Uniswap v4 fee. USYC is the cash sleeve.
+        The keeper buys these names with fee USDC. 5% of the book stays in USYC and BUIDL.
       </p>
 
       <DinariStatus />
