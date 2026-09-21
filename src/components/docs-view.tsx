@@ -38,10 +38,6 @@ const FAQ = [
     a: `No. Hold $${TOKEN.symbol}. Distributions are pushed.`,
   },
   {
-    q: "Why is Holders 0% on eve.fun?",
-    a: "That row would pay USDC. This folio pays stocks instead, using the Creator row.",
-  },
-  {
     q: "Can I earn extra?",
     a: "Yield is optional. Farm the stocks, or put idle USDC in Earn vaults. It is not how the 70% is paid.",
   },

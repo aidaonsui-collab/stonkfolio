@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { EVE_LAUNCH, TOKEN } from "@/lib/chain";
+import { TOKEN } from "@/lib/chain";
 import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { protocolPreview, sleeveWeight, STOCKS } from "@/lib/stocks";
@@ -35,8 +34,7 @@ export function HomeView() {
     <div>
       <section className="mx-auto grid w-full max-w-6xl gap-10 px-4 pt-10 pb-12 sm:px-6 sm:pt-16 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div className="stagger-in">
-          <p className="kicker">{`$${TOKEN.symbol} · Arc 5042 · eve.fun v4 · 70% creator`}</p>
-          <h1 className="display mt-5 text-fg">
+          <h1 className="display text-fg">
             The book
             <br />
             that buys
@@ -47,13 +45,7 @@ export function HomeView() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg">
-              <a href={EVE_LAUNCH} target="_blank" rel="noreferrer">
-                {`Launch $${TOKEN.symbol}`}
-                <ArrowUpRight className="size-4" />
-              </a>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/bundles">Open the bundle</Link>
+              <Link href="/bundles">Open the Book</Link>
             </Button>
             <Button asChild variant="ghost" size="lg">
               <Link href="/portfolio">Portfolio</Link>
@@ -65,7 +57,7 @@ export function HomeView() {
           <div className="flex items-end justify-between px-3 pt-3 pb-2">
             <div>
               <p className="kicker">Active bundle</p>
-              <p className="mt-1 font-display text-2xl italic">Keeper book</p>
+              <p className="mt-1 font-display text-2xl italic">The book</p>
             </div>
             <Link href="/bundles" className="text-xs text-muted hover:text-fg">
               Full weights →

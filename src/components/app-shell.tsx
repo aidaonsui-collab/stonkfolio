@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { EVE_FUN } from "@/lib/chain";
 import { NetworkBanner } from "./network-banner";
 import { SiteHeader } from "./site-header";
 
@@ -12,14 +11,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SiteHeader />
       <main className="min-w-0 flex-1">{children}</main>
       <footer className="border-t border-border">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-8 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <p>
-            Pad:{" "}
-            <a className="text-fg underline-offset-2 hover:underline" href={EVE_FUN} target="_blank" rel="noreferrer">
-              eve.fun
-            </a>
-            . Settlement: Arc 5042. Gas: USDC.
-          </p>
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-8 text-xs text-muted sm:flex-row sm:items-center sm:justify-end sm:px-6">
           <nav className="flex flex-wrap gap-4">
             <Link href="/bundles" className="hover:text-fg">
               Bundles
