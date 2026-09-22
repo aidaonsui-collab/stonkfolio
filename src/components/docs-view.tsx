@@ -46,6 +46,10 @@ const FAQ = [
     a: "The list of names is free. A wallet’s stocks and value cost a small USDC payment.",
   },
   {
+    q: "Can another app buy the book for its holders?",
+    a: "Yes. They send USDC. 5% stays. The rest buys the same stocks, and those stocks go to their holders. $SFOLIO fees do not pay that 5%.",
+  },
+  {
     q: "Can I earn extra?",
     a: "Yield is optional. Farm the stocks, or put spare USDC in Earn vaults. That is not how the 70% is paid.",
   },
