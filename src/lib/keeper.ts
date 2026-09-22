@@ -15,9 +15,9 @@ export const ARC_USYC = getAddress("0x8a5D989Bbb96929F689B0200f435f53dA42bF490")
 export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881D05F9215e");
 
 /** Pushes a merkle round of stocks to holders. Treasury.keeper. */
-export const FOLIO_DISTRIBUTOR = getAddress("0xFc667eCE5db05bc2Cc771D05B416c96eA2500B49");
+export const FOLIO_DISTRIBUTOR = getAddress("0x75ff1625d5A94155dD436BcbEA6C09909F048881");
 
-/** Cut when another app funds the book. 5%. Their holders get the rest. Not on the live distributor until it is redeployed. */
+/** Cut when another app funds the book. 5%. Their holders get the rest. */
 export const BOOK_SERVICE_FEE_BPS = 500;
 
 const ZERO = "0x0000000000000000000000000000000000000000";
