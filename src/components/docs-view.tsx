@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: "Can I choose a stock?",
-    a: "Yes. Sign one name from the book, including SPY, for the next cycle. USYC and BUIDL stay in the book. No signature means you receive every name.",
+    a: "Yes. Open Folio and sign one name from the book, including SPY, for the next cycle. USYC and BUIDL stay in the book. No signature means you receive every name.",
   },
   {
     q: "When does a choice count?",

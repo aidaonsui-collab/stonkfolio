@@ -53,7 +53,7 @@ export function HomeView() {
                 <Link href="/bundles">Open the Book</Link>
               </Button>
               <Button asChild variant="outline" size="lg">
-                <Link href="/portfolio">Open desk</Link>
+                <Link href="/portfolio">Open Folio</Link>
               </Button>
               <AddUsdcButton />
             </div>

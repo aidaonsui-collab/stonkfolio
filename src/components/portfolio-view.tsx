@@ -8,6 +8,7 @@ import { STOCKS, stockByTicker } from "@/lib/stocks";
 import { Button } from "./ui/button";
 import { StockMark } from "./stock-mark";
 import { ConnectButton } from "./connect-button";
+import { RewardChoice } from "./reward-choice";
 
 export function PortfolioView() {
   const { seeing, stonk, sharePct, stocksEarnedUsd, history, earned, connected, preview, setPreview } = useFolio();
@@ -45,6 +46,8 @@ export function PortfolioView() {
           hint="70% creator fee, bought as dShares."
         />
       </div>
+
+      <RewardChoice />
 
       <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-[1.35fr_0.85fr]">
         <section className="min-w-0">

@@ -14,7 +14,7 @@ import { ConnectButton } from "./connect-button";
 export const LINKS = [
   { href: "/", label: "Home" },
   { href: "/bundles", label: "Book" },
-  { href: "/portfolio", label: "Desk" },
+  { href: "/portfolio", label: "Folio" },
   { href: "/yield", label: "Yield" },
   { href: "/keeper", label: "Keeper" },
   { href: "/docs", label: "Docs" },
