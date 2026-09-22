@@ -99,7 +99,7 @@ export function AddUsdcButton() {
   if (!ui) return null;
   return (
     <Button type="button" variant="outline" size="lg" onClick={ui.toggle} disabled={ui.busy}>
-      {ui.open ? "Close" : "Add USDC"}
+      {ui.open ? "Close" : "Add USDC with Apple or Google Pay"}
     </Button>
   );
 }
