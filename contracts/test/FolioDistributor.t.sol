@@ -106,4 +106,62 @@ contract FolioDistributorTest is Test {
         vm.expectRevert(FolioDistributor.NotHolder.selector);
         dist.deliver(holders, shares, proofs);
     }
+
+    function testOutsideAppPaysCutAndKeepsItsHolders() public {
+        MockERC20 app = new MockERC20("APP", "APP", 18);
+        bytes32 id = keccak256("app");
+        dist.setClient(id, address(app), 1);
+        address payer = address(0xBEEF);
+        usdc.mint(payer, 100e6);
+        app.mint(alice, 40 ether);
+        app.mint(bob, 60 ether);
+
+        vm.startPrank(payer);
+        usdc.approve(address(dist), 100e6);
+        dist.depositFor(id, 100e6);
+        vm.stopPrank();
+
+        assertEq(usdc.balanceOf(address(treasury)), 5e6);
+        (, , uint256 credit,) = dist.clients(id);
+        assertEq(credit, 95e6);
+
+        vm.prank(agent);
+        dist.releaseForBuy(id, agent, 95e6);
+        assertEq(usdc.balanceOf(agent), 195e6);
+        (, , credit,) = dist.clients(id);
+        assertEq(credit, 0);
+
+        bytes32 leafA = _leaf(alice, 40);
+        bytes32 leafB = _leaf(bob, 60);
+        vm.prank(agent);
+        dist.openRoundFor(id, _root(leafA, leafB), address(nvda), 100, 100 ether);
+        assertEq(dist.roundClient(), id);
+
+        address[] memory holders = new address[](2);
+        uint256[] memory shares = new uint256[](2);
+        bytes32[][] memory proofs = new bytes32[][](2);
+        holders[0] = alice;
+        holders[1] = bob;
+        shares[0] = 40;
+        shares[1] = 60;
+        proofs[0] = new bytes32[](1);
+        proofs[1] = new bytes32[](1);
+        proofs[0][0] = leafB;
+        proofs[1][0] = leafA;
+        vm.prank(agent);
+        dist.deliver(holders, shares, proofs);
+        assertEq(nvda.balanceOf(alice), 40 ether);
+        assertEq(nvda.balanceOf(bob), 60 ether);
+    }
+
+    function testCannotReleaseMoreThanTheAppPaid() public {
+        bytes32 id = keccak256("app");
+        dist.setClient(id, address(sfolo), 0);
+        usdc.mint(address(this), 20e6);
+        usdc.approve(address(dist), 20e6);
+        dist.depositFor(id, 20e6);
+        vm.prank(agent);
+        vm.expectRevert(FolioDistributor.OverCredit.selector);
+        dist.releaseForBuy(id, agent, 20e6);
+    }
 }

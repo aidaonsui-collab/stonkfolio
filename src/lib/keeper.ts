@@ -17,6 +17,9 @@ export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881
 /** Pushes a merkle round of stocks to holders. Treasury.keeper. */
 export const FOLIO_DISTRIBUTOR = getAddress("0xFc667eCE5db05bc2Cc771D05B416c96eA2500B49");
 
+/** Cut when another app funds the book. 5%. Their holders get the rest. Not on the live distributor until it is redeployed. */
+export const BOOK_SERVICE_FEE_BPS = 500;
+
 const ZERO = "0x0000000000000000000000000000000000000000";
 
 function envAddr(name: string, fallback: Address): Address {
