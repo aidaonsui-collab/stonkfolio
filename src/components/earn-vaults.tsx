@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { curatorLogo } from "@/lib/brand-marks";
 import { pct } from "@/lib/format";
 import { EarnFarmSheet } from "./earn-farm-sheet";
+import { LogoTile } from "./stock-mark";
 
 type EarnVaultRow = {
   name: string;
@@ -78,7 +80,9 @@ export function EarnVaults() {
               </tr>
             </thead>
             <tbody>
-              {vaults.map((v) => (
+              {vaults.map((v) => {
+                const logo = curatorLogo(v.name);
+                return (
                 <tr
                   key={v.vaultAddress}
                   className={v.depositable ? "cursor-pointer border-b border-border last:border-0 hover:bg-elevated/60" : "border-b border-border last:border-0"}
@@ -87,8 +91,13 @@ export function EarnVaults() {
                   }}
                 >
                   <td className="py-3.5">
-                    <span className="block font-medium">{v.name}</span>
-                    <span className="block font-mono text-xs text-muted">{v.asset}</span>
+                    <span className="flex items-center gap-3">
+                      {logo ? <LogoTile src={logo} label={v.name} size={32} /> : <span className="inline-block w-8 shrink-0" />}
+                      <span className="min-w-0">
+                        <span className="block font-medium">{v.name}</span>
+                        <span className="block font-mono text-xs text-muted">{v.asset}</span>
+                      </span>
+                    </span>
                   </td>
                   <td className="py-3.5 text-muted">{v.protocol}</td>
                   <td className="num py-3.5 font-medium text-accent">{pct(v.apy * 100, 2)}</td>
@@ -98,14 +107,17 @@ export function EarnVaults() {
                     {v.status}
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
       ) : null}
 
       <ul className="mt-6 flex flex-col divide-y divide-border md:hidden">
-        {vaults.map((v) => (
+        {vaults.map((v) => {
+          const logo = curatorLogo(v.name);
+          return (
           <li key={v.vaultAddress}>
             <button
               type="button"
@@ -113,6 +125,7 @@ export function EarnVaults() {
               onClick={() => setOpen(v)}
               className="flex w-full items-center gap-3 py-3.5 text-left disabled:opacity-70"
             >
+              {logo ? <LogoTile src={logo} label={v.name} size={32} /> : null}
               <span className="min-w-0 flex-1">
                 <span className="block truncate font-medium">{v.name}</span>
                 <span className="block text-xs text-muted">{v.protocol}</span>
@@ -120,7 +133,8 @@ export function EarnVaults() {
               <span className="num text-sm font-medium text-accent">{pct(v.apy * 100, 2)}</span>
             </button>
           </li>
-        ))}
+          );
+        })}
       </ul>
       {data?.ok ? (
         <p className="mt-3 text-xs text-muted">

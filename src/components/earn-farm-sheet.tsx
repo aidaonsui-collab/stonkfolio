@@ -7,8 +7,10 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "./connect-button";
+import { LogoTile } from "./stock-mark";
 import { ARC_CHAIN_ID, arcStableAddress } from "@/lib/chain";
 import { depositToVault, withdrawFromVault, getVaultPosition, formatEarnAmount, type VaultPosition } from "@/lib/earn-client";
+import { curatorLogo } from "@/lib/brand-marks";
 import { pct, qty } from "@/lib/format";
 import type { EarnVaultRow } from "@/lib/earn";
 
@@ -110,9 +112,14 @@ function EarnFarmSheetBody({ vault }: { vault: EarnVaultRow }) {
     <>
       <SheetHeader>
         <SheetTitle className="text-fg">
-          {vault.name}
-          <span className="mt-0.5 block text-xs font-normal tracking-normal text-muted">
-            {vault.protocol} · Circle Earn Kit
+          <span className="flex items-center gap-3">
+            {curatorLogo(vault.name) ? <LogoTile src={curatorLogo(vault.name)!} label={vault.name} size={36} /> : null}
+            <span>
+              {vault.name}
+              <span className="mt-0.5 block text-xs font-normal tracking-normal text-muted">
+                {vault.protocol} · Circle Earn Kit
+              </span>
+            </span>
           </span>
         </SheetTitle>
         <SheetDescription className="text-muted">

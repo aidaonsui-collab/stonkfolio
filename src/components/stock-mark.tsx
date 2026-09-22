@@ -1,3 +1,4 @@
+import { STOCK_LOGO } from "@/lib/brand-marks";
 import type { Stock } from "@/lib/stocks";
 import { SLEEVE_TONE, stockByTicker } from "@/lib/stocks";
 import { cn } from "@/lib/utils";
@@ -18,6 +19,32 @@ export function markFor(ticker: string) {
   );
 }
 
+export function LogoTile({
+  src,
+  label,
+  size = 32,
+  className,
+}: {
+  src: string;
+  label: string;
+  size?: number;
+  className?: string;
+}) {
+  const inner = Math.round(size * 0.72);
+  return (
+    <span
+      className={cn(
+        "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-sm bg-[#f4f6f8]",
+        className,
+      )}
+      style={{ width: size, height: size }}
+      aria-label={label}
+    >
+      <img src={src} alt="" width={inner} height={inner} className="object-contain" />
+    </span>
+  );
+}
+
 export function StockMark({
   stock,
   size = 36,
@@ -27,6 +54,8 @@ export function StockMark({
   size?: number;
   className?: string;
 }) {
+  const logo = STOCK_LOGO[stock.ticker];
+  if (logo) return <LogoTile src={logo} label={stock.name} size={size} className={className} />;
   const letter = stock.letter || stock.ticker.slice(0, 1);
   const tone = SLEEVE_TONE[stock.kind ?? "equity"];
   return (
