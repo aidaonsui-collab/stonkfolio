@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { ImageResponse } from "next/og";
 
 export const shareSize = { width: 1200, height: 630 };
-export const shareAlt = "StonkFolio. The book that buys itself.";
+export const shareAlt = "StonkFolio. Your book. Your folio.";
 
 const bars = [
   { height: 58, color: "#8fa3c2", width: 14 },
@@ -78,7 +78,7 @@ export async function shareCard() {
             letterSpacing: -2,
           }}
         >
-          The book that
+          Your book.
         </div>
         <div
           style={{
@@ -91,10 +91,10 @@ export async function shareCard() {
             color: "#3d7eff",
           }}
         >
-          buys itself.
+          Your folio.
         </div>
         <div style={{ display: "flex", marginTop: 28, fontSize: 30, color: "#8b9bb3" }}>
-          Every trade buys the book. Holders get the stocks.
+          Every trade buys the stocks. Every holder owns them.
         </div>
       </div>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, color: "#8b9bb3" }}>

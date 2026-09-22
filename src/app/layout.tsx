@@ -21,7 +21,7 @@ const plex = IBM_Plex_Mono({
   weight: ["400", "500", "600"],
 });
 
-const description = "Every trade buys the book. A small slice stays in USYC. Holders get the stocks.";
+const description = "Every trade buys the stocks. Every holder owns them.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.stonkfolio.me"),
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   description,
   openGraph: {
-    title: "The book that buys itself.",
+    title: "Your book. Your folio.",
     description,
     url: "https://www.stonkfolio.me",
     siteName: "StonkFolio",
@@ -43,14 +43,14 @@ export const metadata: Metadata = {
         secureUrl: "https://www.stonkfolio.me/og.jpg",
         width: 1200,
         height: 630,
-        alt: "StonkFolio. The book that buys itself.",
+        alt: "StonkFolio. Your book. Your folio.",
         type: "image/jpeg",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "The book that buys itself.",
+    title: "Your book. Your folio.",
     description,
     site: "@StonkfolioArc",
     creator: "@StonkfolioArc",
@@ -59,7 +59,7 @@ export const metadata: Metadata = {
         url: "/og.jpg",
         width: 1200,
         height: 630,
-        alt: "StonkFolio. The book that buys itself.",
+        alt: "StonkFolio. Your book. Your folio.",
       },
     ],
   },

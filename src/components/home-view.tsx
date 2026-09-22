@@ -41,12 +41,11 @@ export function HomeView() {
           <div className="stagger-in flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-xl">
               <h1 className="display text-fg">
-                The book that
-                <span className="italic text-accent"> buys itself.</span>
+                Your book.
+                <span className="block italic text-accent">Your folio.</span>
               </h1>
               <p className="mt-5 max-w-md text-sm leading-relaxed text-muted sm:text-base">
-                Every trade feeds the Circle Agent Wallet. It buys the book. A small slice stays in USYC. Holders get the
-                stocks, then farm them.
+                Every trade buys the stocks. Every holder owns them.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
