@@ -20,6 +20,9 @@ export const FOLIO_DISTRIBUTOR = getAddress("0x75ff1625d5A94155dD436BcbEA6C09909
 /** Cut when another app funds the book. 5%. Their holders get the rest. */
 export const BOOK_SERVICE_FEE_BPS = 500;
 
+/** Fee USDC must reach this before a cycle buys. Below it, the USDC waits. */
+export const MIN_BUY_USDC = 150;
+
 const ZERO = "0x0000000000000000000000000000000000000000";
 
 function envAddr(name: string, fallback: Address): Address {
@@ -80,7 +83,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (queuedWeight > 0) {
     return {
       action: "buy",
-      reason: `Buy the listed names. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
+      reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
       cashSleeveBps,
       listedWeight,
       queuedWeight,
@@ -88,7 +91,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   }
   return {
     action: "buy",
-    reason: `Spend fee USDC on the book. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
+    reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
     cashSleeveBps,
     listedWeight,
     queuedWeight,

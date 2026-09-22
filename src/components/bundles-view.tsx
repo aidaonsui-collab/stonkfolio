@@ -15,7 +15,7 @@ export function BundlesView() {
     <div className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="display-md">The Book.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
-        The keeper buys these names with fee USDC. 5% of the book stays in USYC and BUIDL.
+        The keeper buys these names once fee USDC reaches 150. 5% of the book stays in USYC and BUIDL.
       </p>
 
       <DistributedBoard />

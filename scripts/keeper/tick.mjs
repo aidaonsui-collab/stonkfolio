@@ -53,9 +53,10 @@ try {
   err = e instanceof Error ? e.message : String(e);
 }
 
+const MIN_BUY = 150n * 1_000_000n;
 const buy = (usdc * 95n) / 100n;
 const sleeve = usdc - buy;
-const action = usdc > 0n ? "buy" : "hold";
+const action = usdc >= MIN_BUY ? "buy" : "hold";
 const status = {
   at: now,
   host: process.env.INDEXER_WORKER || "jessica-air",
@@ -70,7 +71,7 @@ const status = {
   spend: false,
   error: err,
 };
-if (LIVE && usdc > 0n && !process.env.BOOK_TOKENS) {
+if (LIVE && usdc >= MIN_BUY && !process.env.BOOK_TOKENS) {
   appendFileSync(join(dataDir, "tick.err.log"), `${now} buy planned ${fmt(buy)} USDC but BOOK_TOKENS is unset, not spending\n`);
 }
 writeFileSync(join(dataDir, "keeper-status.json"), JSON.stringify(status, null, 2));

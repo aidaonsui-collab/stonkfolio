@@ -17,7 +17,7 @@ const STEPS = [
   {
     n: "03",
     title: "The keeper buys stocks",
-    body: "Most of that USDC buys the names in the bundle. 5% stays in USYC and BUIDL.",
+    body: "The keeper buys once fee USDC reaches 150. Most of it buys the names in the book. 5% stays in USYC and BUIDL.",
     stat: "THE BOOK",
   },
   {
@@ -35,7 +35,23 @@ const FAQ = [
   },
   {
     q: "How much do I get?",
-    a: `The same share of each stock as your share of $${TOKEN.symbol}. Hold more, receive more.`,
+    a: `On the book, the same share of each stock as your share of $${TOKEN.symbol}. If you signed one name, that share buys only that name.`,
+  },
+  {
+    q: "Can I choose a stock?",
+    a: "Yes. Sign one name from the book, including SPY, for the next cycle. USYC and BUIDL stay in the book. No signature means you receive every name.",
+  },
+  {
+    q: "When does a choice count?",
+    a: "On the next cycle. A cycle that has already opened keeps the choices it froze.",
+  },
+  {
+    q: "Who is paid?",
+    a: `A wallet that holds at least 0.05% of $${TOKEN.symbol} at one pinned block, after the burn address is removed. The pool, the burn address, and the keeper are left out. A trade after that block does not change the cycle.`,
+  },
+  {
+    q: "What if a name is too small to buy?",
+    a: "That name waits. Your USDC for it stays pending. Everyone else is still paid. It is not added to the book.",
   },
   {
     q: "Do I stake or claim?",
