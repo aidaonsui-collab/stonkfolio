@@ -39,8 +39,8 @@ export const metadata: Metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og.jpg",
-        secureUrl: "https://www.stonkfolio.me/og.jpg",
+        url: "https://www.stonkfolio.me/share.jpg",
+        secureUrl: "https://www.stonkfolio.me/share.jpg",
         width: 1200,
         height: 630,
         alt: "StonkFolio. Your book. Your folio.",
@@ -56,13 +56,14 @@ export const metadata: Metadata = {
     creator: "@StonkfolioArc",
     images: [
       {
-        url: "/og.jpg",
+        url: "https://www.stonkfolio.me/share.jpg",
         width: 1200,
         height: 630,
         alt: "StonkFolio. Your book. Your folio.",
       },
     ],
   },
+  robots: { index: true, follow: true },
   other: {
     "theme-color": "#07111f",
   },
