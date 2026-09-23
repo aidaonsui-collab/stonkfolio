@@ -17,6 +17,7 @@
     "@circle-fin/onramp-kit": "^1.0.1",
     "@dinari/api-sdk": "^0.15.0",
     "@tanstack/react-query": "^5.102.8",
+    "@vercel/analytics": "^2.0.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cn": "^0.3.0",
