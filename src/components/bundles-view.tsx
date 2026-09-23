@@ -82,7 +82,7 @@ export function BundlesView() {
                 <span
                   className={cn(
                     "inline-flex rounded-full px-2 py-0.5 font-mono text-[10px] tracking-wider uppercase",
-                    s.status === "candidate" ? "bg-elevated text-muted" : "bg-up/15 text-up",
+                    s.status === "live" ? "bg-up/15 text-up" : "bg-elevated text-muted",
                   )}
                 >
                   {s.status}

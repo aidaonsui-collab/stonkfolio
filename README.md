@@ -29,6 +29,8 @@ npm run dev
 
 ## Dinari keys
 
+Equity/index names in `src/lib/stocks.ts` are issued by **Dinari** on Arc (`eip155:5042`). Cash sleeve (BUIDL / USYC) stays BlackRock / Hashnote.
+
 Do **not** paste the API secret into the website. Sandbox keys from [partners.dinari.com](https://partners.dinari.com) go in `.env.local`:
 
 ```
@@ -37,7 +39,7 @@ DINARI_API_SECRET_KEY=...
 DINARI_ENVIRONMENT=sandbox
 ```
 
-`/api/dinari/stocks` reads those server-side. "Test data only" is correct — sandbox cannot mint real dShares. Production keys need KYB, then set `DINARI_ENVIRONMENT=production` on Vercel (Project → Settings → Environment Variables). Never use `NEXT_PUBLIC_` for these.
+`/api/dinari/stocks` reads those server-side and prefers Arc (`eip155:5042`) token addresses when present. Sandbox currently returns non-Arc chains only — "Test data only" is correct. Production keys need KYB, then set `DINARI_ENVIRONMENT=production` on Vercel (Project → Settings → Environment Variables). Never use `NEXT_PUBLIC_` for these. Until Arc CAs appear in the production stock list (or an official registry), `stocks.ts` keeps `address: null` for equities — do not invent addresses.
 
 ## Stack
 

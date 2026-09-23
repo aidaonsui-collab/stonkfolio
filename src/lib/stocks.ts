@@ -1,6 +1,9 @@
 export type StockKind = "equity" | "index" | "mmf";
 export type ListingStatus = "queued" | "candidate" | "live";
 
+/** Arc mainnet (5042) ERC-20. Null until a public contract is confirmed — never invent. */
+export type ArcAddress = `0x${string}` | null;
+
 export type Stock = {
   ticker: string;
   name: string;
@@ -12,26 +15,40 @@ export type Stock = {
   status: ListingStatus;
   color: string;
   letter: string;
+  /**
+   * Arc mainnet token when known.
+   * Equities/index: Dinari dShare on eip155:5042 (null until Dinari publishes Arc CAs).
+   * Cash sleeve (BUIDL/USYC): not Dinari — keep BlackRock/Hashnote issuers.
+   */
+  address: ArcAddress;
 };
 
 /**
  * Creator-chosen book. Swap weights here — dashboard, keeper, and yield all read this list.
+ *
+ * 2026-09-23: Dinari announced dShares live on Arc. Equity/index issuers retarget to Dinari.
+ * Arc dShare addresses are not in Dinari docs (blockchain.md still omits Arc), not found via
+ * explorer CREATE2 probes (empty morning CT), and sandbox API only returns
+ * eip155:179205 / eip155:11155111 — not eip155:5042. Keep address null until production
+ * stock list or an official registry publishes Arc CAs. Do not invent addresses.
  */
 export const STOCKS: Stock[] = [
-  { ticker: "CRCL", name: "Circle Internet Group", issuer: "xStocks / Ondo", kind: "equity", weight: 16, price: 124.0, status: "live", color: "#5b4dff", letter: "C" },
-  { ticker: "NVDA", name: "NVIDIA", issuer: "xStocks / Ondo", kind: "equity", weight: 12, price: 218.29, status: "live", color: "#76b900", letter: "N" },
-  { ticker: "AAPL", name: "Apple", issuer: "xStocks", kind: "equity", weight: 10, price: 332.52, status: "live", color: "#111111", letter: "" },
-  { ticker: "MSFT", name: "Microsoft", issuer: "xStocks", kind: "equity", weight: 9, price: 428.1, status: "live", color: "#00a4ef", letter: "M" },
-  { ticker: "GOOGL", name: "Alphabet", issuer: "xStocks", kind: "equity", weight: 8, price: 198.4, status: "live", color: "#4285f4", letter: "G" },
-  { ticker: "AMZN", name: "Amazon", issuer: "xStocks", kind: "equity", weight: 8, price: 257.13, status: "live", color: "#ff9900", letter: "a" },
-  { ticker: "META", name: "Meta Platforms", issuer: "xStocks", kind: "equity", weight: 6, price: 612.2, status: "live", color: "#0668e1", letter: "∞" },
-  { ticker: "TSLA", name: "Tesla", issuer: "xStocks", kind: "equity", weight: 6, price: 367.6, status: "live", color: "#cc0000", letter: "T" },
-  { ticker: "AMD", name: "AMD", issuer: "xStocks", kind: "equity", weight: 5, price: 515.94, status: "live", color: "#000000", letter: "▶" },
-  { ticker: "COIN", name: "Coinbase", issuer: "xStocks", kind: "equity", weight: 4, price: 274.07, status: "live", color: "#0052ff", letter: "C" },
-  { ticker: "SPY", name: "S&P 500", issuer: "xStocks / Ondo", kind: "index", weight: 8, price: 770.25, status: "live", color: "#1b4dff", letter: "S" },
-  { ticker: "BE", name: "Bloom Energy", issuer: "xStocks", kind: "equity", weight: 3, price: 271.14, status: "live", color: "#111111", letter: "BE" },
-  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU" },
-  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US" },
+  { ticker: "CRCL", name: "Circle Internet Group", issuer: "Dinari", kind: "equity", weight: 16, price: 124.0, status: "live", color: "#5b4dff", letter: "C", address: null },
+  { ticker: "NVDA", name: "NVIDIA", issuer: "Dinari", kind: "equity", weight: 12, price: 218.29, status: "live", color: "#76b900", letter: "N", address: null },
+  { ticker: "AAPL", name: "Apple", issuer: "Dinari", kind: "equity", weight: 10, price: 332.52, status: "live", color: "#111111", letter: "", address: null },
+  { ticker: "MSFT", name: "Microsoft", issuer: "Dinari", kind: "equity", weight: 9, price: 428.1, status: "live", color: "#00a4ef", letter: "M", address: null },
+  { ticker: "GOOGL", name: "Alphabet", issuer: "Dinari", kind: "equity", weight: 8, price: 198.4, status: "live", color: "#4285f4", letter: "G", address: null },
+  { ticker: "AMZN", name: "Amazon", issuer: "Dinari", kind: "equity", weight: 8, price: 257.13, status: "live", color: "#ff9900", letter: "a", address: null },
+  { ticker: "META", name: "Meta Platforms", issuer: "Dinari", kind: "equity", weight: 6, price: 612.2, status: "live", color: "#0668e1", letter: "∞", address: null },
+  { ticker: "TSLA", name: "Tesla", issuer: "Dinari", kind: "equity", weight: 6, price: 367.6, status: "live", color: "#cc0000", letter: "T", address: null },
+  { ticker: "AMD", name: "AMD", issuer: "Dinari", kind: "equity", weight: 5, price: 515.94, status: "live", color: "#000000", letter: "▶", address: null },
+  { ticker: "COIN", name: "Coinbase", issuer: "Dinari", kind: "equity", weight: 4, price: 274.07, status: "live", color: "#0052ff", letter: "C", address: null },
+  { ticker: "SPY", name: "S&P 500", issuer: "Dinari", kind: "index", weight: 8, price: 770.25, status: "live", color: "#1b4dff", letter: "S", address: null },
+  // Not in Dinari sandbox catalog (live /api/dinari/stocks missing BE). Queue until listed.
+  { ticker: "BE", name: "Bloom Energy", issuer: "Dinari", kind: "equity", weight: 3, price: 271.14, status: "queued", color: "#111111", letter: "BE", address: null },
+  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU", address: null },
+  // Cash sleeve — not Dinari. Arc USYC from project .env.example / keeper constant.
+  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US", address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490" },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -43,9 +60,9 @@ export const SLEEVE_TONE: Record<StockKind, string> = {
 };
 
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
-  { id: "equity", label: "Equities", hint: "Tokenized names the keeper buys first." },
+  { id: "equity", label: "Equities", hint: "Dinari dShares the keeper buys first on Arc." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
-  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve of the book." },
+  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve of the book (not Dinari)." },
 ];
 
 export function sleeveWeight(kind: StockKind) {

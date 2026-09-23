@@ -33,6 +33,7 @@ export function bookPayload() {
       weight: s.weight,
       price: s.price,
       status: s.status,
+      address: s.address,
     })),
   };
 }
