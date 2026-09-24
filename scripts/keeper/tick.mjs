@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Stonkfolio keeper tick. Runs on Jessica's Air (com.stonkfolio.keeper).
- * Reads Eve's Circle Agent Wallet USDC/USYC on Arc. Does not spend unless
- * KEEPER_LIVE=1 and `circle` is on PATH with a logged-in session.
+ * Reads Eve's Circle Agent Wallet USDC/USYC on Arc and writes the buy plan.
+ * Does not sign or broadcast. KEEPER_EXECUTE is recorded and ignored.
  */
 import { mkdirSync, writeFileSync, appendFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { planCycle, parseBookTokens, swapCommands } from "./cycle.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
 const dataDir = join(root, "data");
@@ -54,9 +55,15 @@ try {
 }
 
 const MIN_BUY = 150n * 1_000_000n;
-const buy = (usdc * 95n) / 100n;
-const sleeve = usdc - buy;
-const action = usdc >= MIN_BUY ? "buy" : "hold";
+let plan = null;
+let planError = null;
+try {
+  plan = planCycle({ usdc, book: parseBookTokens(process.env.BOOK_TOKENS || ""), minBuy: MIN_BUY });
+} catch (e) {
+  planError = e instanceof Error ? e.message : String(e);
+}
+const action = plan?.action || "hold";
+const spent = plan ? plan.legs.reduce((n, leg) => n + leg.amountIn, 0n) : 0n;
 const status = {
   at: now,
   host: process.env.INDEXER_WORKER || "jessica-air",
@@ -65,14 +72,23 @@ const status = {
   live: LIVE,
   action,
   usdc: fmt(usdc),
-  buyUsdc: fmt(buy),
-  sleeveUsdc: fmt(sleeve),
+  buyUsdc: fmt(spent),
+  sleeveUsdc: fmt(plan ? plan.unspent : usdc),
   usyc: fmt(usyc),
   spend: false,
-  error: err,
+  plan: plan
+    ? {
+        action: plan.action,
+        reason: plan.reason,
+        unspent: plan.unspent.toString(),
+        legs: plan.legs.map((leg) => ({ symbol: leg.symbol, kind: leg.kind, amountIn: leg.amountIn.toString() })),
+      }
+    : null,
+  commands: plan ? swapCommands(plan, KEEPER).map((row) => row.command) : [],
+  error: err || planError,
 };
-if (LIVE && usdc >= MIN_BUY && !process.env.BOOK_TOKENS) {
-  appendFileSync(join(dataDir, "tick.err.log"), `${now} buy planned ${fmt(buy)} USDC but BOOK_TOKENS is unset, not spending\n`);
+if (LIVE && process.env.KEEPER_EXECUTE === "1") {
+  appendFileSync(join(dataDir, "tick.err.log"), `${now} KEEPER_EXECUTE is set, but this tick does not broadcast\n`);
 }
 writeFileSync(join(dataDir, "keeper-status.json"), JSON.stringify(status, null, 2));
 appendFileSync(join(dataDir, "tick.out.log"), `${now} action=${action} usdc=${status.usdc} usyc=${status.usyc}${err ? ` err=${err}` : ""}\n`);

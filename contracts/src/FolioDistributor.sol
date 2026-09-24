@@ -10,6 +10,7 @@ interface IERC20 {
 
 interface IFolioTreasury {
     function receiveFees(uint256 amount) external;
+    function depositCash(address token, uint256 amount) external;
     function distribute(address token, address[] calldata holders, uint256[] calldata amounts) external;
     function usdc() external view returns (address);
 }
@@ -110,6 +111,15 @@ contract FolioDistributor {
         IERC20(usdc).approve(address(treasury), amount);
         treasury.receiveFees(amount);
         emit FeesDeposited(msg.sender, amount);
+    }
+
+    /// Pull a cash token the agent already bought and park it. This contract is the treasury keeper.
+    function depositCash(address token, uint256 amount) external onlyAgent {
+        if (token == address(0) || amount == 0) revert ZeroShares();
+        bool ok = IERC20(token).transferFrom(msg.sender, address(this), amount);
+        if (!ok) revert NotHolder();
+        IERC20(token).approve(address(treasury), amount);
+        treasury.depositCash(token, amount);
     }
 
     /// Register an app. `holderToken` is the token whose holders receive the stocks.
