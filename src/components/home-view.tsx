@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FEE_LEGS, pctOfFee } from "@/lib/fees";
+import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { useFolio } from "@/lib/folio";
 import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
@@ -15,7 +15,7 @@ const CHAPTERS = [
   {
     n: "01",
     title: "Funding.",
-    body: "Every trade takes 1%. 70% of that fee is USDC and goes to the Circle agent wallet — the keeper.",
+    body: `Every trade takes 1%. ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC and goes to the Circle agent wallet — the keeper.`,
   },
   {
     n: "02",
@@ -74,7 +74,7 @@ export function HomeView() {
           <Kpi
             label="Keeper USDC"
             value={preview ? compactUsd(pulse.usdcRouted) : "—"}
-            hint={preview ? "70% of the 1% fee" : "Starts when the book lists."}
+            hint={preview ? `${pctOfFee(LAUNCH.split.creatorBps)} of the 1% fee` : "Starts when the book lists."}
           />
           <Kpi
             label="Stocks bought"
@@ -161,7 +161,9 @@ export function HomeView() {
       <section className="page pt-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="display-md">Where the cut goes.</h2>
-          <p className="max-w-xs text-sm text-muted">1% on every trade. The fee splits four ways.</p>
+          <p className="max-w-xs text-sm text-muted">
+            1% on every trade. {pctOfFee(LAUNCH.split.creatorBps)} rewards. {pctOfFee(LAUNCH.split.platformBps)} platform.
+          </p>
         </div>
         <div className="mt-6">
           <WeightBar
@@ -172,7 +174,7 @@ export function HomeView() {
             }))}
           />
         </div>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2">
           {FEE_LEGS.map((leg) => (
             <div key={leg.key} className="panel-tight relative overflow-hidden p-5">
               <span

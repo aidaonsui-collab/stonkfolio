@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { TOKEN } from "@/lib/chain";
+import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 
 const STEPS = [
   {
@@ -11,7 +12,7 @@ const STEPS = [
   {
     n: "02",
     title: "1% comes off the trade",
-    body: "70% of that fee is USDC for the book. The rest burns, stays as LP, or goes to the pad.",
+    body: `${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC for the book. ${pctOfFee(LAUNCH.split.platformBps)} is the platform.`,
     stat: "1%",
   },
   {
@@ -67,7 +68,7 @@ const FAQ = [
   },
   {
     q: "Can I earn extra?",
-    a: "Yield is optional. Farm the stocks, or put spare USDC in Earn vaults. That is not how the 70% is paid.",
+    a: `Yield is optional. Farm the stocks, or put spare USDC in Earn vaults. That is not how the ${pctOfFee(LAUNCH.split.creatorBps)} is paid.`,
   },
 ] as const;
 
@@ -104,22 +105,12 @@ export function DocsView() {
         <h2 className="font-display text-2xl italic tracking-tight">On a $100 trade</h2>
         <p className="mt-3 text-sm text-muted">You pay $1. It splits like this.</p>
         <ul className="mt-5 divide-y divide-border">
-          <li className="flex justify-between gap-4 py-3 text-sm">
-            <span className="text-muted">Stocks for holders</span>
-            <span className="font-medium">$0.70</span>
-          </li>
-          <li className="flex justify-between gap-4 py-3 text-sm">
-            <span className="text-muted">Burn</span>
-            <span className="font-medium">$0.10</span>
-          </li>
-          <li className="flex justify-between gap-4 py-3 text-sm">
-            <span className="text-muted">Stays in the pool</span>
-            <span className="font-medium">$0.10</span>
-          </li>
-          <li className="flex justify-between gap-4 py-3 text-sm">
-            <span className="text-muted">Pad</span>
-            <span className="font-medium">$0.10</span>
-          </li>
+          {FEE_LEGS.map((leg) => (
+            <li key={leg.key} className="flex justify-between gap-4 py-3 text-sm">
+              <span className="text-muted">{leg.label}</span>
+              <span className="font-medium">${(leg.bps / 10_000).toFixed(2)}</span>
+            </li>
+          ))}
         </ul>
       </section>
 

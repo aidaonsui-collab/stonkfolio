@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ARC_EXPLORER, TOKEN } from "@/lib/chain";
+import { LAUNCH, pctOfFee } from "@/lib/fees";
 import { dash, qty, shortAddr, usd } from "@/lib/format";
 import { useFolio } from "@/lib/folio";
 import { STOCKS, stockByTicker } from "@/lib/stocks";
@@ -21,7 +22,7 @@ export function PortfolioView() {
         {preview
           ? "Preview tape. Sample holder, not your wallet."
           : connected
-            ? "Desk is open. Stocks from the 70% creator fee."
+            ? `Desk is open. Stocks from the ${pctOfFee(LAUNCH.split.creatorBps)} rewards.`
             : "Connect a desk or flip on the preview tape to read balances and the stock ledger."}
       </p>
       {!seeing ? (
@@ -43,7 +44,7 @@ export function PortfolioView() {
         <Metric
           label="Stocks earned"
           value={dash(seeing, usd(stocksEarnedUsd))}
-          hint="70% creator fee, bought as dShares."
+          hint={`${pctOfFee(LAUNCH.split.creatorBps)} rewards, bought as dShares.`}
         />
       </div>
 

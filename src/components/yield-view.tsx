@@ -5,6 +5,7 @@ import { Search } from "lucide-react";
 import { MARKETS, VENUE_META, type Venue, type Market } from "@/lib/markets";
 import { useFolio } from "@/lib/folio";
 import { compactQty, pct } from "@/lib/format";
+import { LAUNCH, pctOfFee } from "@/lib/fees";
 import { cn } from "@/lib/utils";
 import { FarmSheet } from "./farm-sheet";
 import { EarnVaults } from "./earn-vaults";
@@ -54,7 +55,7 @@ export function YieldView() {
           <p className="kicker text-accent">Venues on Arc</p>
           <h1 className="display-md mt-3">Put the book to work.</h1>
           <p className="mt-3 max-w-xl text-sm text-muted">
-            {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit vaults below. Stocks come from the 70% creator fee; Earn vaults are optional extra.
+            {MARKETS.length} stock markets · Morpho · Aave V4 · Uniswap. Circle Earn Kit vaults below. Stocks come from the {pctOfFee(LAUNCH.split.creatorBps)} rewards; Earn vaults are optional extra.
           </p>
         </div>
         <button

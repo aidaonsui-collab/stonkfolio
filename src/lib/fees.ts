@@ -1,4 +1,4 @@
-/** Uniswap v4 Instant fee card for $SFOLIO. Platform floor is 10%. */
+/** Uniswap v4 Instant fee card for $SFOLIO. 80% rewards, 20% platform. */
 
 export const LAUNCH = {
   venue: "pad",
@@ -8,20 +8,20 @@ export const LAUNCH = {
   /** Pool fee in bps of notional. 100 = 1.0%. */
   feeBps: 100,
   split: {
-    creatorBps: 7_000,
-    burnBps: 1_000,
+    creatorBps: 8_000,
+    burnBps: 0,
     holdersBps: 0,
-    autoLpBps: 1_000,
-    platformBps: 1_000,
+    autoLpBps: 0,
+    platformBps: 2_000,
   },
 } as const;
 
 export const FEE_LEGS = [
-  { key: "creator", label: "Creator", bps: LAUNCH.split.creatorBps, hint: "Keeper wallet. Buys the book. A small slice stays in USYC." },
+  { key: "creator", label: "Rewards", bps: LAUNCH.split.creatorBps, hint: "Keeper wallet. Buys the book. A small slice stays in USYC." },
   { key: "burn", label: "Burn", bps: LAUNCH.split.burnBps, hint: "Launch token to dead" },
   { key: "autoLp", label: "Auto-LP", bps: LAUNCH.split.autoLpBps, hint: "Stays in the SFOLIO/USDC pool" },
-  { key: "platform", label: "Pad", bps: LAUNCH.split.platformBps, hint: "Pad floor" },
-] as const;
+  { key: "platform", label: "Platform", bps: LAUNCH.split.platformBps, hint: "Platform share." },
+].filter((leg) => leg.bps > 0);
 
 export function pctOfFee(bps: number) {
   return `${bps / 100}%`;

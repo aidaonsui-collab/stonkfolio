@@ -40,8 +40,8 @@ export const TOKEN = {
   pair: "SFOLIO / USDC",
   poolFeeBps: 100,
   holdersBps: 0,
-  creatorBps: 7_000,
-  burnBps: 1_000,
-  autoLpBps: 1_000,
-  platformBps: 1_000,
+  creatorBps: 8_000,
+  burnBps: 0,
+  autoLpBps: 0,
+  platformBps: 2_000,
 } as const;
