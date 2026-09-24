@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { CREATOR_CUT_BPS, FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { useFolio } from "@/lib/folio";
 import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
@@ -20,7 +20,7 @@ const CHAPTERS = [
   {
     n: "02",
     title: "The buy.",
-    body: "Most of that USDC buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO.",
+    body: `The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of that USDC. The rest buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO.`,
   },
   {
     n: "03",

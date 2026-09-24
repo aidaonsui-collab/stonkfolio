@@ -17,6 +17,9 @@ export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881
 /** Pushes a merkle round of stocks to holders. Treasury.keeper. */
 export const FOLIO_DISTRIBUTOR = getAddress("0x75ff1625d5A94155dD436BcbEA6C09909F048881");
 
+/** Creator wallet. Gets 10% of the launch-fee USDC that reaches the keeper. Same as scripts/keeper/cycle.mjs. */
+export const CREATOR_CUT_WALLET = getAddress("0x26bD491560b5175ee8bD1DA4998Fe260FfC413c9");
+
 /** Cut when another app funds the book. 5%. Their holders get the rest. */
 export const BOOK_SERVICE_FEE_BPS = 500;
 
@@ -49,10 +52,10 @@ export function usycAddress(): Address {
   return envAddr("USYC_ADDRESS", ARC_USYC);
 }
 
-/** Contracts the agent wallet may touch. Used for Circle CLI allowlists. */
+/** Addresses the agent wallet may touch, including the creator wallet it pays. Used for Circle CLI allowlists. */
 export function keeperAllowlist(): Address[] {
   const extra = treasuryAddress();
-  const list = [ARC_USDC_ERC20, usycAddress(), keeperAddress(), x402PayTo()];
+  const list = [ARC_USDC_ERC20, usycAddress(), keeperAddress(), x402PayTo(), CREATOR_CUT_WALLET];
   if (extra) list.push(extra);
   return [...new Set(list.map((a) => getAddress(a)))];
 }

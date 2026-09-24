@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { TOKEN } from "@/lib/chain";
-import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { CREATOR_CUT_BPS, FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+
+/** On a $1 fee: the creator's share of the rewards leg, and what is left for the book. */
+const CREATOR_PER_DOLLAR = (LAUNCH.split.creatorBps * CREATOR_CUT_BPS) / 10_000 / 10_000;
+const BOOK_PER_DOLLAR = LAUNCH.split.creatorBps / 10_000 - CREATOR_PER_DOLLAR;
 
 const STEPS = [
   {
@@ -12,7 +16,7 @@ const STEPS = [
   {
     n: "02",
     title: "1% comes off the trade",
-    body: `${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC for the book. ${pctOfFee(LAUNCH.split.platformBps)} is the platform.`,
+    body: `${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the keeper. The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of it. The rest is for the book. ${pctOfFee(LAUNCH.split.platformBps)} is the platform.`,
     stat: "1%",
   },
   {
@@ -112,6 +116,9 @@ export function DocsView() {
             </li>
           ))}
         </ul>
+        <p className="mt-3 text-sm text-muted">
+          {`Of the $${(LAUNCH.split.creatorBps / 10_000).toFixed(2)}, $${CREATOR_PER_DOLLAR.toFixed(2)} goes to the creator and $${BOOK_PER_DOLLAR.toFixed(2)} buys the book.`}
+        </p>
       </section>
 
       <section className="mt-14">

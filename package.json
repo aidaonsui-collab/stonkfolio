@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test:contracts": "forge test --root contracts -vv",
-    "test:keeper": "node --test scripts/keeper/cycle.test.mjs",
+    "test:keeper": "node --test scripts/keeper/cycle.test.mjs scripts/keeper/ledger.test.mjs",
     "test:api": "node scripts/test-api.mjs",
     "keeper:tick": "node scripts/keeper/tick.mjs"
   },

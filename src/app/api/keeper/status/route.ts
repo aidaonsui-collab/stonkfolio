@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createPublicClient, erc20Abi, formatUnits, http } from "viem";
 import { arc, ARC_USDC_ERC20 } from "@/lib/chain";
 import { corsHeaders } from "@/lib/x402";
-import { keeperAddress, keeperPlan, treasuryAddress, usycAddress } from "@/lib/keeper";
+import { CREATOR_CUT_BPS } from "@/lib/fees";
+import { CREATOR_CUT_WALLET, keeperAddress, keeperPlan, treasuryAddress, usycAddress } from "@/lib/keeper";
 
 export const dynamic = "force-dynamic";
 
@@ -13,6 +14,7 @@ export async function GET() {
   const usyc = usycAddress();
   const treasury = treasuryAddress();
   const plan = keeperPlan();
+  const creatorCut = { wallet: CREATOR_CUT_WALLET, bps: CREATOR_CUT_BPS };
   const rpc = process.env.ARC_RPC || "https://rpc.arc-scan.org";
   const client = createPublicClient({
     chain: arc,
@@ -39,6 +41,7 @@ export async function GET() {
         treasury,
         usyc,
         plan,
+        creatorCut,
         balances: {
           keeperUsdc: formatUnits(keeperUsdc, 6),
           keeperUsyc: formatUnits(keeperUsyc, 6),
@@ -51,7 +54,7 @@ export async function GET() {
   } catch (err) {
     const reason = err instanceof Error ? err.message : "rpc failed";
     return NextResponse.json(
-      { ok: false, keeper, treasury, usyc, plan, reason },
+      { ok: false, keeper, treasury, usyc, plan, creatorCut, reason },
       { status: 502, headers: corsHeaders() },
     );
   }

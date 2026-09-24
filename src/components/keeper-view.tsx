@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ARC_EXPLORER, ARC_USDC_ERC20 } from "@/lib/chain";
-import { EVE_AGENT_WALLET, FOLIO_DISTRIBUTOR, keeperPlan, usycAddress } from "@/lib/keeper";
+import { CREATOR_CUT_WALLET, EVE_AGENT_WALLET, FOLIO_DISTRIBUTOR, keeperPlan, usycAddress } from "@/lib/keeper";
 import { shortAddr } from "@/lib/format";
-import { LAUNCH, pctOfFee } from "@/lib/fees";
+import { CREATOR_CUT_BPS, LAUNCH, pctOfFee } from "@/lib/fees";
 
 type Status = {
   ok?: boolean;
@@ -49,7 +49,7 @@ export function KeeperView() {
       <p className="kicker text-accent">Circle agent wallet</p>
       <h1 className="display-md mt-3">The keeper.</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-        {pctOfFee(LAUNCH.split.creatorBps)} of the trading fee is USDC to this Circle agent wallet. A buy waits until that USDC reaches 150. Most of it buys the book. 5% stays in USYC and BUIDL. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays. The rest buys the book for their holders.
+        {pctOfFee(LAUNCH.split.creatorBps)} of the trading fee is USDC to this Circle agent wallet. {pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator wallet. A buy waits until the rest reaches 150. Most of it buys the book. 5% stays in USYC and BUIDL. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays. The rest buys the book for their holders.
       </p>
 
       <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">
@@ -89,6 +89,7 @@ export function KeeperView() {
           <AllowRow label="USDC" addr={ARC_USDC_ERC20} />
           <AllowRow label="USYC" addr={usyc} />
           <AllowRow label="Sends stocks" addr={FOLIO_DISTRIBUTOR} />
+          <AllowRow label={`Creator (${pctOfFee(CREATOR_CUT_BPS)})`} addr={CREATOR_CUT_WALLET} />
           {status?.treasury ? <AllowRow label="Treasury" addr={status.treasury} /> : null}
         </ul>
       </section>

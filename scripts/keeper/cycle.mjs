@@ -1,6 +1,8 @@
 /**
  * Off-chain keeper cycle. Plans a buy from fee USDC, then builds the
  * treasury transfer and the distributor round. It does not sign or broadcast.
+ * The creator's 10% of launch fees comes off first (planCreatorCut); the book
+ * plans from what is left.
  *
  * Weights are percents of the wallet's USDC and must sum to at most 100.
  * A name with no address is left as unspent USDC. Do not put a stocks.ts
@@ -18,6 +20,15 @@ export const USDC = "0x3600000000000000000000000000000000000000";
 export const AGENT = "0x80aa1fA83F7B771BF2AB815DA9bA1236b1B91E3F";
 export const TREASURY = "0xd47B04A41b3734EAb2687ef01d07881D05F9215e";
 export const DISTRIBUTOR = "0x75ff1625d5A94155dD436BcbEA6C09909F048881";
+
+/** 10% of the launch-fee USDC that reaches the keeper goes to the creator. Same as src/lib/fees.ts. */
+export const CREATOR_CUT_BPS = 1_000n;
+/** Creator wallet. Same as src/lib/keeper.ts. */
+export const CREATOR_WALLET = "0x26bD491560b5175ee8bD1DA4998Fe260FfC413c9";
+/** Wallets that were paid the cut before CREATOR_WALLET. Their payments still count as paid. */
+export const PAST_CREATOR_WALLETS = [];
+/** A cut under 1 USDC waits for the next tick. It stays reserved from the book. */
+export const MIN_CUT_USDC = 1_000_000n;
 
 const transferAbi = [
   {
@@ -176,6 +187,52 @@ export function planCycle({ usdc, book, minBuy = MIN_BUY_USDC }) {
     return { action: "hold", reason: "configured weights round to zero", legs: [], unspent: balance };
   }
   return { action: "buy", reason: "buy configured weights, leave the rest", legs, unspent: balance - spent };
+}
+
+/**
+ * The creator's cut, from the ledger's running totals. Owed is 10% of every
+ * launch-fee USDC that ever reached the keeper, less what the creator wallets
+ * were already sent. Unspent USDC carried to the next tick is never cut twice.
+ *
+ * `reserved` comes off the book's budget even when nothing is sent, so the
+ * book cannot spend it. Nothing is sent while the ledger is behind, because
+ * a payment in the unscanned blocks would not be counted yet.
+ *
+ * @param {{ feeIncome: bigint, cutPaid: bigint, balance: bigint, current?: boolean, bps?: bigint, wallet?: string, minCut?: bigint, agent?: string }} args
+ */
+export function planCreatorCut({
+  feeIncome,
+  cutPaid,
+  balance,
+  current = true,
+  bps = CREATOR_CUT_BPS,
+  wallet = CREATOR_WALLET,
+  minCut = MIN_CUT_USDC,
+  agent = AGENT,
+}) {
+  const rate = BigInt(bps);
+  if (rate < 0n || rate > 10_000n) throw new Error("creator cut bps out of range");
+  const entitled = (BigInt(feeIncome) * rate) / 10_000n;
+  const paid = BigInt(cutPaid);
+  const owed = entitled > paid ? entitled - paid : 0n;
+  const bal = BigInt(balance);
+  const reserved = owed < bal ? owed : bal;
+  const to = getAddress(wallet);
+  const base = { wallet: to, bps: Number(rate), entitled, paid, owed, reserved };
+  if (owed === 0n) return { ...base, send: 0n, call: null, reason: "nothing owed" };
+  if (!current) return { ...base, send: 0n, call: null, reason: "ledger is behind; cut held until it catches up" };
+  if (reserved < minCut) return { ...base, send: 0n, call: null, reason: "under 1 USDC; waits for the next tick" };
+  const data = encodeFunctionData({ abi: transferAbi, functionName: "transfer", args: [to, reserved] });
+  return {
+    ...base,
+    send: reserved,
+    call: {
+      to: USDC,
+      data,
+      command: `circle wallet execute --address ${agent} --chain ARC --contract ${USDC} --fn transfer --args ${to},${reserved.toString()}`,
+    },
+    reason: reserved < owed ? "send what the wallet holds; the rest stays owed" : "send the cut",
+  };
 }
 
 export function swapCommands(plan, agent = AGENT) {

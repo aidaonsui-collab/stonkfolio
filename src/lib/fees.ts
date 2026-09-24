@@ -16,8 +16,16 @@ export const LAUNCH = {
   },
 } as const;
 
+/** Share of the keeper's fee USDC sent to the creator wallet. The rest buys the book. Same as scripts/keeper/cycle.mjs. */
+export const CREATOR_CUT_BPS = 1_000;
+
 export const FEE_LEGS = [
-  { key: "creator", label: "Rewards", bps: LAUNCH.split.creatorBps, hint: "Keeper wallet. Buys the book. A small slice stays in USYC." },
+  {
+    key: "creator",
+    label: "Rewards",
+    bps: LAUNCH.split.creatorBps,
+    hint: `Keeper wallet. ${pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator. The rest buys the book.`,
+  },
   { key: "burn", label: "Burn", bps: LAUNCH.split.burnBps, hint: "Launch token to dead" },
   { key: "autoLp", label: "Auto-LP", bps: LAUNCH.split.autoLpBps, hint: "Stays in the SFOLIO/USDC pool" },
   { key: "platform", label: "Platform", bps: LAUNCH.split.platformBps, hint: "Platform share." },
