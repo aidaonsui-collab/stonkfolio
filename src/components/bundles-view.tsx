@@ -1,12 +1,15 @@
 "use client";
 
-import { STOCKS, SLEEVES, SLEEVE_TONE, sleeveWeight } from "@/lib/stocks";
+import { STOCKS, SLEEVES, SLEEVE_TONE, sleeveWeight, listingLabel } from "@/lib/stocks";
 import { usd } from "@/lib/format";
 import { BundleMap } from "./bundle-map";
 import { StockMark } from "./stock-mark";
 import { DistributedBoard } from "./distributed-board";
 import { WeightBar } from "./page-hero";
 import { cn } from "@/lib/utils";
+import { shortAddr } from "@/lib/format";
+
+const ARC_TOKEN_EXPLORER = "https://explorer.arc.io/address";
 
 export function BundlesView() {
   const total = STOCKS.reduce((s, x) => s + x.weight, 0);
@@ -16,6 +19,7 @@ export function BundlesView() {
       <h1 className="display-md">The Book.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         The keeper buys these names once fee USDC reaches 150. 5% of the book stays in USYC and BUIDL.
+        Dinari dShares are on Arc but not yet minted — trading stays gated until supply exists.
       </p>
 
       <DistributedBoard />
@@ -50,7 +54,7 @@ export function BundlesView() {
       </div>
 
       <div className="mt-8">
-        <div className="hidden grid-cols-[1.4fr_0.6fr_1fr_0.5fr_0.7fr_0.6fr] border-b border-border px-2 pb-2 text-[11px] tracking-[0.14em] text-muted uppercase md:grid">
+        <div className="hidden grid-cols-[1.4fr_0.6fr_1fr_0.5fr_0.7fr_1fr] border-b border-border px-2 pb-2 text-[11px] tracking-[0.14em] text-muted uppercase md:grid">
           <span>Name</span>
           <span>Kind</span>
           <span>Issuer</span>
@@ -59,43 +63,58 @@ export function BundlesView() {
           <span>Status</span>
         </div>
         <ul>
-          {STOCKS.map((s) => (
-            <li
-              key={s.ticker}
-              className="grid items-center gap-2 border-b border-border py-3.5 md:grid-cols-[1.4fr_0.6fr_1fr_0.5fr_0.7fr_0.6fr]"
-            >
-              <span className="flex items-center gap-3">
-                <StockMark stock={s} size={36} />
+          {STOCKS.map((s) => {
+            const label = listingLabel(s);
+            const liveLook = s.tradeable && s.status === "live";
+            return (
+              <li
+                key={s.ticker}
+                className="grid items-center gap-2 border-b border-border py-3.5 md:grid-cols-[1.4fr_0.6fr_1fr_0.5fr_0.7fr_1fr]"
+              >
+                <span className="flex items-center gap-3">
+                  <StockMark stock={s} size={36} />
+                  <span>
+                    <span className="block font-medium">{s.ticker}</span>
+                    <span className="block max-w-[220px] truncate text-xs text-muted">{s.name}</span>
+                    {s.address ? (
+                      <a
+                        className="mt-0.5 block font-mono text-[10px] text-muted hover:underline"
+                        href={`${ARC_TOKEN_EXPLORER}/${s.address}`}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {shortAddr(s.address)}
+                      </a>
+                    ) : null}
+                  </span>
+                </span>
+                <span className="hidden capitalize text-muted md:block">{s.kind === "mmf" ? "cash" : s.kind}</span>
+                <span className="hidden truncate text-sm text-muted md:block">{s.issuer}</span>
+                <span className="num text-sm">
+                  <span className="text-muted md:hidden">Weight </span>
+                  {s.weight}%
+                </span>
+                <span className="num hidden text-sm md:block">{usd(s.price)}</span>
                 <span>
-                  <span className="block font-medium">{s.ticker}</span>
-                  <span className="block max-w-[220px] truncate text-xs text-muted">{s.name}</span>
+                  <span
+                    className={cn(
+                      "inline-flex rounded-full px-2 py-0.5 font-mono text-[10px] tracking-wider uppercase",
+                      liveLook ? "bg-up/15 text-up" : "bg-elevated text-muted",
+                    )}
+                    title={s.tradeable ? "tradeable" : "not tradeable"}
+                  >
+                    {label}
+                  </span>
                 </span>
-              </span>
-              <span className="hidden capitalize text-muted md:block">{s.kind === "mmf" ? "cash" : s.kind}</span>
-              <span className="hidden truncate text-sm text-muted md:block">{s.issuer}</span>
-              <span className="num text-sm">
-                <span className="text-muted md:hidden">Weight </span>
-                {s.weight}%
-              </span>
-              <span className="num hidden text-sm md:block">{usd(s.price)}</span>
-              <span>
-                <span
-                  className={cn(
-                    "inline-flex rounded-full px-2 py-0.5 font-mono text-[10px] tracking-wider uppercase",
-                    s.status === "live" ? "bg-up/15 text-up" : "bg-elevated text-muted",
-                  )}
-                >
-                  {s.status}
-                </span>
-              </span>
-              <div className="col-span-full h-1 overflow-hidden rounded-full bg-elevated md:col-span-6">
-                <div
-                  className="h-full rounded-full"
-                  style={{ width: `${s.weight * (100 / 16)}%`, background: SLEEVE_TONE[s.kind] }}
-                />
-              </div>
-            </li>
-          ))}
+                <div className="col-span-full h-1 overflow-hidden rounded-full bg-elevated md:col-span-6">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${s.weight * (100 / 16)}%`, background: SLEEVE_TONE[s.kind] }}
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ul>
         <p className="mt-4 text-xs text-muted">Weights sum to {total}%.</p>
       </div>

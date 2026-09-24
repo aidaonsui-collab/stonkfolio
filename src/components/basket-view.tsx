@@ -1,6 +1,6 @@
 "use client";
 
-import { STOCKS } from "@/lib/stocks";
+import { STOCKS, listingLabel } from "@/lib/stocks";
 import { usd } from "@/lib/format";
 import { StockMark } from "./stock-mark";
 
@@ -44,7 +44,7 @@ export function BasketView() {
                 <td className="px-5 py-3.5">{usd(s.price, s.price >= 10 ? 2 : 2)}</td>
                 <td className="px-5 py-3.5">
                   <span className="rounded-full bg-[#f4f1ea] px-2 py-0.5 text-[11px] font-semibold tracking-[0.1em] uppercase">
-                    {s.status}
+                    {listingLabel(s)}
                   </span>
                 </td>
               </tr>

@@ -33,7 +33,9 @@ export function bookPayload() {
       weight: s.weight,
       price: s.price,
       status: s.status,
+      tradeable: s.tradeable,
       address: s.address,
+      wrappedAddress: s.wrappedAddress,
     })),
   };
 }

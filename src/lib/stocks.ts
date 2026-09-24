@@ -1,5 +1,6 @@
 export type StockKind = "equity" | "index" | "mmf";
-export type ListingStatus = "queued" | "candidate" | "live";
+/** Book listing state. `deployed-unminted` = Arc CA known, totalSupply 0, not tradeable. */
+export type ListingStatus = "queued" | "candidate" | "live" | "deployed-unminted";
 
 /** Arc mainnet (5042) ERC-20. Null until a public contract is confirmed — never invent. */
 export type ArcAddress = `0x${string}` | null;
@@ -17,38 +18,55 @@ export type Stock = {
   letter: string;
   /**
    * Arc mainnet token when known.
-   * Equities/index: Dinari dShare on eip155:5042 (null until Dinari publishes Arc CAs).
+   * Equities/index: Dinari plain dShare on eip155:5042.
    * Cash sleeve (BUIDL/USYC): not Dinari — keep BlackRock/Hashnote issuers.
+   * A non-null address is NOT enough to trade — gate on `tradeable`.
    */
   address: ArcAddress;
+  /** Dinari wrapped dShare (`.dw`) on Arc. Null for cash / unverified. */
+  wrappedAddress: ArcAddress;
+  /**
+   * Keeper / UI may treat as buyable only when true.
+   * Dinari Arc dShares stay false until totalSupply > 0 and a real venue exists.
+   */
+  tradeable: boolean;
 };
+
+/** Human label for the book status badge. */
+export function listingLabel(s: Pick<Stock, "status" | "tradeable" | "address" | "kind">): string {
+  if (s.status === "deployed-unminted") return "On Arc, not yet minted";
+  if (s.status === "queued") return "queued";
+  if (s.status === "candidate") return "candidate";
+  if (s.kind !== "mmf" && s.address && !s.tradeable) return "On Arc, not yet minted";
+  return s.status;
+}
 
 /**
  * Creator-chosen book. Swap weights here — dashboard, keeper, and yield all read this list.
  *
- * 2026-09-23: Dinari announced dShares live on Arc. Equity/index issuers retarget to Dinari.
- * Arc dShare addresses are not in Dinari docs (blockchain.md still omits Arc), not found via
- * explorer CREATE2 probes (empty morning CT), and sandbox API only returns
- * eip155:179205 / eip155:11155111 — not eip155:5042. Keep address null until production
- * stock list or an official registry publishes Arc CAs. Do not invent addresses.
+ * 2026-09-24: Arc Dinari diamond 0xf60f689ec22fC2D485b3C734eFE58538cCc28766 registers dShares.
+ * Plain + wrapped (.dw) CAs filled for verified book names. totalSupply is 0 on all of them;
+ * no Uniswap v3 USDC pools. tradeable stays false until mint. AMD/COIN not found via diamond
+ * CREATE enumeration (proxies not diamond-created; getDShares not on Arc facet) — left null.
+ * BE stays queued (not in Dinari catalog). Cash sleeve unchanged.
  */
 export const STOCKS: Stock[] = [
-  { ticker: "CRCL", name: "Circle Internet Group", issuer: "Dinari", kind: "equity", weight: 16, price: 124.0, status: "live", color: "#5b4dff", letter: "C", address: null },
-  { ticker: "NVDA", name: "NVIDIA", issuer: "Dinari", kind: "equity", weight: 12, price: 218.29, status: "live", color: "#76b900", letter: "N", address: null },
-  { ticker: "AAPL", name: "Apple", issuer: "Dinari", kind: "equity", weight: 10, price: 332.52, status: "live", color: "#111111", letter: "", address: null },
-  { ticker: "MSFT", name: "Microsoft", issuer: "Dinari", kind: "equity", weight: 9, price: 428.1, status: "live", color: "#00a4ef", letter: "M", address: null },
-  { ticker: "GOOGL", name: "Alphabet", issuer: "Dinari", kind: "equity", weight: 8, price: 198.4, status: "live", color: "#4285f4", letter: "G", address: null },
-  { ticker: "AMZN", name: "Amazon", issuer: "Dinari", kind: "equity", weight: 8, price: 257.13, status: "live", color: "#ff9900", letter: "a", address: null },
-  { ticker: "META", name: "Meta Platforms", issuer: "Dinari", kind: "equity", weight: 6, price: 612.2, status: "live", color: "#0668e1", letter: "∞", address: null },
-  { ticker: "TSLA", name: "Tesla", issuer: "Dinari", kind: "equity", weight: 6, price: 367.6, status: "live", color: "#cc0000", letter: "T", address: null },
-  { ticker: "AMD", name: "AMD", issuer: "Dinari", kind: "equity", weight: 5, price: 515.94, status: "live", color: "#000000", letter: "▶", address: null },
-  { ticker: "COIN", name: "Coinbase", issuer: "Dinari", kind: "equity", weight: 4, price: 274.07, status: "live", color: "#0052ff", letter: "C", address: null },
-  { ticker: "SPY", name: "S&P 500", issuer: "Dinari", kind: "index", weight: 8, price: 770.25, status: "live", color: "#1b4dff", letter: "S", address: null },
+  { ticker: "CRCL", name: "Circle Internet Group", issuer: "Dinari", kind: "equity", weight: 16, price: 124.0, status: "deployed-unminted", color: "#5b4dff", letter: "C", address: "0x2eBbD389bf504fA9f0600361ef70C15eb62Cc93B", wrappedAddress: "0x31323f4DB9a6EAB5cC149Ae43155B4756B5FFD7a", tradeable: false },
+  { ticker: "NVDA", name: "NVIDIA", issuer: "Dinari", kind: "equity", weight: 12, price: 218.29, status: "deployed-unminted", color: "#76b900", letter: "N", address: "0x4B16f5251cd4c853f28998809DcA61ccCBcB898B", wrappedAddress: "0x7BFdE9230dbDAD218671ED6556c767D6E214EB1C", tradeable: false },
+  { ticker: "AAPL", name: "Apple", issuer: "Dinari", kind: "equity", weight: 10, price: 332.52, status: "deployed-unminted", color: "#111111", letter: "", address: "0xB6b0149009eb78239213b97A960b5c793C03373b", wrappedAddress: "0x4C3556888fe97755B35f8b3EBE2a4C52b638a2fF", tradeable: false },
+  { ticker: "MSFT", name: "Microsoft", issuer: "Dinari", kind: "equity", weight: 9, price: 428.1, status: "deployed-unminted", color: "#00a4ef", letter: "M", address: "0x1831FdAC7Fcb9271f2E2FfB1bbba965CcAf8136B", wrappedAddress: "0x82d10e0e8C66de7b23B2F2230B279CDB0523B9Ba", tradeable: false },
+  { ticker: "GOOGL", name: "Alphabet", issuer: "Dinari", kind: "equity", weight: 8, price: 198.4, status: "deployed-unminted", color: "#4285f4", letter: "G", address: "0x7024f993A0781169E064346396c5F6139DC6d98A", wrappedAddress: "0x3D589A3c5dE0209d3Ca15A6e03266F7cC83f3F3E", tradeable: false },
+  { ticker: "AMZN", name: "Amazon", issuer: "Dinari", kind: "equity", weight: 8, price: 257.13, status: "deployed-unminted", color: "#ff9900", letter: "a", address: "0xAbA4a08C36404f6EFf79Dc85b0b4c5172A095504", wrappedAddress: "0xD6F02c18F5D0Ff2F688CFE80A199131ACE44b2Ce", tradeable: false },
+  { ticker: "META", name: "Meta Platforms", issuer: "Dinari", kind: "equity", weight: 6, price: 612.2, status: "deployed-unminted", color: "#0668e1", letter: "∞", address: "0x5183EfaBdDA4F872788307B705163982036ba962", wrappedAddress: "0xF7F6ACE1358b3FabD73959dc9cCbDfc36f974379", tradeable: false },
+  { ticker: "TSLA", name: "Tesla", issuer: "Dinari", kind: "equity", weight: 6, price: 367.6, status: "deployed-unminted", color: "#cc0000", letter: "T", address: "0x4193C2B9B176763f48B1eF5266aEd71f6348ba81", wrappedAddress: "0xff987C251de5E898058980915efB3eBC79C6605f", tradeable: false },
+  { ticker: "AMD", name: "AMD", issuer: "Dinari", kind: "equity", weight: 5, price: 515.94, status: "candidate", color: "#000000", letter: "▶", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "COIN", name: "Coinbase", issuer: "Dinari", kind: "equity", weight: 4, price: 274.07, status: "candidate", color: "#0052ff", letter: "C", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "SPY", name: "S&P 500", issuer: "Dinari", kind: "index", weight: 8, price: 770.25, status: "deployed-unminted", color: "#1b4dff", letter: "S", address: "0x82E9e5725dA9050e121D12802fCC302752aBaA1A", wrappedAddress: "0xbf823fC3e6a9326e4ACb0756388d9FF2566Ca1cA", tradeable: false },
   // Not in Dinari sandbox catalog (live /api/dinari/stocks missing BE). Queue until listed.
-  { ticker: "BE", name: "Bloom Energy", issuer: "Dinari", kind: "equity", weight: 3, price: 271.14, status: "queued", color: "#111111", letter: "BE", address: null },
-  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU", address: null },
+  { ticker: "BE", name: "Bloom Energy", issuer: "Dinari", kind: "equity", weight: 3, price: 271.14, status: "queued", color: "#111111", letter: "BE", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU", address: null, wrappedAddress: null, tradeable: false },
   // Cash sleeve — not Dinari. Arc USYC from project .env.example / keeper constant.
-  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US", address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490" },
+  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US", address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490", wrappedAddress: null, tradeable: true },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -60,7 +78,7 @@ export const SLEEVE_TONE: Record<StockKind, string> = {
 };
 
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
-  { id: "equity", label: "Equities", hint: "Dinari dShares the keeper buys first on Arc." },
+  { id: "equity", label: "Equities", hint: "Dinari dShares on Arc. Deployed, not yet minted — keeper waits." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
   { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve of the book (not Dinari)." },
 ];

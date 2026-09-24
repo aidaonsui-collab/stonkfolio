@@ -47,10 +47,12 @@ export async function GET() {
         tokens,
         chains: tokenChains(tokens),
         arcAddress,
-        /** Book static address (null until Arc CA published). Prefer live API arcAddress when set. */
+        /** Book static plain dShare. Prefer live API arcAddress when set. Not tradeable alone. */
         bookAddress: book?.address ?? null,
+        bookWrappedAddress: book?.wrappedAddress ?? null,
         bookIssuer: book?.issuer ?? null,
         bookStatus: book?.status ?? null,
+        bookTradeable: book?.tradeable ?? false,
       };
     });
     const have = new Set(stocks.map((n) => n.symbol.toUpperCase()));
@@ -71,7 +73,7 @@ export async function GET() {
       missing,
       note:
         arcCount === 0
-          ? "No eip155:5042 dShare addresses in this Dinari environment yet. Docs still omit Arc; sandbox returns non-Arc chains. Switch DINARI_ENVIRONMENT=production after KYB keys, then refill stocks.ts address fields."
+          ? "No eip155:5042 tokens in this Dinari API env yet. Book CAs are filled from the Arc diamond; tradeable stays false until mint."
           : undefined,
     });
   } catch (err) {

@@ -66,7 +66,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   listedWeight: number;
   queuedWeight: number;
 } {
-  const listed = new Set((args?.listedTickers ?? STOCKS.filter((s) => s.status === "live").map((s) => s.ticker)).map((t) => t.toUpperCase()));
+  const listed = new Set((args?.listedTickers ?? STOCKS.filter((s) => s.tradeable).map((s) => s.ticker)).map((t) => t.toUpperCase()));
   const listedWeight = STOCKS.filter((s) => listed.has(s.ticker)).reduce((n, s) => n + s.weight, 0);
   const queuedWeight = STOCKS.filter((s) => !listed.has(s.ticker)).reduce((n, s) => n + s.weight, 0);
   const cashSleeveBps = sleeveWeight("mmf") * 100;
@@ -74,7 +74,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (listedWeight === 0) {
     return {
       action: "park",
-      reason: "Nothing listed yet. Fee USDC waits in the wallet.",
+      reason: "Nothing tradeable yet. Fee USDC waits in the wallet (Arc dShares deployed but unminted).",
       cashSleeveBps,
       listedWeight,
       queuedWeight,

@@ -3,7 +3,9 @@
  * treasury transfer and the distributor round. It does not sign or broadcast.
  *
  * Weights are percents of the wallet's USDC and must sum to at most 100.
- * A name with no address is left as unspent USDC. Cash names are parked
+ * A name with no address is left as unspent USDC. Do not put a stocks.ts
+ * address into BOOK_TOKENS unless that row is tradeable (Dinari Arc dShares
+ * are deployed-unminted / tradeable:false until mint). Cash names are parked
  * through FolioDistributor.depositCash. Stock names are transferred into
  * FolioTreasury, then paid out with openRound + deliver.
  *
