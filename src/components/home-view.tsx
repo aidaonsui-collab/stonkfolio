@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FEE_LEGS, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
+import { useFolio } from "@/lib/folio";
 import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
 import { AddUsdc, AddUsdcButton } from "./add-usdc";
 import { Button } from "./ui/button";
@@ -29,6 +30,7 @@ const CHAPTERS = [
 ];
 
 export function HomeView() {
+  const { preview } = useFolio();
   const pulse = protocolPreview();
   const equity = sleeveWeight("equity");
   const index = sleeveWeight("index");
@@ -60,11 +62,35 @@ export function HomeView() {
           </div>
         </AddUsdc>
 
-        <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <Kpi label="Keeper USDC" value={compactUsd(pulse.usdcRouted)} hint="70% of the 1% fee" />
-          <Kpi label="Stocks bought" value={compactUsd(pulse.stocksBoughtUsd)} hint="At mark" />
-          <Kpi label="Holders" value={pulse.holders.toLocaleString()} hint="Eligible supply" />
-          <Kpi label="Last cycle" value={pulse.lastCycle} hint="Keeper clock" />
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-2">
+          <p className="kicker">Protocol pulse</p>
+          {preview ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-elevated px-2.5 py-1 font-mono text-[11px] tracking-wide text-accent">
+              Sample data · preview tape
+            </span>
+          ) : null}
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Kpi
+            label="Keeper USDC"
+            value={preview ? compactUsd(pulse.usdcRouted) : "—"}
+            hint={preview ? "70% of the 1% fee" : "Starts when the book lists."}
+          />
+          <Kpi
+            label="Stocks bought"
+            value={preview ? compactUsd(pulse.stocksBoughtUsd) : "—"}
+            hint={preview ? "At mark" : "Starts when the book lists."}
+          />
+          <Kpi
+            label="Holders"
+            value={preview ? pulse.holders.toLocaleString() : "—"}
+            hint={preview ? "Eligible supply" : "Starts when the book lists."}
+          />
+          <Kpi
+            label="Last cycle"
+            value={preview ? pulse.lastCycle : "—"}
+            hint={preview ? "Keeper clock" : "Starts when the book lists."}
+          />
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
@@ -135,7 +161,7 @@ export function HomeView() {
       <section className="page pt-12">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="display-md">Where the cut goes.</h2>
-          <p className="max-w-xs text-sm text-muted">1% on every trade. Split on the eve.fun Instant card.</p>
+          <p className="max-w-xs text-sm text-muted">1% on every trade. The fee splits four ways.</p>
         </div>
         <div className="mt-6">
           <WeightBar

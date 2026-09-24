@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { EVE_FUN, TOKEN } from "@/lib/chain";
+import { TOKEN } from "@/lib/chain";
 
 const STEPS = [
   {
     n: "01",
     title: `People trade $${TOKEN.symbol}`,
-    body: "Trades go through the eve.fun pool against USDC.",
-    stat: "EVE.FUN",
+    body: "Trades go through the $SFOLIO/USDC pool.",
+    stat: "USDC",
   },
   {
     n: "02",
     title: "1% comes off the trade",
-    body: "70% of that fee is USDC for the book. The rest burns, stays as LP, or goes to eve.fun.",
+    body: "70% of that fee is USDC for the book. The rest burns, stays as LP, or goes to the pad.",
     stat: "1%",
   },
   {
@@ -117,7 +117,7 @@ export function DocsView() {
             <span className="font-medium">$0.10</span>
           </li>
           <li className="flex justify-between gap-4 py-3 text-sm">
-            <span className="text-muted">eve.fun</span>
+            <span className="text-muted">Pad</span>
             <span className="font-medium">$0.10</span>
           </li>
         </ul>
@@ -144,10 +144,6 @@ export function DocsView() {
         <Link href="/yield" className="text-fg underline-offset-2 hover:underline">
           Yield
         </Link>
-        {" · "}
-        <a className="text-fg underline-offset-2 hover:underline" href={`${EVE_FUN}/docs`} target="_blank" rel="noreferrer">
-          eve.fun docs
-        </a>
         .
       </p>
     </div>

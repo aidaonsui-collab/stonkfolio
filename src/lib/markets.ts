@@ -169,7 +169,7 @@ export const MARKETS: Market[] = [
     special: true,
     hot: true,
     status: "live",
-    blurb: "Uniswap V3 CRCL/USDC 1% — the same venue eve.fun Instant already uses. LP fees, plus a skim to the folio.",
+    blurb: "Uniswap V3 CRCL/USDC at 1%. LP fees, plus a skim to the folio.",
   },
   {
     id: "uni-nvda",

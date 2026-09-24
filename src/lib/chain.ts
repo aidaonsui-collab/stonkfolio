@@ -12,8 +12,6 @@ export function arcStableAddress(asset: string) {
   return null;
 }
 export const ARC_EXPLORER = "https://arc-scan.org";
-export const EVE_FUN = "https://www.eve.fun";
-export const EVE_LAUNCH = "https://www.eve.fun/create";
 
 export const MAINNET_AT = new Date("2026-09-16T18:00:00.000Z");
 
@@ -38,7 +36,7 @@ export const TOKEN = {
   name: "Stonkfolio",
   symbol: "SFOLIO",
   supply: 1_000_000_000,
-  launchpad: "eve.fun Instant v4",
+  launchpad: "Instant v4",
   pair: "SFOLIO / USDC",
   poolFeeBps: 100,
   holdersBps: 0,
