@@ -11,7 +11,7 @@ export function BasketView() {
       <p className="text-[13px] tracking-[0.18em] text-[#8a8a8a] uppercase">/ RWA /</p>
       <h1 className="display mt-3 text-[42px] text-[#111] sm:text-6xl">The basket.</h1>
       <p className="mt-4 max-w-2xl text-[15px] text-[#6b6b6b]">
-        Creator-chosen. The keeper buys names on this list. Weights are the split of Instant creator USDC.
+        The keeper buys names on this list. Weights are the split of the rewards USDC.
       </p>
 
       <div className="folio-shadow mt-8 overflow-x-auto rounded-2xl bg-white">

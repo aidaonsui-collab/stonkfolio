@@ -56,7 +56,7 @@ export function KeeperView() {
         <Metric
           label="Agent wallet"
           value={shortAddr(keeper)}
-          hint="Creator rewards on Arc"
+          hint="Rewards wallet on Arc"
           href={`${ARC_EXPLORER}/address/${keeper}`}
         />
         <Metric
