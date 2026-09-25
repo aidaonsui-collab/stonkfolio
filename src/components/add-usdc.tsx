@@ -84,9 +84,7 @@ export function AddUsdc({ children }: { children: React.ReactNode }) {
       {note ? <p className="mt-4 max-w-md text-sm text-muted">{note}</p> : null}
       {open ? (
         <div className="mt-4 w-full">
-          <p className="mb-3 max-w-md text-sm text-muted">
-            USDC goes to your wallet. This checkout is a test. No real charge.
-          </p>
+          <p className="mb-3 max-w-md text-sm text-muted">USDC goes to your wallet.</p>
           <div ref={box} className="h-[720px] w-full overflow-hidden rounded-xl bg-surface" />
         </div>
       ) : null}
@@ -99,7 +97,7 @@ export function AddUsdcButton() {
   if (!ui) return null;
   return (
     <Button type="button" variant="outline" size="lg" onClick={ui.toggle} disabled={ui.busy}>
-      {ui.open ? "Close" : "Add USDC with Apple or Google Pay"}
+      {ui.open ? "Close" : "Add USDC"}
     </Button>
   );
 }
