@@ -19,7 +19,7 @@ export type Stock = {
   /**
    * Arc mainnet token when known.
    * Equities/index: Dinari plain dShare on eip155:5042.
-   * Cash sleeve (BUIDL/USYC): not Dinari — keep BlackRock/Hashnote issuers.
+   * Cash sleeve: Circle Earn Morpho vault. USDC in, vault shares out. Not Dinari.
    * A non-null address is NOT enough to trade — gate on `tradeable`.
    */
   address: ArcAddress;
@@ -48,7 +48,7 @@ export function listingLabel(s: Pick<Stock, "status" | "tradeable" | "address" |
  * Plain + wrapped (.dw) CAs filled for verified book names. totalSupply is 0 on all of them;
  * no Uniswap v3 USDC pools. tradeable stays false until mint. AMD/COIN not found via diamond
  * CREATE enumeration (proxies not diamond-created; getDShares not on Arc facet) — left null.
- * BE stays queued (not in Dinari catalog). Cash sleeve unchanged.
+ * BE stays queued (not in Dinari catalog). Cash sleeve is Circle Earn, not USYC or BUIDL.
  */
 export const STOCKS: Stock[] = [
   { ticker: "CRCL", name: "Circle Internet Group", issuer: "Dinari", kind: "equity", weight: 16, price: 124.0, status: "deployed-unminted", color: "#5b4dff", letter: "C", address: "0x2eBbD389bf504fA9f0600361ef70C15eb62Cc93B", wrappedAddress: "0x31323f4DB9a6EAB5cC149Ae43155B4756B5FFD7a", tradeable: false },
@@ -64,9 +64,7 @@ export const STOCKS: Stock[] = [
   { ticker: "SPY", name: "S&P 500", issuer: "Dinari", kind: "index", weight: 8, price: 770.25, status: "deployed-unminted", color: "#1b4dff", letter: "S", address: "0x82E9e5725dA9050e121D12802fCC302752aBaA1A", wrappedAddress: "0xbf823fC3e6a9326e4ACb0756388d9FF2566Ca1cA", tradeable: false },
   // Not in Dinari sandbox catalog (live /api/dinari/stocks missing BE). Queue until listed.
   { ticker: "BE", name: "Bloom Energy", issuer: "Dinari", kind: "equity", weight: 3, price: 271.14, status: "queued", color: "#111111", letter: "BE", address: null, wrappedAddress: null, tradeable: false },
-  { ticker: "BUIDL", name: "BlackRock USD Institutional Digital Liquidity Fund", issuer: "BlackRock / Securitize", kind: "mmf", weight: 3, price: 1, status: "live", color: "#000000", letter: "BU", address: null, wrappedAddress: null, tradeable: false },
-  // Cash sleeve — not Dinari. Arc USYC from project .env.example / keeper constant.
-  { ticker: "USYC", name: "Hashnote Short Duration Yield", issuer: "Hashnote / Circle", kind: "mmf", weight: 2, price: 1, status: "live", color: "#4e2eff", letter: "US", address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490", wrappedAddress: null, tradeable: true },
+  { ticker: "EARN", name: "Circle Earn USDC", issuer: "Morpho / Dialectic", kind: "mmf", weight: 5, price: 1, status: "live", color: "#4e2eff", letter: "E", address: "0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30", wrappedAddress: null, tradeable: true },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -80,7 +78,7 @@ export const SLEEVE_TONE: Record<StockKind, string> = {
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
   { id: "equity", label: "Equities", hint: "Dinari dShares on Arc. Deployed, not yet minted — keeper waits." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
-  { id: "mmf", label: "Cash", hint: "BUIDL / USYC sleeve of the book (not Dinari)." },
+  { id: "mmf", label: "Cash", hint: "5% of fee USDC. Deposited in Circle Earn on Morpho." },
 ];
 
 export function sleeveWeight(kind: StockKind) {
@@ -104,7 +102,7 @@ export const PREVIEW_DISTRIBUTIONS: Distribution[] = [
   { id: "5", received: "Sep 17, 09:05", ticker: "MSFT", amount: 0.0156, tx: "0x55aa1199cc88ee77ff00aabbccddeeff00112233" },
   { id: "6", received: "Sep 17, 21:18", ticker: "AMZN", amount: 0.0192, tx: "0x0f0e0d0c0b0a09080706050403020100fedcba98" },
   { id: "7", received: "Sep 18, 11:02", ticker: "TSLA", amount: 0.0114, tx: "0xcafebabedeadbeefcafebabedeadbeefcafebabe" },
-  { id: "8", received: "Sep 18, 11:02", ticker: "USYC", amount: 18.4, tx: "0xcafebabedeadbeefcafebabedeadbeefcafebabe" },
+  { id: "8", received: "Sep 18, 11:02", ticker: "EARN", amount: 18.4, tx: "0xcafebabedeadbeefcafebabedeadbeefcafebabe" },
 ];
 
 /** Preview holder wallet. */
@@ -122,13 +120,13 @@ export const PREVIEW_HOLDER = {
     MSFT: 0.0156,
     AMZN: 0.0192,
     TSLA: 0.0114,
-    USYC: 18.4,
+    EARN: 18.4,
     GOOGL: 0.0091,
     META: 0.0044,
     AMD: 0.0038,
     COIN: 0.0062,
     BE: 0.0021,
-    BUIDL: 12.2,
+
   } as Record<string, number>,
 };
 

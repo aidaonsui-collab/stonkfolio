@@ -8,8 +8,11 @@ export const EVE_AGENT_WALLET = getAddress("0x80aa1fA83F7B771BF2AB815DA9bA1236b1
 /** Eve Arc Facilitator receive wallet (EVE_CIRCLE_PAYTO). x402 on Arc. */
 export const EVE_ARC_FACILITATOR = getAddress("0x0e56d191219fa7a4a8a50d17d4ce838e80bf566e");
 
-/** Hashnote / Circle USYC on Arc mainnet. */
+/** Hashnote / Circle USYC on Arc mainnet. Not the cash sleeve. */
 export const ARC_USYC = getAddress("0x8a5D989Bbb96929F689B0200f435f53dA42bF490");
+
+/** Dialectic RWA USDC vault on Circle Earn (Morpho, Arc). The 5% sleeve deposits here. */
+export const EARN_VAULT = getAddress("0x6bdfe1165d5165808d02de05969c9a19e9b7cf30");
 
 /** FolioTreasury on Arc. Owner is the Air EOA. On-chain keeper is the distributor. */
 export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881D05F9215e");
@@ -55,7 +58,7 @@ export function usycAddress(): Address {
 /** Addresses the agent wallet may touch, including the creator wallet it pays. Used for Circle CLI allowlists. */
 export function keeperAllowlist(): Address[] {
   const extra = treasuryAddress();
-  const list = [ARC_USDC_ERC20, usycAddress(), keeperAddress(), x402PayTo(), CREATOR_CUT_WALLET];
+  const list = [ARC_USDC_ERC20, EARN_VAULT, keeperAddress(), x402PayTo(), CREATOR_CUT_WALLET];
   if (extra) list.push(extra);
   return [...new Set(list.map((a) => getAddress(a)))];
 }
@@ -86,7 +89,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (queuedWeight > 0) {
     return {
       action: "buy",
-      reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
+      reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in Circle Earn.`,
       cashSleeveBps,
       listedWeight,
       queuedWeight,
@@ -94,7 +97,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   }
   return {
     action: "buy",
-    reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in USYC and BUIDL.`,
+    reason: `Buy once fee USDC reaches ${MIN_BUY_USDC}. Keep ${cashSleeveBps / 100}% in Circle Earn.`,
     cashSleeveBps,
     listedWeight,
     queuedWeight,
@@ -103,16 +106,13 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
 
 export function circleCliParkCommands(usdcAmount = "10") {
   const keeper = keeperAddress();
-  const usyc = usycAddress();
-  const treasury = treasuryAddress();
+  const raw = BigInt(Math.round(Number(usdcAmount) * 1_000_000));
   return [
     `circle wallet list --type agent --chain ARC`,
     `circle wallet balance --address ${keeper} --chain ARC`,
     `circle wallet limit set --address ${keeper} --chain ARC --policy-type stablecoin --per-tx 500 --daily 5000`,
-    `circle wallet swap --address ${keeper} --chain ARC --from ${ARC_USDC_ERC20} --to ${usyc} --amount ${usdcAmount}`,
-    treasury
-      ? `circle wallet execute --address ${keeper} --chain ARC --contract ${treasury} --fn depositCash --args ${usyc},${usdcAmount}`
-      : `# deploy FolioTreasury then: circle wallet execute --contract $FOLIO_TREASURY --fn receiveFees`,
+    `circle wallet execute --address ${keeper} --chain ARC --contract ${ARC_USDC_ERC20} --fn approve --args ${EARN_VAULT},${raw}`,
+    `circle wallet execute --address ${keeper} --chain ARC --contract ${EARN_VAULT} --fn deposit --args ${raw},${keeper}`,
   ];
 }
 

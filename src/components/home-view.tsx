@@ -20,7 +20,7 @@ const CHAPTERS = [
   {
     n: "02",
     title: "The buy.",
-    body: `The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of that USDC. The rest buys the stocks. 5% stays in USYC and BUIDL. Holders get the stocks in the same proportion as their $SFOLIO.`,
+    body: `The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of that USDC. The rest buys the stocks. 5% of that USDC farms in Circle Earn. Holders get the stocks in the same proportion as their $SFOLIO.`,
   },
   {
     n: "03",

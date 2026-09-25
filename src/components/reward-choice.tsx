@@ -138,7 +138,7 @@ export function RewardChoice() {
             {pending ? "Waiting for signature" : dirty ? "Sign this choice" : "Signed"}
           </Button>
         )}
-        <p className="text-sm text-muted">{note || (isConnected ? "USYC and BUIDL stay in the book." : "Connect a wallet on Arc to sign.")}</p>
+        <p className="text-sm text-muted">{note || (isConnected ? "The cash sleeve stays in Circle Earn." : "Connect a wallet on Arc to sign.")}</p>
       </div>
     </section>
   );

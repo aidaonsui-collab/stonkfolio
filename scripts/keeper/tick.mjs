@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
  * Stonkfolio keeper tick. Runs on Jessica's Air (com.stonkfolio.keeper).
- * Reads Eve's Circle Agent Wallet USDC/USYC on Arc, advances the USDC ledger,
+ * Reads Eve's Circle Agent Wallet USDC on Arc, advances the USDC ledger,
  * and writes the creator cut and the buy plan.
  * Does not sign or broadcast. KEEPER_EXECUTE is recorded and ignored.
  */
 import { mkdirSync, writeFileSync, appendFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { CREATOR_CUT_BPS, CREATOR_WALLET, PAST_CREATOR_WALLETS, planCreatorCut, planCycle, parseBookTokens, swapCommands } from "./cycle.mjs";
+import { CREATOR_CUT_BPS, CREATOR_WALLET, PAST_CREATOR_WALLETS, earnCommands, planCreatorCut, planCycle, parseBookTokens, swapCommands } from "./cycle.mjs";
 import { advanceLedger, ledgerTotals, loadLedger, parseAddressList, saveLedger, topSenders } from "./ledger.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "../..");
@@ -179,7 +179,11 @@ const status = {
         legs: plan.legs.map((leg) => ({ symbol: leg.symbol, kind: leg.kind, amountIn: leg.amountIn.toString() })),
       }
     : null,
-  commands: [...(cut?.call ? [cut.call.command] : []), ...(plan ? swapCommands(plan, KEEPER).map((row) => row.command) : [])],
+  commands: [
+    ...(cut?.call ? [cut.call.command] : []),
+    ...(plan ? swapCommands(plan, KEEPER).map((row) => row.command) : []),
+    ...(plan ? earnCommands(plan, KEEPER).map((row) => row.command) : []),
+  ],
   error: err || configError || ledgerError || planError,
 };
 if (LIVE && process.env.KEEPER_EXECUTE === "1") {

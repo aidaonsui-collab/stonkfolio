@@ -1,13 +1,13 @@
 # Stonkfolio
 
-Arc-native stock folio. $SFOLIO launches on an Instant pad against USDC. Creator USDC buys a curated RWA book. 5% stays in USYC and BUIDL. Holders see those stocks on the distributions board.
+Arc-native stock folio. $SFOLIO launches on an Instant pad against USDC. Creator USDC buys a curated RWA book. 5% of that USDC farms in Circle Earn on Morpho. Holders see those stocks on the distributions board.
 
 ## Loop
 
 1. Creator preset: 1B $SFOLIO / USDC, Uniswap **v4**, LP locked, 1% pool fee.
 2. Fee card: rewards **80** · platform **20**. Burn, holders, and auto-LP are 0.
 3. Creator rewards wallet = Eve's existing Circle Agent Wallet (`0x80aa…e3f`). Same SCA as x402. No second wallet.
-4. 10% of the launch-fee USDC that reaches the keeper goes to the creator wallet (`0x26bD…13c9`). The rest buys the book in `src/lib/stocks.ts`. 5% stays in USYC and BUIDL. The keeper checks every 30 minutes on Jessica's Air (`com.stonkfolio.keeper`).
+4. 10% of the launch-fee USDC that reaches the keeper goes to the creator wallet (`0x26bD…13c9`). The rest buys the book in `src/lib/stocks.ts`. 5% of that USDC farms in Circle Earn on Morpho. The keeper checks every 30 minutes on Jessica's Air (`com.stonkfolio.keeper`).
 5. `FolioTreasury` distributes stocks to holders. Holders farm on Morpho / Aave / Uniswap, or Circle Earn Kit USDC vaults on `/yield`.
 6. `GET /api/book` is free. `GET /api/nav` and `/api/distributions` are x402 (Arc USDC, Eve's Arc Facilitator payTo).
 
@@ -29,7 +29,7 @@ npm run dev
 
 ## Dinari keys
 
-Equity/index names in `src/lib/stocks.ts` are issued by **Dinari** on Arc (`eip155:5042`). Cash sleeve (BUIDL / USYC) stays BlackRock / Hashnote.
+Equity/index names in `src/lib/stocks.ts` are issued by **Dinari** on Arc (`eip155:5042`). The cash sleeve is USDC deposited in Circle Earn (Morpho). It is not USYC or BUIDL.
 
 Do **not** paste the API secret into the website. Sandbox keys from [partners.dinari.com](https://partners.dinari.com) go in `.env.local`:
 

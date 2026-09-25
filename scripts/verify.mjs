@@ -78,7 +78,7 @@ await page.getByRole("link", { name: "Docs" }).first().click();
 await page.waitForURL("**/docs");
 await shot("docs-desktop.png");
 const docsCopy = await page.locator("body").textContent();
-if (!docsCopy || !docsCopy.toLowerCase().includes("usyc")) errors.push("docs missing USYC");
+if (!docsCopy || !docsCopy.toLowerCase().includes("circle earn")) errors.push("docs missing Circle Earn");
 if (!docsCopy || !docsCopy.toLowerCase().includes("people trade")) errors.push("docs missing process steps");
 if (docsCopy && /queued/i.test(docsCopy)) errors.push("docs still has pre-launch queued copy");
 if (docsCopy && docsCopy.includes(".env.local")) errors.push("docs leaked .env.local");

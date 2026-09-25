@@ -8,6 +8,7 @@ import {
   CREATOR_WALLET,
   MIN_BUY_USDC,
   MIN_CUT_USDC,
+  earnCommands,
   parseBookTokens,
   planCreatorCut,
   planCycle,
@@ -19,7 +20,7 @@ import {
 
 const NVDA = "0x0000000000000000000000000000000000000a11";
 const AAPL = "0x0000000000000000000000000000000000000B0B";
-const USYC = "0x8a5D989Bbb96929F689B0200f435f53dA42bF490";
+const EARN = "0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30";
 const ALICE = "0x0000000000000000000000000000000000000A11";
 const BOB = "0x0000000000000000000000000000000000000B0B";
 const CAROL = "0x00000000000000000000000000000000000000C0";
@@ -27,8 +28,7 @@ const CAROL = "0x00000000000000000000000000000000000000C0";
 const book = [
   { symbol: "NVDA", address: "0x0000000000000000000000000000000000000a11", weight: 12, kind: "stock", decimals: 18 },
   { symbol: "AAPL", address: AAPL, weight: 10, kind: "stock", decimals: 18 },
-  { symbol: "USYC", address: USYC, weight: 2, kind: "cash", decimals: 6 },
-  { symbol: "BUIDL", address: "", weight: 3, kind: "cash", decimals: 6 },
+  { symbol: "EARN", address: EARN, weight: 5, kind: "cash", decimals: 6 },
 ];
 
 test("under 150 USDC does not buy", () => {
@@ -54,14 +54,18 @@ test("configured weights are bought and the rest stays USDC", () => {
     [
       ["NVDA", 24n * 1_000_000n],
       ["AAPL", 20n * 1_000_000n],
-      ["USYC", 4n * 1_000_000n],
+      ["EARN", 10n * 1_000_000n],
     ],
   );
-  assert.equal(plan.unspent, 152n * 1_000_000n);
+  assert.equal(plan.unspent, 146n * 1_000_000n);
   const commands = swapCommands(plan);
-  assert.equal(commands.length, 3);
+  assert.equal(commands.length, 2);
   assert.match(commands[0].command, /--amount 24$/);
-  assert.match(commands[2].command, /--to 0x8a5D989Bbb96929F689B0200f435f53dA42bF490/);
+  const earn = earnCommands(plan);
+  assert.equal(earn.length, 2);
+  assert.match(earn[0].command, /--fn approve/);
+  assert.match(earn[1].command, /--fn deposit/);
+  assert.match(earn[1].command, /0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30/);
 });
 
 test("weights over 100 are refused", () => {
@@ -88,8 +92,7 @@ test("book weights still match src/lib/stocks.ts", () => {
   const sum = rows.reduce((n, row) => n + row[1], 0);
   assert.equal(sum, 100);
   assert.equal(rows.find((row) => row[0] === "NVDA")[1], 12);
-  assert.equal(rows.find((row) => row[0] === "USYC")[1], 2);
-  assert.equal(rows.find((row) => row[0] === "BUIDL")[1], 3);
+  assert.equal(rows.find((row) => row[0] === "EARN")[1], 5);
 });
 
 test("merkle proofs match the distributor leaf and pay pro-rata", () => {
@@ -157,26 +160,42 @@ test("three holders leave the division dust in the treasury", () => {
   assert.equal(settled.dust, 1n);
 });
 
-test("cash is parked through the distributor, not paid to holders", () => {
-  const leg = { symbol: "USYC", address: USYC, kind: "cash" };
+test("cash is deposited into Circle Earn, not paid to holders", () => {
+  const leg = { symbol: "EARN", address: EARN, kind: "cash" };
   const settled = settleLeg({ leg, amountOut: 4n * 1_000_000n, holders: [] });
   assert.equal(settled.kind, "cash");
-  assert.equal(settled.calls.length, 1);
-  const decoded = decodeFunctionData({
+  assert.equal(settled.calls.length, 2);
+  const approve = decodeFunctionData({
     abi: [
       {
         type: "function",
-        name: "depositCash",
+        name: "approve",
         inputs: [
-          { name: "token", type: "address" },
+          { name: "spender", type: "address" },
           { name: "amount", type: "uint256" },
         ],
       },
     ],
     data: settled.calls[0].data,
   });
-  assert.equal(decoded.args[0], USYC);
-  assert.equal(decoded.args[1], 4n * 1_000_000n);
+  const deposit = decodeFunctionData({
+    abi: [
+      {
+        type: "function",
+        name: "deposit",
+        inputs: [
+          { name: "assets", type: "uint256" },
+          { name: "receiver", type: "address" },
+        ],
+      },
+    ],
+    data: settled.calls[1].data,
+  });
+  assert.equal(approve.args[0], getAddress(EARN));
+  assert.equal(approve.args[1], 4n * 1_000_000n);
+  assert.equal(deposit.args[0], 4n * 1_000_000n);
+  assert.equal(settled.calls[0].to, USDC);
+  assert.equal(settled.calls[1].to, getAddress(EARN));
 });
 
 test("two-holder root is the forge vector", () => {

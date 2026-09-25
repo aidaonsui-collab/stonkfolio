@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ARC_EXPLORER, ARC_USDC_ERC20 } from "@/lib/chain";
-import { CREATOR_CUT_WALLET, EVE_AGENT_WALLET, FOLIO_DISTRIBUTOR, keeperPlan, usycAddress } from "@/lib/keeper";
+import { CREATOR_CUT_WALLET, EARN_VAULT, EVE_AGENT_WALLET, FOLIO_DISTRIBUTOR, keeperPlan } from "@/lib/keeper";
 import { shortAddr } from "@/lib/format";
 import { CREATOR_CUT_BPS, LAUNCH, pctOfFee } from "@/lib/fees";
 
@@ -41,7 +41,6 @@ export function KeeperView() {
   }, []);
 
   const keeper = status?.keeper ?? EVE_AGENT_WALLET;
-  const usyc = status?.usyc ?? usycAddress();
   const bal = status?.balances;
 
   return (
@@ -49,7 +48,7 @@ export function KeeperView() {
       <p className="kicker text-accent">Circle agent wallet</p>
       <h1 className="display-md mt-3">The keeper.</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-        {pctOfFee(LAUNCH.split.creatorBps)} of the trading fee is USDC to this Circle agent wallet. {pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator wallet. A buy waits until the rest reaches 150. Most of it buys the book. 5% stays in USYC and BUIDL. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays. The rest buys the book for their holders.
+        {pctOfFee(LAUNCH.split.creatorBps)} of the trading fee is USDC to this Circle agent wallet. {pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator wallet. A buy waits until the rest reaches 150. Most of it buys the book. 5% of that USDC farms in Circle Earn. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays in Circle Earn. The rest buys the book for their holders.
       </p>
 
       <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">
@@ -66,8 +65,8 @@ export function KeeperView() {
         />
         <Metric
           label="Cash sleeve"
-          value={bal ? `${Number(bal.keeperUsyc).toLocaleString()} USYC` : "—"}
-          hint="USYC and BUIDL. Not spent on stocks."
+          value="Circle Earn"
+          hint="5% of fee USDC, in a Morpho vault. Not spent on stocks."
         />
       </div>
 
@@ -87,7 +86,7 @@ export function KeeperView() {
         <ul className="mt-4 divide-y divide-border">
           <AllowRow label="Keeper" addr={keeper} />
           <AllowRow label="USDC" addr={ARC_USDC_ERC20} />
-          <AllowRow label="USYC" addr={usyc} />
+          <AllowRow label="Circle Earn" addr={EARN_VAULT} />
           <AllowRow label="Sends stocks" addr={FOLIO_DISTRIBUTOR} />
           <AllowRow label={`Creator (${pctOfFee(CREATOR_CUT_BPS)})`} addr={CREATOR_CUT_WALLET} />
           {status?.treasury ? <AllowRow label="Treasury" addr={status.treasury} /> : null}

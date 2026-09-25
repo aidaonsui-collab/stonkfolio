@@ -261,7 +261,7 @@ export const MARKETS: Market[] = [
     special: false,
     hot: false,
     status: "live",
-    blurb: "BlackRock BUIDL as Aave collateral once it lists on Arc. Cash sleeve of the folio.",
+    blurb: "Sample card. The book does not buy BUIDL. The cash sleeve is Circle Earn.",
   },
   {
     id: "morpho-usyc",
@@ -284,7 +284,7 @@ export const MARKETS: Market[] = [
     special: false,
     hot: false,
     status: "live",
-    blurb: "USYC isolated market. Circle-adjacent T-bill yield, Morpho utilisation.",
+    blurb: "Sample card. The book does not buy USYC. The cash sleeve is Circle Earn.",
   },
   {
     id: "uni-aapl",

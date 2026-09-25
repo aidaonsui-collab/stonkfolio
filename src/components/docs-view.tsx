@@ -22,7 +22,7 @@ const STEPS = [
   {
     n: "03",
     title: "The keeper buys stocks",
-    body: "The keeper buys once fee USDC reaches 150. Most of it buys the names in the book. 5% stays in USYC and BUIDL.",
+    body: "The keeper buys once fee USDC reaches 150. Most of it buys the names in the book. 5% of the USDC farms in Circle Earn.",
     stat: "THE BOOK",
   },
   {
@@ -44,7 +44,7 @@ const FAQ = [
   },
   {
     q: "Can I choose a stock?",
-    a: "Yes. Open Folio and sign one name from the book, including SPY, for the next cycle. USYC and BUIDL stay in the book. No signature means you receive every name.",
+    a: "Yes. Open Folio and sign one name from the book, including SPY, for the next cycle. The cash sleeve stays in Circle Earn. No signature means you receive every name.",
   },
   {
     q: "When does a choice count?",

@@ -7,9 +7,9 @@
  * Weights are percents of the wallet's USDC and must sum to at most 100.
  * A name with no address is left as unspent USDC. Do not put a stocks.ts
  * address into BOOK_TOKENS unless that row is tradeable (Dinari Arc dShares
- * are deployed-unminted / tradeable:false until mint). Cash names are parked
- * through FolioDistributor.depositCash. Stock names are transferred into
- * FolioTreasury, then paid out with openRound + deliver.
+ * are deployed-unminted / tradeable:false until mint). The cash sleeve stays
+ * USDC and is deposited into the Circle Earn Morpho vault. Stock names are
+ * transferred into FolioTreasury, then paid out with openRound + deliver.
  *
  * The merkle leaf matches FolioDistributor: keccak256(bytes.concat(keccak256(abi.encode(holder, share)))).
  */
@@ -20,6 +20,8 @@ export const USDC = "0x3600000000000000000000000000000000000000";
 export const AGENT = "0x80aa1fA83F7B771BF2AB815DA9bA1236b1B91E3F";
 export const TREASURY = "0xd47B04A41b3734EAb2687ef01d07881D05F9215e";
 export const DISTRIBUTOR = "0xf2815231F61A1A0cBA8BCDCBA41b22c26Ca4cB25";
+/** Dialectic RWA USDC on Circle Earn (Morpho, Arc). Active vault. The 5% sleeve deposits here. */
+export const EARN_VAULT = "0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30";
 
 /** 10% of the launch-fee USDC that reaches the keeper goes to the creator. Same as src/lib/fees.ts. */
 export const CREATOR_CUT_BPS = 1_000n;
@@ -37,6 +39,32 @@ const transferAbi = [
     stateMutability: "nonpayable",
     inputs: [
       { name: "to", type: "address" },
+      { name: "amount", type: "uint256" },
+    ],
+    outputs: [{ type: "bool" }],
+  },
+];
+
+const erc4626Abi = [
+  {
+    type: "function",
+    name: "deposit",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "assets", type: "uint256" },
+      { name: "receiver", type: "address" },
+    ],
+    outputs: [{ name: "shares", type: "uint256" }],
+  },
+];
+
+const approveAbi = [
+  {
+    type: "function",
+    name: "approve",
+    stateMutability: "nonpayable",
+    inputs: [
+      { name: "spender", type: "address" },
       { name: "amount", type: "uint256" },
     ],
     outputs: [{ type: "bool" }],
@@ -237,36 +265,66 @@ export function planCreatorCut({
 
 export function swapCommands(plan, agent = AGENT) {
   if (!plan || plan.action !== "buy") return [];
-  return plan.legs.map((leg) => ({
-    kind: "swap",
-    symbol: leg.symbol,
-    to: leg.address,
-    amountIn: leg.amountIn,
-    command: `circle wallet swap --address ${agent} --chain ARC --from ${USDC} --to ${leg.address} --amount ${formatUnits(leg.amountIn, 6)}`,
-  }));
+  return plan.legs
+    .filter((leg) => leg.kind !== "cash")
+    .map((leg) => ({
+      kind: "swap",
+      symbol: leg.symbol,
+      to: leg.address,
+      amountIn: leg.amountIn,
+      command: `circle wallet swap --address ${agent} --chain ARC --from ${USDC} --to ${leg.address} --amount ${formatUnits(leg.amountIn, 6)}`,
+    }));
+}
+
+/** Cash sleeve: USDC stays USDC and is deposited into the Morpho vault. Shares come back to the agent. */
+export function earnCommands(plan, agent = AGENT) {
+  if (!plan || plan.action !== "buy") return [];
+  return plan.legs
+    .filter((leg) => leg.kind === "cash")
+    .flatMap((leg) => earnCalls(leg, agent));
+}
+
+function earnCalls(leg, agent) {
+  const vault = getAddress(leg.address);
+  const amount = BigInt(leg.amountIn ?? leg.amountOut);
+  const approve = encodeFunctionData({ abi: approveAbi, functionName: "approve", args: [vault, amount] });
+  const deposit = encodeFunctionData({ abi: erc4626Abi, functionName: "deposit", args: [amount, getAddress(agent)] });
+  return [
+    {
+      kind: "approve",
+      symbol: leg.symbol,
+      to: USDC,
+      data: approve,
+      command: `circle wallet execute --address ${agent} --chain ARC --contract ${USDC} --fn approve --args ${vault},${amount.toString()}`,
+    },
+    {
+      kind: "earn",
+      symbol: leg.symbol,
+      to: vault,
+      data: deposit,
+      command: `circle wallet execute --address ${agent} --chain ARC --contract ${vault} --fn deposit --args ${amount.toString()},${getAddress(agent)}`,
+    },
+  ];
 }
 
 /** After a fill, move the tokens and open one payout round per stock. */
-export function settleLeg({ leg, amountOut, holders, treasury = TREASURY, distributor = DISTRIBUTOR, minBalance = 0n }) {
+export function settleLeg({
+  leg,
+  amountOut,
+  holders,
+  treasury = TREASURY,
+  distributor = DISTRIBUTOR,
+  agent = AGENT,
+  minBalance = 0n,
+}) {
   const out = BigInt(amountOut);
   if (out <= 0n) throw new Error(`no ${leg.symbol} received`);
   if (leg.kind === "cash") {
-    const data = encodeFunctionData({
-      abi: distributorAbi,
-      functionName: "depositCash",
-      args: [leg.address, out],
-    });
     return {
       kind: "cash",
       symbol: leg.symbol,
       amountOut: out,
-      calls: [
-        {
-          to: distributor,
-          data,
-          command: `circle wallet execute --address ${AGENT} --chain ARC --contract ${distributor} --fn depositCash --args ${leg.address},${out.toString()}`,
-        },
-      ],
+      calls: earnCalls({ ...leg, amountIn: out }, agent),
     };
   }
   const selected = (holders || [])
