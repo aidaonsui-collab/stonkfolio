@@ -19,7 +19,7 @@ export const MIN_BUY_USDC = 150n * 1_000_000n;
 export const USDC = "0x3600000000000000000000000000000000000000";
 export const AGENT = "0x80aa1fA83F7B771BF2AB815DA9bA1236b1B91E3F";
 export const TREASURY = "0xd47B04A41b3734EAb2687ef01d07881D05F9215e";
-export const DISTRIBUTOR = "0x75ff1625d5A94155dD436BcbEA6C09909F048881";
+export const DISTRIBUTOR = "0xf2815231F61A1A0cBA8BCDCBA41b22c26Ca4cB25";
 
 /** 10% of the launch-fee USDC that reaches the keeper goes to the creator. Same as src/lib/fees.ts. */
 export const CREATOR_CUT_BPS = 1_000n;

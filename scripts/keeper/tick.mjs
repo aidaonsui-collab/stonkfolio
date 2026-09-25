@@ -129,7 +129,7 @@ const status = {
   at: now,
   host: process.env.INDEXER_WORKER || "jessica-air",
   keeper: KEEPER,
-  distributor: "0x75ff1625d5A94155dD436BcbEA6C09909F048881",
+  distributor: "0xf2815231F61A1A0cBA8BCDCBA41b22c26Ca4cB25",
   live: LIVE,
   block: head,
   action,

@@ -15,7 +15,7 @@ export const ARC_USYC = getAddress("0x8a5D989Bbb96929F689B0200f435f53dA42bF490")
 export const FOLIO_TREASURY_LIVE = getAddress("0xd47B04A41b3734EAb2687ef01d07881D05F9215e");
 
 /** Pushes a merkle round of stocks to holders. Treasury.keeper. */
-export const FOLIO_DISTRIBUTOR = getAddress("0x75ff1625d5A94155dD436BcbEA6C09909F048881");
+export const FOLIO_DISTRIBUTOR = getAddress("0xf2815231F61A1A0cBA8BCDCBA41b22c26Ca4cB25");
 
 /** Creator wallet. Gets 10% of the launch-fee USDC that reaches the keeper. Same as scripts/keeper/cycle.mjs. */
 export const CREATOR_CUT_WALLET = getAddress("0x26bD491560b5175ee8bD1DA4998Fe260FfC413c9");
