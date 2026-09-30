@@ -45,6 +45,14 @@ DINARI_ENVIRONMENT=sandbox
 
 Plain dShare + wrapped (`.dw`) addresses in `stocks.ts` were filled from Dinari's Arc diamond `0xf60f689ec22fC2D485b3C734eFE58538cCc28766` (verified `symbol()` / `totalSupply()` on-chain). **Supply is 0** as of Sep 24 2026; there are no Uniswap v3 USDC pools yet. Each equity/index row uses `status: "deployed-unminted"` and **`tradeable: false`**. The keeper and UI gate buys on `tradeable`, not on a non-null `address`. Flip `tradeable` only after mint + a real venue. BE stays without an Arc CA until listed. AMD/COIN CAs filled 2026-09-24 from diamond storage. Do not invent addresses. Keep `KEEPER_LIVE=0` until then.
 
+## Borrow (Circle Borrow Kit)
+
+`/yield` lists Circle Borrow Kit markets on Arc (Morpho Blue): borrow USDC or EURC against cirBTC, WETH, XAUM, and a few stable collaterals, from the user's own wallet. Quotes show collateral, health factor, and liquidation price before signing. Open loans can be repaid and closed from the same section.
+
+- **Fee.** Each borrow carries a 0.25% origination fee (`BORROW_FEE_BPS` in `src/lib/borrow.ts`) paid to the Arcfun platform wallet `0x26bD…13c9` (owner and treasury of the live Arcfun Instant factory).
+- **How the fee attaches.** The browser kit talks to `/v1/borrowKit/*` on this site, which forwards to `api.circle.com` and adds `CIRCLE_API_KEY` only on `loans/borrow` and `loans/borrow/quote`. `integrators/*` is never proxied, so nobody can change the fee through the site. Without the key, borrowing still works with no fee.
+- **One-time setup.** Put `CIRCLE_API_KEY` in `.env.local` and on Vercel, then run `node --env-file=.env.local scripts/borrow/set-integrator-fee.mjs` (`--check` reads the current setting). The script reads the rate and wallet from `src/lib/borrow.ts`.
+
 ## Creator cut
 
 The keeper owes the creator wallet 10% of every launch-fee USDC that has ever reached it, less what that wallet was already sent. Leftover USDC carried between ticks is never cut twice. The owed amount comes off the book's budget before `planCycle` runs, and the tick writes the transfer as a `circle wallet execute … --fn transfer` command. Like the buys, it does not broadcast.

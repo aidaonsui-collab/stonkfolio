@@ -30,7 +30,7 @@ export async function addOrSwitchArc() {
           chainId: hexId,
           chainName: "Arc",
           nativeCurrency: { name: "USD Coin", symbol: "USDC", decimals: 18 },
-          rpcUrls: ["https://rpc.arc-scan.org", "https://arc-mainnet-rpc.baracat.meme"],
+          rpcUrls: ["https://rpc.mainnet.arc.io"],
           blockExplorerUrls: ["https://arc-scan.org"],
         },
       ],

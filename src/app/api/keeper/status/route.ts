@@ -15,7 +15,7 @@ export async function GET() {
   const treasury = treasuryAddress();
   const plan = keeperPlan();
   const creatorCut = { wallet: CREATOR_CUT_WALLET, bps: CREATOR_CUT_BPS };
-  const rpc = process.env.ARC_RPC || "https://rpc.arc-scan.org";
+  const rpc = process.env.ARC_RPC || "https://rpc.mainnet.arc.io";
   const client = createPublicClient({
     chain: arc,
     transport: http(rpc, { timeout: 8_000 }),

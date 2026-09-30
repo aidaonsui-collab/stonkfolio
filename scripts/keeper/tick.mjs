@@ -19,7 +19,7 @@ const LEDGER_PATH = join(dataDir, "keeper-ledger.json");
 const KEEPER = (process.env.KEEPER_AGENT_WALLET || "0x80aa1fA83F7B771BF2AB815DA9bA1236b1B91E3F").toLowerCase();
 const USDC = "0x3600000000000000000000000000000000000000";
 const USYC = (process.env.USYC_ADDRESS || "0x8a5D989Bbb96929F689B0200f435f53dA42bF490").toLowerCase();
-const RPC = process.env.ARC_RPC || "https://rpc.arc-scan.org";
+const RPC = process.env.ARC_RPC || "https://rpc.mainnet.arc.io";
 const LOGS_RPC = process.env.ARC_LOGS_RPC || RPC;
 const LIVE = process.env.KEEPER_LIVE === "1";
 /** Read this many blocks behind head, so a lagging RPC node already has the logs. About 15 seconds. */
