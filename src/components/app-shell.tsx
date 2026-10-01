@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Briefcase, FileText, Home, Landmark, Sprout } from "lucide-react";
+import { ArrowLeftRight, BookOpen, Briefcase, FileText, Home, Landmark, Sprout } from "lucide-react";
 import { SiteHeader, LINKS, isActive } from "./site-header";
 import { FolioMark, Wordmark } from "./logo";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,7 @@ const ICONS = {
   "/": Home,
   "/bundles": BookOpen,
   "/portfolio": Briefcase,
+  "/swap": ArrowLeftRight,
   "/yield": Sprout,
   "/keeper": Landmark,
   "/docs": FileText,
@@ -91,7 +92,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </div>
         </footer>
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
-          <ul className="grid grid-cols-5">
+          <ul className="grid grid-cols-6">
             {DOCK.map((item) => {
               const active = isActive(pathname, item.href);
               const Icon = ICONS[item.href];
@@ -100,7 +101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   <Link
                     href={item.href}
                     className={cn(
-                      "flex min-h-12 flex-col items-center justify-center gap-1 py-2 text-xs tracking-wide",
+                      "flex min-h-12 flex-col items-center justify-center gap-1 py-2 text-[11px] tracking-wide",
                       active ? "text-accent" : "text-muted",
                     )}
                   >

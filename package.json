@@ -10,7 +10,9 @@
     "test:contracts": "forge test --root contracts -vv",
     "test:keeper": "node --test scripts/keeper/cycle.test.mjs scripts/keeper/ledger.test.mjs",
     "test:api": "node scripts/test-api.mjs",
-    "keeper:tick": "node scripts/keeper/tick.mjs"
+    "keeper:tick": "node scripts/keeper/tick.mjs",
+    "test:swap": "tsx --test scripts/swap/swap.test.ts",
+    "swap:quotes": "tsx scripts/swap/quotes.mts"
   },
   "dependencies": {
     "@circle-fin/adapter-viem-v2": "^1.18.0",
@@ -43,6 +45,7 @@
     "eslint-config-next": "16.3.5",
     "playwright": "^1.63.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

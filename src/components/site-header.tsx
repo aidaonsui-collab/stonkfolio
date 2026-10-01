@@ -15,6 +15,7 @@ export const LINKS = [
   { href: "/", label: "Home" },
   { href: "/bundles", label: "Book" },
   { href: "/portfolio", label: "Folio" },
+  { href: "/swap", label: "Swap" },
   { href: "/yield", label: "Yield" },
   { href: "/keeper", label: "Keeper" },
   { href: "/docs", label: "Docs" },
