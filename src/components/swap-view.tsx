@@ -15,9 +15,17 @@ import {
   DEFAULT_SLIPPAGE_BPS,
   IMPACT_CONFIRM_PCT,
   IMPACT_WARN_PCT,
+  PERMIT2,
   SWAP_ROUTER,
   SWAP_TOKENS,
+  UNIVERSAL_ROUTER,
+  VENUE_LABEL,
+  buildPermit2ApproveTx,
   buildSwapTx,
+  buildV4SwapTx,
+  permit2Abi,
+  routeVenue,
+  v4ApprovalStep,
   erc20Abi,
   formatTokenAmount,
   friendlyError,
@@ -95,7 +103,7 @@ export function SwapView() {
   const [slipCustom, setSlipCustom] = useState("");
   const [showSettings, setShowSettings] = useState(false);
   const [picker, setPicker] = useState<"in" | "out" | null>(null);
-  const [busy, setBusy] = useState<null | "approve" | "swap">(null);
+  const [busy, setBusy] = useState<null | "approve" | "permit2" | "swap">(null);
   const [notice, setNotice] = useState<{ tone: "ok" | "err"; text: string; tx?: string } | null>(null);
 
   const amountIn = parseAmount(amountStr, tokenIn.decimals);
@@ -126,6 +134,19 @@ export function SwapView() {
     queryKey: ["swap-allowance", address, tokenIn.address],
     enabled: Boolean(address && onArc),
     queryFn: () => client.readContract({ address: tokenIn.address, abi: erc20Abi, functionName: "allowance", args: [address as Address, SWAP_ROUTER] }),
+  });
+
+  // v4 spends through Permit2: ERC-20 -> Permit2, then Permit2 -> Universal Router.
+  const permit2Allowance = useQuery({
+    queryKey: ["swap-permit2", address, tokenIn.address],
+    enabled: Boolean(address && onArc),
+    queryFn: async () => {
+      const [erc20ToPermit2, p2] = await Promise.all([
+        client.readContract({ address: tokenIn.address, abi: erc20Abi, functionName: "allowance", args: [address as Address, PERMIT2] }),
+        client.readContract({ address: PERMIT2, abi: permit2Abi, functionName: "allowance", args: [address as Address, tokenIn.address, UNIVERSAL_ROUTER] }),
+      ]);
+      return { erc20ToPermit2, amount: p2[0], expiration: Number(p2[1]) };
+    },
   });
 
   // Debounced quote (400ms). The query key only changes after typing pauses.
@@ -162,7 +183,20 @@ export function SwapView() {
   const q = quote.kind === "ok" ? quote.q : null;
   const minOut = q ? minReceived(q.best.amountOut, slipBps) : null;
   const level = q ? impactLevel(q.impactPct) : "ok";
-  const needsAllowance = Boolean(amountIn && allowance.data !== undefined && allowance.data < amountIn);
+  const venue = q ? routeVenue(q.best.route) : null;
+  const v4Step =
+    venue === "v4" && amountIn && permit2Allowance.data
+      ? v4ApprovalStep({
+          erc20ToPermit2: permit2Allowance.data.erc20ToPermit2,
+          permit2Amount: permit2Allowance.data.amount,
+          permit2Expiration: permit2Allowance.data.expiration,
+          amountIn,
+        })
+      : null;
+  const needsAllowance =
+    venue === "v4"
+      ? Boolean(amountIn && (permit2Allowance.data === undefined ? false : v4Step !== null))
+      : Boolean(amountIn && allowance.data !== undefined && allowance.data < amountIn);
 
   const flip = useCallback(() => {
     setTokenIn(tokenOut);
@@ -224,17 +258,32 @@ export function SwapView() {
     setNotice(null);
     try {
       // Exact amount, not infinite.
+      if (venue === "v4" && v4Step === "permit2") {
+        // Step 2 of 2: Permit2 lets the Universal Router pull exactly this amount for a short time.
+        const p2 = buildPermit2ApproveTx({ token: tokenIn.address, amountIn });
+        const hash = await writeContractAsync({ ...p2, args: [...p2.args] as never, chainId: ARC_CHAIN_ID } as never);
+        const rcpt = await client.waitForTransactionReceipt({ hash });
+        if (rcpt.status !== "success") throw new Error("Approval failed on-chain.");
+        await permit2Allowance.refetch();
+        setNotice({ tone: "ok", text: `${tokenIn.symbol} approved for the Uniswap v4 router for this swap (expires in 30 minutes).`, tx: hash });
+        return;
+      }
+      const spender = venue === "v4" ? PERMIT2 : SWAP_ROUTER;
       const hash = await writeContractAsync({
         address: tokenIn.address,
         abi: erc20Abi,
         functionName: "approve",
-        args: [SWAP_ROUTER, amountIn],
+        args: [spender, amountIn],
         chainId: ARC_CHAIN_ID,
       });
       const rcpt = await client.waitForTransactionReceipt({ hash });
       if (rcpt.status !== "success") throw new Error("Approval failed on-chain.");
-      await allowance.refetch();
-      setNotice({ tone: "ok", text: `${tokenIn.symbol} approved for this swap.`, tx: hash });
+      await Promise.all([allowance.refetch(), permit2Allowance.refetch()]);
+      setNotice({
+        tone: "ok",
+        text: venue === "v4" ? `${tokenIn.symbol} approved for Permit2. One more approval, then the swap.` : `${tokenIn.symbol} approved for this swap.`,
+        tx: hash,
+      });
     } catch (err) {
       setNotice({ tone: "err", text: friendlyError(err) });
     } finally {
@@ -252,13 +301,16 @@ export function SwapView() {
     setBusy("swap");
     setNotice(null);
     try {
-      const tx = buildSwapTx({ route: q.best.route, amountIn, minOut, recipient: address });
+      const tx =
+        venue === "v4"
+          ? buildV4SwapTx({ route: q.best.route, amountIn, minOut })
+          : buildSwapTx({ route: q.best.route, amountIn, minOut, recipient: address });
       const hash = await writeContractAsync({ ...tx, args: [...tx.args] as never, chainId: ARC_CHAIN_ID } as never);
       const rcpt = await client.waitForTransactionReceipt({ hash });
       if (rcpt.status !== "success") throw new Error("The swap reverted on-chain. No funds moved.");
       setNotice({ tone: "ok", text: `Swapped ${formatTokenAmount(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${tokenOut.symbol}.`, tx: hash });
       setAmountStr("");
-      await Promise.all([balances.refetch(), allowance.refetch()]);
+      await Promise.all([balances.refetch(), allowance.refetch(), permit2Allowance.refetch()]);
       qc.invalidateQueries({ queryKey: ["swap-balances"] });
     } catch (err) {
       setNotice({ tone: "err", text: friendlyError(err) });
@@ -306,7 +358,7 @@ export function SwapView() {
     label = "Swapping…";
     disabled = true;
   } else if (needsAllowance) {
-    label = `Approve ${tokenIn.symbol}`;
+    label = venue === "v4" ? (v4Step === "permit2" ? `Approve ${tokenIn.symbol} for swap (step 2 of 2)` : `Approve ${tokenIn.symbol} (step 1 of 2)`) : `Approve ${tokenIn.symbol}`;
     action = approve;
   } else if (level === "confirm" && !bigImpactOk) {
     label = "Confirm price impact to swap";
@@ -325,7 +377,7 @@ export function SwapView() {
       <p className="kicker text-accent">Swap</p>
       <h1 className="display-md mt-3">Swap on Arc.</h1>
       <p className="mt-3 text-sm leading-relaxed text-muted">
-        Trade USDC, EURC, cirBTC and WETH on Uniswap v3 from your own wallet.
+        Trade USDC, EURC, cirBTC and WETH through Uniswap v3 and v4 on Arc from your own wallet. We pick whichever gives you more.
       </p>
 
       <div className="panel mt-8 p-3 sm:p-4">
@@ -468,6 +520,13 @@ export function SwapView() {
               </dd>
             </div>
             <div className="flex justify-between gap-4">
+              <dt className="text-muted">Venue</dt>
+              <dd className="text-right">
+                {VENUE_LABEL[q.venue]}
+                {q.bestV3 && q.bestV4 ? " (better of v3 and v4)" : ""}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-4">
               <dt className="text-muted">Route</dt>
               <dd className="text-right">{routeLabel(q.best.route, tokens)}</dd>
             </div>
@@ -529,7 +588,7 @@ export function SwapView() {
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-muted">
-        Swaps execute on Uniswap v3 on Arc from your own wallet. Stonkfolio takes no fee and never holds your funds.
+        Swaps route through Uniswap v3 and v4 on Arc and execute from your own wallet. Stonkfolio takes no fee and never holds your funds. Uniswap v4 swaps need two one-time approvals (token to Permit2, then Permit2 to the router) for the exact amount.
       </p>
       <p className="mt-2 text-xs leading-relaxed text-muted">
         Crypto swaps carry risk, including thin liquidity and price impact. Read the{" "}

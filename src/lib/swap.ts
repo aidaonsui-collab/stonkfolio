@@ -1,7 +1,9 @@
 import {
   createPublicClient,
   defineChain,
+  encodeAbiParameters,
   encodeFunctionData,
+  keccak256,
   encodePacked,
   formatUnits,
   getAddress,
@@ -14,8 +16,9 @@ import {
 } from "viem";
 
 /**
- * Swap on Arc (5042) through Uniswap v3. Stonkfolio takes no fee and never holds funds:
- * the user's wallet signs approve + swap straight to SwapRouter02 with itself as recipient.
+ * Swap on Arc (5042) through Uniswap v3 and v4. Stonkfolio takes no fee and never holds funds:
+ * the user's wallet signs approve + swap straight to Uniswap's router (SwapRouter02 for v3, the
+ * Universal Router + Permit2 for v4) with itself as recipient.
  * This file only depends on viem so the pure helpers can be tested from node.
  */
 
@@ -27,6 +30,29 @@ export const V3_FACTORY = getAddress("0xf0db7b58379503491d857dB50AC9ece64c653918
 export const SWAP_ROUTER = getAddress("0x53BF6B0684Ec7eF91e1387Da3D1a1769bC5A6F77");
 export const QUOTER_V2 = getAddress("0x7DfD4F31be6814D2906BDE155c3e1B146EAc1468");
 export const MULTICALL3 = getAddress("0xcA11bde05977b3631167028862bE2a173976CA11");
+
+/**
+ * Uniswap v4 on Arc. All verified on-chain 2026-10-01 with eth_getCode, and by checking that
+ * Quoter / StateView / Universal Router / PositionManager each return PoolManager from poolManager().
+ * Addresses match developers.uniswap.org/docs/protocols/v4/deployments (Arc: 5042).
+ */
+export const V4_POOL_MANAGER = getAddress("0x8366a39CC670B4001A1121B8F6A443A643e40951");
+export const V4_QUOTER = getAddress("0x8Dc178eFB8111BB0973Dd9d722ebeFF267c98F94");
+export const V4_STATE_VIEW = getAddress("0xF3334192D15450CdD385c8B70e03f9A6bD9E673b");
+export const UNIVERSAL_ROUTER = getAddress("0x4fcA4a51Ab4F23A7447b3284fBd7D73289A89Fb1");
+export const PERMIT2 = getAddress("0x000000000022D473030F116dDEE9F6B43aC78BA3");
+/** Permit2 allowance given to the Universal Router lasts this long. */
+export const PERMIT2_EXPIRY_SECONDS = 30 * 60;
+/** v4 pools are keyed by (fee, tickSpacing). hooks is always zero: hooked pools are not routed. */
+export const V4_POOL_SPECS: readonly { fee: number; tickSpacing: number }[] = [
+  { fee: 100, tickSpacing: 1 },
+  { fee: 500, tickSpacing: 10 },
+  { fee: 3000, tickSpacing: 60 },
+  { fee: 10000, tickSpacing: 200 },
+];
+
+export type Venue = "v3" | "v4";
+export const VENUE_LABEL: Record<Venue, string> = { v3: "Uniswap v3", v4: "Uniswap v4" };
 
 export const FEE_TIERS = [100, 500, 3000, 10000] as const;
 export const DEADLINE_SECONDS = 20 * 60;
@@ -62,6 +88,60 @@ export const erc20Abi = parseAbi([
 
 export const factoryAbi = parseAbi(["function getPool(address,address,uint24) view returns (address)"]);
 export const poolAbi = parseAbi(["function liquidity() view returns (uint128)"]);
+
+export const permit2Abi = parseAbi([
+  "function allowance(address owner, address token, address spender) view returns (uint160 amount, uint48 expiration, uint48 nonce)",
+  "function approve(address token, address spender, uint160 amount, uint48 expiration)",
+]);
+
+export const stateViewAbi = parseAbi(["function getLiquidity(bytes32 poolId) view returns (uint128)"]);
+
+const poolKeyComponents = [
+  { name: "currency0", type: "address" },
+  { name: "currency1", type: "address" },
+  { name: "fee", type: "uint24" },
+  { name: "tickSpacing", type: "int24" },
+  { name: "hooks", type: "address" },
+] as const;
+
+/** V4Quoter. Like QuoterV2 it is nonpayable but meant to be eth_called. */
+export const v4QuoterAbi = [
+  {
+    type: "function",
+    name: "quoteExactInputSingle",
+    stateMutability: "nonpayable",
+    inputs: [
+      {
+        name: "params",
+        type: "tuple",
+        components: [
+          { name: "poolKey", type: "tuple", components: poolKeyComponents },
+          { name: "zeroForOne", type: "bool" },
+          { name: "exactAmount", type: "uint128" },
+          { name: "hookData", type: "bytes" },
+        ],
+      },
+    ],
+    outputs: [
+      { name: "amountOut", type: "uint256" },
+      { name: "gasEstimate", type: "uint256" },
+    ],
+  },
+] as const;
+
+export const universalRouterAbi = [
+  {
+    type: "function",
+    name: "execute",
+    stateMutability: "payable",
+    inputs: [
+      { name: "commands", type: "bytes" },
+      { name: "inputs", type: "bytes[]" },
+      { name: "deadline", type: "uint256" },
+    ],
+    outputs: [],
+  },
+] as const;
 
 /** QuoterV2 (struct form). */
 export const quoterAbi = [
@@ -247,8 +327,13 @@ export function encodePath(tokens: readonly Address[], fees: readonly number[]):
   return encodePacked(types, values);
 }
 
-export type RouteHop = { tokenIn: Address; tokenOut: Address; fee: number };
-export type Route = { hops: RouteHop[] };
+export type RouteHop = { tokenIn: Address; tokenOut: Address; fee: number; /** v4 only */ tickSpacing?: number };
+/** venue defaults to v3 when absent. v4 routes are always a single hop. */
+export type Route = { hops: RouteHop[]; venue?: Venue };
+
+export function routeVenue(route: Route): Venue {
+  return route.venue ?? "v3";
+}
 
 export function routeTokens(route: Route): Address[] {
   return [route.hops[0].tokenIn, ...route.hops.map((h) => h.tokenOut)];
@@ -259,6 +344,112 @@ export function routeLabel(route: Route, tokens: readonly SwapToken[]): string {
   const path = routeTokens(route).map(sym).join(" → ");
   const fees = route.hops.map((h) => `${h.fee / 10_000}%`).join(" + ");
   return `${path} (${fees} fee${route.hops.length > 1 ? "s" : ""})`;
+}
+
+// ---------- v4 helpers ----------
+
+/** v4 orders a pool's two currencies by address. */
+export function sortCurrencies(a: Address, b: Address): [Address, Address] {
+  return BigInt(a) < BigInt(b) ? [a, b] : [b, a];
+}
+
+export type V4PoolKey = { currency0: Address; currency1: Address; fee: number; tickSpacing: number; hooks: Address };
+
+export function v4PoolKey(a: Address, b: Address, fee: number, tickSpacing: number): V4PoolKey {
+  const [currency0, currency1] = sortCurrencies(a, b);
+  return { currency0, currency1, fee, tickSpacing, hooks: ZERO };
+}
+
+/** PoolId = keccak256(abi.encode(poolKey)). */
+export function v4PoolId(key: V4PoolKey): Hex {
+  return keccak256(
+    encodeAbiParameters(
+      [{ type: "address" }, { type: "address" }, { type: "uint24" }, { type: "int24" }, { type: "address" }],
+      [key.currency0, key.currency1, key.fee, key.tickSpacing, key.hooks],
+    ),
+  );
+}
+
+function hopKey(h: RouteHop): V4PoolKey {
+  if (h.tickSpacing === undefined) throw new Error("v4 hop needs tickSpacing");
+  return v4PoolKey(h.tokenIn, h.tokenOut, h.fee, h.tickSpacing);
+}
+
+const MAX_UINT128 = (1n << 128n) - 1n;
+const MAX_UINT160 = (1n << 160n) - 1n;
+
+/** Which approval a v4 swap still needs: ERC-20 to Permit2 first, then Permit2 to the Universal Router. */
+export function v4ApprovalStep(args: {
+  erc20ToPermit2: bigint;
+  permit2Amount: bigint;
+  permit2Expiration: number;
+  amountIn: bigint;
+  nowSec?: number;
+}): "erc20" | "permit2" | null {
+  const now = args.nowSec ?? Math.floor(Date.now() / 1000);
+  if (args.erc20ToPermit2 < args.amountIn) return "erc20";
+  // Re-approve when the Permit2 allowance is too small or about to lapse (under 5 minutes left).
+  if (args.permit2Amount < args.amountIn || args.permit2Expiration <= now + 300) return "permit2";
+  return null;
+}
+
+/** Permit2.approve(token, UniversalRouter, exact amountIn, short expiry). */
+export function buildPermit2ApproveTx(args: { token: Address; amountIn: bigint; nowSec?: number }) {
+  if (args.amountIn <= 0n || args.amountIn > MAX_UINT160) throw new Error("bad amount");
+  const now = args.nowSec ?? Math.floor(Date.now() / 1000);
+  return {
+    address: PERMIT2,
+    abi: permit2Abi,
+    functionName: "approve" as const,
+    args: [args.token, UNIVERSAL_ROUTER, args.amountIn, now + PERMIT2_EXPIRY_SECONDS] as const,
+  };
+}
+
+// Universal Router command and v4 router actions (v4-periphery Actions.sol).
+const CMD_V4_SWAP = "0x10" as const;
+const ACT_SWAP_EXACT_IN_SINGLE = 0x06;
+const ACT_SETTLE_ALL = 0x0c;
+const ACT_TAKE_ALL = 0x0f;
+
+/**
+ * Universal Router execute(0x10 V4_SWAP, [abi.encode(actions, params)], deadline) with
+ * SWAP_EXACT_IN_SINGLE, SETTLE_ALL (pays up to amountIn through Permit2), TAKE_ALL (min output, paid to msg.sender).
+ */
+export function buildV4SwapTx(args: { route: Route; amountIn: bigint; minOut: bigint; nowSec?: number }) {
+  const { route, amountIn, minOut } = args;
+  if (routeVenue(route) !== "v4" || route.hops.length !== 1) throw new Error("not a single-hop v4 route");
+  if (amountIn <= 0n || amountIn > MAX_UINT128 || minOut <= 0n || minOut > MAX_UINT128) throw new Error("bad amounts");
+  const hop = route.hops[0];
+  const key = hopKey(hop);
+  const zeroForOne = hop.tokenIn.toLowerCase() === key.currency0.toLowerCase();
+  const currencyOut = zeroForOne ? key.currency1 : key.currency0;
+  const actions = ("0x" +
+    [ACT_SWAP_EXACT_IN_SINGLE, ACT_SETTLE_ALL, ACT_TAKE_ALL].map((a) => a.toString(16).padStart(2, "0")).join("")) as Hex;
+  const swapParams = encodeAbiParameters(
+    [
+      {
+        type: "tuple",
+        components: [
+          { name: "poolKey", type: "tuple", components: poolKeyComponents },
+          { name: "zeroForOne", type: "bool" },
+          { name: "amountIn", type: "uint128" },
+          { name: "amountOutMinimum", type: "uint128" },
+          { name: "hookData", type: "bytes" },
+        ],
+      },
+    ],
+    [{ poolKey: key, zeroForOne, amountIn, amountOutMinimum: minOut, hookData: "0x" }],
+  );
+  const settle = encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [hop.tokenIn, amountIn]);
+  const take = encodeAbiParameters([{ type: "address" }, { type: "uint256" }], [currencyOut, minOut]);
+  const input = encodeAbiParameters([{ type: "bytes" }, { type: "bytes[]" }], [actions, [swapParams, settle, take]]);
+  const now = args.nowSec ?? Math.floor(Date.now() / 1000);
+  return {
+    address: UNIVERSAL_ROUTER,
+    abi: universalRouterAbi,
+    functionName: "execute" as const,
+    args: [CMD_V4_SWAP as Hex, [input], BigInt(now + DEADLINE_SECONDS)] as const,
+  };
 }
 
 /** Positive number = worse than the small-trade price. */
@@ -315,7 +506,8 @@ async function withRetry<T>(fn: () => Promise<T>, tries = 3): Promise<T> {
 
 // ---------- pool discovery and routing ----------
 
-export type Pool = { a: Address; b: Address; fee: number; pool: Address; liquidity: bigint };
+/** venue defaults to v3. For v4, `pool` holds the PoolId and tickSpacing is set. */
+export type Pool = { a: Address; b: Address; fee: number; pool: Address; liquidity: bigint; venue?: Venue; tickSpacing?: number };
 
 const poolCache = new Map<string, Promise<Pool[]>>();
 
@@ -376,26 +568,78 @@ export function discoverPools(client: PublicClient, tokens: readonly SwapToken[]
   return run;
 }
 
-export function clearPoolCache() {
-  poolCache.clear();
+const poolCacheV4 = new Map<string, Promise<Pool[]>>();
+
+/**
+ * Finds v4 pools (hooks = none) with in-range liquidity between the tokens, by asking StateView for
+ * each (fee, tickSpacing) PoolId. v4 has no factory, so this probes the standard fee/spacing pairs.
+ * Never throws: if StateView is unreachable or no pool has liquidity, v4 is simply skipped.
+ */
+export function discoverPoolsV4(client: PublicClient, tokens: readonly SwapToken[]): Promise<Pool[]> {
+  const key = tokens.map((t) => t.address.toLowerCase()).sort().join(",");
+  const hit = poolCacheV4.get(key);
+  if (hit) return hit;
+  const run = (async () => {
+    const combos = pairsFor(tokens).flatMap(([a, b]) =>
+      V4_POOL_SPECS.map((spec) => ({ a: a.address, b: b.address, ...spec, id: v4PoolId(v4PoolKey(a.address, b.address, spec.fee, spec.tickSpacing)) })),
+    );
+    const liq = await withRetry(() =>
+      client.multicall({
+        multicallAddress: MULTICALL3,
+        allowFailure: true,
+        contracts: combos.map((c) => ({ address: V4_STATE_VIEW, abi: stateViewAbi, functionName: "getLiquidity" as const, args: [c.id] as const })),
+      }),
+    );
+    return combos
+      .map((c, i) => ({
+        a: c.a,
+        b: c.b,
+        fee: c.fee,
+        tickSpacing: c.tickSpacing,
+        pool: c.id as Address,
+        venue: "v4" as const,
+        liquidity: liq[i].status === "success" ? (liq[i].result as bigint) : 0n,
+      }))
+      .filter((p) => p.liquidity > 0n);
+  })().catch(() => {
+    // Do not cache a failure (for example an RPC 429): the next quote tries again.
+    poolCacheV4.delete(key);
+    return [] as Pool[];
+  });
+  poolCacheV4.set(key, run);
+  return run;
 }
 
-/** Direct routes and 2-hop routes through a hub token, over pools that have liquidity. */
+export function clearPoolCache() {
+  poolCache.clear();
+  poolCacheV4.clear();
+}
+
+/**
+ * Direct routes (v3 and v4) and v3 2-hop routes through a hub token, over pools that have liquidity.
+ * v4 is direct-only for now, and a route never mixes venues.
+ */
 export function findRoutes(pools: readonly Pool[], tokens: readonly SwapToken[], tokenIn: Address, tokenOut: Address, max = 40): Route[] {
   const eq = (x: string, y: string) => x.toLowerCase() === y.toLowerCase();
-  const edge = (from: Address, to: Address) =>
-    pools.filter((p) => (eq(p.a, from) && eq(p.b, to)) || (eq(p.a, to) && eq(p.b, from)));
+  const edge = (list: readonly Pool[], from: Address, to: Address) =>
+    list.filter((p) => (eq(p.a, from) && eq(p.b, to)) || (eq(p.a, to) && eq(p.b, from)));
+  const v3Pools = pools.filter((p) => (p.venue ?? "v3") === "v3");
+  const v4Pools = pools.filter((p) => p.venue === "v4");
   const routes: Route[] = [];
-  for (const p of edge(tokenIn, tokenOut)) {
-    routes.push({ hops: [{ tokenIn, tokenOut, fee: p.fee }] });
+  for (const p of edge(v3Pools, tokenIn, tokenOut)) {
+    routes.push({ venue: "v3", hops: [{ tokenIn, tokenOut, fee: p.fee }] });
+  }
+  for (const p of edge(v4Pools, tokenIn, tokenOut)) {
+    routes.push({ venue: "v4", hops: [{ tokenIn, tokenOut, fee: p.fee, tickSpacing: p.tickSpacing }] });
   }
   for (const mid of tokens.filter((t) => t.hub)) {
     if (eq(mid.address, tokenIn) || eq(mid.address, tokenOut)) continue;
-    const first = edge(tokenIn, mid.address);
-    const second = edge(mid.address, tokenOut);
+    const first = edge(v3Pools, tokenIn, mid.address);
+    const second = edge(v3Pools, mid.address, tokenOut);
     for (const f of first) {
       for (const s of second) {
         routes.push({
+          venue: "v3",
           hops: [
             { tokenIn, tokenOut: mid.address, fee: f.fee },
             { tokenIn: mid.address, tokenOut, fee: s.fee },
@@ -410,6 +654,16 @@ export function findRoutes(pools: readonly Pool[], tokens: readonly SwapToken[],
 export type RouteQuote = { route: Route; amountOut: bigint; gasEstimate: bigint };
 
 function quoteCall(route: Route, amountIn: bigint) {
+  if (routeVenue(route) === "v4") {
+    const h = route.hops[0];
+    const poolKey = hopKey(h);
+    return {
+      address: V4_QUOTER,
+      abi: v4QuoterAbi,
+      functionName: "quoteExactInputSingle" as const,
+      args: [{ poolKey, zeroForOne: h.tokenIn.toLowerCase() === poolKey.currency0.toLowerCase(), exactAmount: amountIn, hookData: "0x" as Hex }] as const,
+    };
+  }
   if (route.hops.length === 1) {
     const h = route.hops[0];
     return {
@@ -424,7 +678,9 @@ function quoteCall(route: Route, amountIn: bigint) {
 }
 
 /** Quotes every route in one batched call. Routes whose quote reverts (no usable pool) are dropped. */
-export async function quoteRoutes(client: PublicClient, routes: readonly Route[], amountIn: bigint): Promise<RouteQuote[]> {
+export async function quoteRoutes(client: PublicClient, routesIn: readonly Route[], amountIn: bigint): Promise<RouteQuote[]> {
+  // The v4 quoter takes a uint128 amount; a v4 route cannot take more than that.
+  const routes = routesIn.filter((r) => routeVenue(r) !== "v4" || amountIn <= MAX_UINT128);
   if (!routes.length) return [];
   const calls = routes.map((r) => quoteCall(r, amountIn));
   const results = (await withRetry(() =>
@@ -452,7 +708,16 @@ export type BestQuote = {
   considered: number;
   /** Percent worse than a small-trade quote on the same route. Null when it cannot be measured. */
   impactPct: number | null;
+  /** Venue of the chosen route. */
+  venue: Venue;
+  /** Best quote per venue (null when that venue has no usable route), for comparison. */
+  bestV3: RouteQuote | null;
+  bestV4: RouteQuote | null;
 };
+
+function bestOf(list: readonly RouteQuote[]): RouteQuote | null {
+  return list.length ? list.reduce((a, b) => (b.amountOut > a.amountOut ? b : a)) : null;
+}
 
 /** Finds the route with the highest output and measures price impact against a small trade. */
 export async function quoteBest(
@@ -463,11 +728,15 @@ export async function quoteBest(
   amountIn: bigint,
 ): Promise<BestQuote | null> {
   if (tokenIn.toLowerCase() === tokenOut.toLowerCase() || amountIn <= 0n) return null;
-  const pools = await discoverPools(client, tokens);
-  const routes = findRoutes(pools, tokens, tokenIn, tokenOut);
-  const quotes = await quoteRoutes(client, routes, amountIn);
-  if (!quotes.length) return null;
-  const best = quotes.reduce((a, b) => (b.amountOut > a.amountOut ? b : a));
+  // v4 is best-effort: if its discovery or quote fails, the v3 answer still stands.
+  const [pools, poolsV4] = await Promise.all([discoverPools(client, tokens), discoverPoolsV4(client, tokens)]);
+  const routes = findRoutes([...pools, ...poolsV4], tokens, tokenIn, tokenOut);
+  const quotes = await quoteRoutes(client, routes.filter((r) => routeVenue(r) === "v3"), amountIn);
+  const quotesV4 = await quoteRoutes(client, routes.filter((r) => routeVenue(r) === "v4"), amountIn).catch(() => [] as RouteQuote[]);
+  const all = [...quotes, ...quotesV4];
+  if (!all.length) return null;
+  // Highest output wins; a tie stays on v3 because it comes first.
+  const best = all.reduce((a, b) => (b.amountOut > a.amountOut ? b : a));
   let impactPct: number | null = null;
   for (const div of [1000n, 100n, 10n]) {
     const refIn = amountIn / div;
@@ -479,7 +748,7 @@ export async function quoteBest(
       break;
     }
   }
-  return { amountIn, best, considered: quotes.length, impactPct };
+  return { amountIn, best, considered: all.length, impactPct, venue: routeVenue(best.route), bestV3: bestOf(quotes), bestV4: bestOf(quotesV4) };
 }
 
 // ---------- transaction building ----------
