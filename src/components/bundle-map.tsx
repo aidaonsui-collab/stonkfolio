@@ -1,7 +1,7 @@
 import { STOCK_LOGO } from "@/lib/brand-marks";
 import { SLEEVE_TONE, STOCKS, type Stock } from "@/lib/stocks";
 import { cn } from "@/lib/utils";
-import { LogoTile } from "./stock-mark";
+import { StockMark } from "./stock-mark";
 
 function fillFor(stock: Stock) {
   const t = Math.max(0.28, Math.min(0.92, stock.weight / 16));
@@ -23,9 +23,7 @@ function Strip({ stock, flex }: { stock: Stock; flex?: boolean }) {
       }}
     >
       <p className={cn("flex min-w-0 items-center gap-1.5 font-mono text-xs font-semibold tracking-wide", ink ? "text-ink" : "text-fg")}>
-        {STOCK_LOGO[stock.ticker] ? (
-          <LogoTile src={STOCK_LOGO[stock.ticker]} label={stock.name} size={22} />
-        ) : null}
+        {STOCK_LOGO[stock.ticker] ? <StockMark stock={stock} size={22} /> : null}
         <span className="truncate">{stock.ticker}</span>
       </p>
       <p className={cn("num text-xs", ink ? "text-ink/70" : "text-fg/80")}>{stock.weight}%</p>

@@ -1,15 +1,20 @@
-/** Published brand marks. A name with no symbol that stays readable at this size is absent. */
+/**
+ * Company marks served from /public/logos/stocks. SPY has none: the SPDR S&P 500 ETF mark is not ours to ship,
+ * so it keeps the ticker circle. Marks belong to their owners and are used only to identify the company.
+ */
 export const STOCK_LOGO: Record<string, string> = {
-  CRCL: "/logos/crcl.svg",
-  NVDA: "/logos/nvda.svg",
-  AAPL: "/logos/aapl.svg",
-  MSFT: "/logos/msft.svg",
-  GOOGL: "/logos/googl.svg",
-  AMZN: "/logos/amzn.svg",
-  META: "/logos/meta.svg",
-  TSLA: "/logos/tsla.svg",
-  AMD: "/logos/amd.svg",
-  COIN: "/logos/coin.png",
+  CRCL: "/logos/stocks/crcl.svg",
+  NVDA: "/logos/stocks/nvda.svg",
+  AAPL: "/logos/stocks/aapl.svg",
+  MSFT: "/logos/stocks/msft.svg",
+  GOOGL: "/logos/stocks/googl.svg",
+  AMZN: "/logos/stocks/amzn.svg",
+  META: "/logos/stocks/meta.svg",
+  TSLA: "/logos/stocks/tsla.svg",
+  AMD: "/logos/stocks/amd.svg",
+  COIN: "/logos/stocks/coin.png",
+  BE: "/logos/stocks/be.svg",
+  MSTR: "/logos/stocks/mstr.svg",
   USYC: "/logos/usyc.svg",
 };
 

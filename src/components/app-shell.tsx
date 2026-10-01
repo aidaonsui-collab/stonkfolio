@@ -6,7 +6,7 @@ import { ArrowLeftRight, BookOpen, Briefcase, FileText, Home, Landmark, Sprout }
 import { SiteHeader, LINKS, isActive } from "./site-header";
 import { FolioMark, Wordmark } from "./logo";
 import { cn } from "@/lib/utils";
-import { LEGAL_NAME, X_URL } from "@/lib/site";
+import { LEGAL_NAME } from "@/lib/site";
 
 const ICONS = {
   "/": Home,
@@ -61,22 +61,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SiteHeader />
         <main className="min-w-0 flex-1 pb-16 lg:pb-0">{children}</main>
         <footer className="border-t border-border pb-20 lg:pb-0">
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-5 text-xs text-muted sm:px-6">
-            <p>Keeper wallet and Earn vaults use Circle on Arc.</p>
-            <div className="flex items-center gap-4">
-              <a
-                href={X_URL}
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Stonkfolio on X"
-                className="inline-flex min-h-11 min-w-11 items-center justify-center font-medium text-fg hover:text-accent"
-              >
-                X
-              </a>
-              <p className="font-mono">SFOLIO / USDC · Uniswap v4</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-4 py-3 text-xs text-muted sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 py-3 text-xs text-muted sm:px-6">
             <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-1">
               {FOOTER_LINKS.map((l) => (
                 <Link

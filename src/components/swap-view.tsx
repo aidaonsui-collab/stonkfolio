@@ -11,7 +11,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { ARC_CHAIN_ID, ARC_EXPLORER } from "@/lib/chain";
 import { cn } from "@/lib/utils";
 import { addOrSwitchArc } from "@/lib/wagmi";
-import { STOCKS } from "@/lib/stocks";
 import {
   DEFAULT_SLIPPAGE_BPS,
   IMPACT_CONFIRM_PCT,
@@ -88,8 +87,6 @@ export function SwapView() {
     retry: false,
   });
   const tokens = useMemo<readonly SwapToken[]>(() => [...SWAP_TOKENS, ...(xRes.data ?? [])], [xRes.data]);
-  const liveX = new Set((xRes.data ?? []).map((t) => t.symbol));
-  const comingSoon = STOCKS.filter((s) => s.xSymbol && !liveX.has(s.xSymbol));
 
   const [tokenIn, setTokenIn] = useState<SwapToken>(SWAP_TOKENS[0]);
   const [tokenOut, setTokenOut] = useState<SwapToken>(SWAP_TOKENS[1]);
@@ -541,30 +538,6 @@ export function SwapView() {
         </Link>
         .
       </p>
-
-      <section className="mt-12">
-        <h2 className="font-display text-2xl italic tracking-tight">Coming soon</h2>
-        <p className="mt-2 text-sm text-muted">
-          Tokenized stocks from xStocks are announced for Arc but not deployed yet. Each one turns on here by itself once it has
-          an Arc contract and a funded pool.
-        </p>
-        <ul className="mt-4 divide-y divide-border">
-          {comingSoon.map((s) => (
-            <li key={s.ticker} className="flex items-center justify-between gap-4 py-3 text-sm opacity-60">
-              <span className="flex items-center gap-3">
-                <TokenDot t={{ symbol: s.ticker, color: s.color }} size={28} />
-                <span>
-                  <span className="block font-medium">{s.xSymbol}</span>
-                  <span className="block text-xs text-muted">{s.name}</span>
-                </span>
-              </span>
-              <span className="rounded-full bg-elevated px-2 py-0.5 font-mono text-[10px] tracking-[0.12em] text-muted uppercase">
-                Coming soon
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
 
       <TokenPicker
         open={picker !== null}

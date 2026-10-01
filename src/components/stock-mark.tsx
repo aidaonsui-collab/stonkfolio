@@ -2,6 +2,7 @@ import { STOCK_LOGO } from "@/lib/brand-marks";
 import type { Stock } from "@/lib/stocks";
 import { SLEEVE_TONE, stockByTicker } from "@/lib/stocks";
 import { cn } from "@/lib/utils";
+import { StockLogo } from "./stock-logo";
 
 const FALLBACK: Record<string, Pick<Stock, "ticker" | "letter" | "name" | "kind">> = {
   USDC: { ticker: "USDC", letter: "$", name: "USD Coin", kind: "mmf" },
@@ -55,13 +56,12 @@ export function StockMark({
   className?: string;
 }) {
   const logo = STOCK_LOGO[stock.ticker];
-  if (logo) return <LogoTile src={logo} label={stock.name} size={size} className={className} />;
   const letter = stock.letter || stock.ticker.slice(0, 1);
   const tone = SLEEVE_TONE[stock.kind ?? "equity"];
-  return (
+  const circle = (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-sm font-mono font-medium text-fg",
+        "inline-flex shrink-0 items-center justify-center rounded-full font-mono font-medium text-fg",
         className,
       )}
       style={{
@@ -76,4 +76,6 @@ export function StockMark({
       {letter}
     </span>
   );
+  if (logo) return <StockLogo src={logo} label={stock.name} size={size} className={className} fallback={circle} />;
+  return circle;
 }
