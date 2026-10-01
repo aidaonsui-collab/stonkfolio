@@ -6,6 +6,7 @@ import { BookOpen, Briefcase, FileText, Home, Landmark, Sprout } from "lucide-re
 import { SiteHeader, LINKS, isActive } from "./site-header";
 import { FolioMark, Wordmark } from "./logo";
 import { cn } from "@/lib/utils";
+import { LEGAL_NAME, X_URL } from "@/lib/site";
 
 const ICONS = {
   "/": Home,
@@ -15,6 +16,13 @@ const ICONS = {
   "/keeper": Landmark,
   "/docs": FileText,
 } as const;
+
+const FOOTER_LINKS = [
+  { href: "/terms", label: "Terms of Service" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/risk", label: "Risk Disclosure" },
+  { href: "/about", label: "About" },
+] as const;
 
 const DOCK = LINKS.filter((l) => l.href !== "/docs");
 
@@ -56,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <p>Keeper wallet and Earn vaults use Circle on Arc.</p>
             <div className="flex items-center gap-4">
               <a
-                href="https://x.com/StonkfolioArc"
+                href={X_URL}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Stonkfolio on X"
@@ -66,6 +74,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </a>
               <p className="font-mono">SFOLIO / USDC · Uniswap v4</p>
             </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-border px-4 py-3 text-xs text-muted sm:px-6">
+            <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-1">
+              {FOOTER_LINKS.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className="inline-flex min-h-11 items-center px-2 font-medium text-fg hover:text-accent first:pl-0"
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </nav>
+            <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
           </div>
         </footer>
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">

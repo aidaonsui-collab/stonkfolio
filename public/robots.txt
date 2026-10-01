@@ -6,3 +6,5 @@ Allow: /
 
 User-agent: TelegramBot
 Allow: /
+
+Sitemap: https://www.stonkfolio.me/sitemap.xml
