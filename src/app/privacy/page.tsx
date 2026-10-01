@@ -60,7 +60,7 @@ export default function Page() {
                 "Vercel: hosting, logs and Web Analytics.",
                 "Circle: keeper wallet, Earn and Borrow Kit, and the Circle on-ramp used for Add USDC. Requests to Circle APIs are routed through our servers.",
                 "Transak and other on-ramp partners, if and when enabled: they handle payment, identity and compliance checks under their own privacy policies.",
-                "Dinari: issuer of the tokenized equities. If you interact with their services you are subject to their policies.",
+                "xStocks (Backed / Payward): planned issuer of the tokenized equities. Its public catalog is read on request. If you interact with their services you are subject to their policies.",
                 "Public RPC and block explorer providers that you or the site call to read the blockchain.",
               ]}
             />

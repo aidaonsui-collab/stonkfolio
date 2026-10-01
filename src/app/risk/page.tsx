@@ -50,7 +50,7 @@ export default function Page() {
           body: (
             <Bullets
               items={[
-                "Tokenized equities are issued by third parties such as Dinari. Their value depends on the issuer, its custodians and brokers holding the underlying shares, and on the issuer’s ability to mint and redeem. An issuer failure, freeze or legal action could cause loss.",
+                "Tokenized equities are planned as xStocks (Backed / Payward), a third-party issuer, and are not yet available on Arc. Their value depends on the issuer, its custodians and brokers holding the underlying shares, and on the issuer’s ability to mint and redeem. An issuer failure, freeze or legal action could cause loss.",
                 "USYC and other cash-like tokens depend on their issuers and on eligibility rules that may restrict who can hold or redeem them.",
                 "Price feeds and oracles can be wrong, delayed or manipulated.",
               ]}
@@ -91,8 +91,9 @@ export default function Page() {
           title: "Availability of tokenized stocks",
           body: (
             <p>
-              The tokenized stocks in the book are not yet minted and are not tradeable on Arc today. The keeper does
-              not buy them until they are minted and have a real market. Features that depend on them may not work, and
+              The tokenized stocks in the book are planned as xStocks. xStocks have been announced for Arc but are not yet
+              deployed there, so they are not tradeable on Arc today. The keeper does not buy them until they are live
+              and have a real market. Features that depend on them may not work, and
               may change or never launch.
             </p>
           ),

@@ -86,7 +86,7 @@ export default function Page() {
           body: (
             <Bullets
               items={[
-                "Tokenized equities and indexes are issued by third-party providers such as Dinari (dShares). They are subject to the issuer’s own terms, eligibility rules, minting, redemption and availability, which we do not control. They may be unavailable, or unavailable to you.",
+                "Tokenized equities and indexes are planned to be issued by a third-party provider, xStocks (Backed / Payward), and are not yet available on Arc. They are subject to the issuer’s own terms, eligibility rules, minting, redemption and availability, which we do not control. They may be unavailable, or unavailable to you.",
                 "USYC is issued by a third party and is subject to the issuer’s eligibility restrictions. Access may be limited to qualified or permitted holders.",
                 "Yield, Earn and borrowing features use third-party protocols such as Circle Earn and Circle Borrow Kit on Morpho. Their terms apply, and their failures are outside our control.",
                 "On-ramp and payment services are provided by third parties under their own terms and checks.",

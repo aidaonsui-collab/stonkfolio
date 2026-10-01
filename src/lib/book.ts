@@ -29,6 +29,7 @@ export function bookPayload() {
       ticker: s.ticker,
       name: s.name,
       issuer: s.issuer,
+      xSymbol: s.xSymbol,
       kind: s.kind,
       weight: s.weight,
       price: s.price,

@@ -6,8 +6,8 @@
  *
  * Weights are percents of the wallet's USDC and must sum to at most 100.
  * A name with no address is left as unspent USDC. Do not put a stocks.ts
- * address into BOOK_TOKENS unless that row is tradeable (Dinari Arc dShares
- * are deployed-unminted / tradeable:false until mint). The cash sleeve stays
+ * address into BOOK_TOKENS unless that row is tradeable (xStocks are announced
+ * for Arc but not deployed: address null / tradeable:false until the issuer ships them). The cash sleeve stays
  * USDC and is deposited into the Circle Earn Morpho vault. Stock names are
  * transferred into FolioTreasury, then paid out with openRound + deliver.
  *

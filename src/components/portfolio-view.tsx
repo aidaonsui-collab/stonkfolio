@@ -44,7 +44,7 @@ export function PortfolioView() {
         <Metric
           label="Stocks earned"
           value={dash(seeing, usd(stocksEarnedUsd))}
-          hint={`${pctOfFee(LAUNCH.split.creatorBps)} rewards, bought as dShares.`}
+          hint={`${pctOfFee(LAUNCH.split.creatorBps)} rewards, bought as xStocks once they are on Arc.`}
         />
       </div>
 

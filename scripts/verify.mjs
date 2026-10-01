@@ -82,12 +82,12 @@ if (!docsCopy || !docsCopy.toLowerCase().includes("circle earn")) errors.push("d
 if (!docsCopy || !docsCopy.toLowerCase().includes("people trade")) errors.push("docs missing process steps");
 if (docsCopy && /queued/i.test(docsCopy)) errors.push("docs still has pre-launch queued copy");
 if (docsCopy && docsCopy.includes(".env.local")) errors.push("docs leaked .env.local");
-if (docsCopy && docsCopy.includes("DINARI_API")) errors.push("docs leaked API key names");
+if (docsCopy && docsCopy.includes("API_KEY")) errors.push("docs leaked API key names");
 
 await page.getByRole("link", { name: "Bundles" }).first().click();
 await page.waitForURL("**/bundles");
 const bundlesCopy = await page.locator("body").textContent();
-if (bundlesCopy && (bundlesCopy.includes(".env.local") || bundlesCopy.includes("DINARI_API_KEY"))) {
+if (bundlesCopy && (bundlesCopy.includes(".env.local") || bundlesCopy.includes("API_KEY"))) {
   errors.push("bundles leaked env key copy");
 }
 

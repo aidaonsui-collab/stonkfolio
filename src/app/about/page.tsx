@@ -28,11 +28,6 @@ const CONTRACTS = [
     role: "Receives the creator cut (10% of launch-fee USDC that reaches the keeper) and the 0.25% Circle Borrow Kit origination fee.",
   },
   {
-    name: "Dinari Arc diamond (tokenization issuer)",
-    address: "0xf60f689ec22fC2D485b3C734eFE58538cCc28766",
-    role: "Dinari’s contract on Arc that registers its dShares. Dinari issues the tokenized stocks.",
-  },
-  {
     name: "USYC",
     address: "0x8a5D989Bbb96929F689B0200f435f53dA42bF490",
     role: "Hashnote / Circle USYC token on Arc. Issuer eligibility restrictions apply.",
@@ -58,8 +53,9 @@ export default function Page() {
               </p>
               <p>
                 <strong className="text-fg">Status:</strong> $SFOLIO has not launched yet. The tokenized equities in the
-                book are issued by Dinari and are pending availability on Arc; they are not yet minted or tradeable. The
-                site shows sample data in Preview mode.
+                book are planned as xStocks (Backed / Payward). xStocks are not yet deployed on Arc, so they are not available
+                or tradeable here, and no Arc contract addresses exist for them yet. The site shows sample data in Preview
+                mode.
               </p>
             </>
           ),
@@ -113,6 +109,7 @@ export default function Page() {
               <Bullets
                 items={[
                   "The 20% platform leg of the pool fee is paid to a destination set by the launch pad at launch.",
+                  "Tokenized stock addresses: none yet. xStocks (Backed / Payward) will be listed here once the issuer publishes Arc deployments.",
                   "The $SFOLIO token address, LP lock details and audit reports will be published at launch.",
                 ]}
               />

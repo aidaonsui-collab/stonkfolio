@@ -80,7 +80,7 @@ export function keeperPlan(args?: { listedTickers?: string[] }): {
   if (listedWeight === 0) {
     return {
       action: "park",
-      reason: "Nothing tradeable yet. Fee USDC waits in the wallet (Arc dShares deployed but unminted).",
+      reason: "Nothing tradeable yet. Fee USDC waits in the wallet (xStocks are not deployed on Arc yet).",
       cashSleeveBps,
       listedWeight,
       queuedWeight,

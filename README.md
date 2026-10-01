@@ -20,30 +20,20 @@ npm run dev
 ```
 
 - `/` how it works
-- `/bundles` curator book + Dinari sandbox feed
+- `/bundles` curator book of xStocks (not yet on Arc)
 - `/portfolio` holder desk
 - `/yield` farm board
 - `/docs` fee path and venues
 
 **Preview** in the header fills the boards with sample size. Preview deposits stay in `localStorage`.
 
-## Dinari keys
+## xStocks (tokenized equities)
 
-Equity/index names in `src/lib/stocks.ts` are issued by **Dinari** on Arc (`eip155:5042`). The cash sleeve is USDC deposited in Circle Earn (Morpho). It is not USYC or BUIDL.
+Equity/index names in `src/lib/stocks.ts` are planned as **xStocks** (Backed / Payward, [xstocks.fi](https://xstocks.fi)). The cash sleeve is USDC deposited in Circle Earn (Morpho). It is not USYC or BUIDL.
 
-Do **not** paste the API secret into the website. Sandbox keys from [partners.dinari.com](https://partners.dinari.com) go in `.env.local`:
+**Status (checked 2026-10-01): xStocks are not deployed on Arc (`eip155:5042`).** The public catalog at `https://api.xstocks.fi/api/v2/public/assets` lists every book name (AAPLx, MSFTx, NVDAx, GOOGLx, AMZNx, METAx, TSLAx, SPYx, CRCLx, COINx, AMDx, BEx) but no product has an Arc deployment. Every equity/index row therefore has `address: null`, `status: "announced"` and **`tradeable: false`**. The keeper and UI gate buys on `tradeable`, not on a non-null `address`. Fill `address` only from an issuer-published Arc deployment, and flip `tradeable` only after supply and a real venue exist. Do not invent addresses. Keep `KEEPER_LIVE=0` until then.
 
-```
-DINARI_API_KEY_ID=...
-DINARI_API_SECRET_KEY=...
-DINARI_ENVIRONMENT=sandbox
-```
-
-`/api/dinari/stocks` reads those server-side and prefers Arc (`eip155:5042`) token addresses when present. Sandbox currently returns non-Arc chains only — "Test data only" is correct. Production keys need KYB, then set `DINARI_ENVIRONMENT=production` on Vercel (Project → Settings → Environment Variables). Never use `NEXT_PUBLIC_` for these.
-
-### Arc dShare contracts (2026-09-24)
-
-Plain dShare + wrapped (`.dw`) addresses in `stocks.ts` were filled from Dinari's Arc diamond `0xf60f689ec22fC2D485b3C734eFE58538cCc28766` (verified `symbol()` / `totalSupply()` on-chain). **Supply is 0** as of Sep 24 2026; there are no Uniswap v3 USDC pools yet. Each equity/index row uses `status: "deployed-unminted"` and **`tradeable: false`**. The keeper and UI gate buys on `tradeable`, not on a non-null `address`. Flip `tradeable` only after mint + a real venue. BE stays without an Arc CA until listed. AMD/COIN CAs filled 2026-09-24 from diamond storage. Do not invent addresses. Keep `KEEPER_LIVE=0` until then.
+`GET /api/xstocks/assets` reads the public catalog (no API key) and reports, per book name, which networks list it and whether an Arc address appears. It needs no secrets.
 
 ## Borrow (Circle Borrow Kit)
 
@@ -64,4 +54,4 @@ The keeper owes the creator wallet 10% of every launch-fee USDC that has ever re
 
 ## Stack
 
-Next.js 16 · Tailwind 4 · wagmi/viem on Arc (`5042`, gas USDC) · `@dinari/api-sdk` (sandbox).
+Next.js 16 · Tailwind 4 · wagmi/viem on Arc (`5042`, gas USDC).

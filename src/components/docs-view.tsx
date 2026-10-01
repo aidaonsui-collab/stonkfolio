@@ -136,8 +136,8 @@ export function DocsView() {
       <section className="mt-14">
         <h2 className="font-display text-2xl italic tracking-tight">Risks, contracts and issuer</h2>
         <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-          Crypto assets and yield carry risk, including total loss. The tokenized stocks are issued by Dinari and are
-          not yet minted on Arc. Read the{" "}
+          Crypto assets and yield carry risk, including total loss. The tokenized stocks are planned as xStocks (issued by Backed)
+          and are not yet available on Arc. Read the{" "}
           <Link href="/risk" className="text-fg underline-offset-2 hover:underline">
             Risk Disclosure
           </Link>

@@ -19,7 +19,7 @@ export function BundlesView() {
       <h1 className="display-md">The Book.</h1>
       <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted">
         The keeper buys these names once fee USDC reaches 150. 5% of that USDC farms in Circle Earn.
-        Dinari dShares are on Arc but not yet minted — trading stays gated until supply exists.
+        The stocks are xStocks. They are announced for Arc but not yet deployed there — trading stays gated until they are live.
       </p>
 
       <DistributedBoard />

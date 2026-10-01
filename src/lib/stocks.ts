@@ -1,6 +1,9 @@
 export type StockKind = "equity" | "index" | "mmf";
-/** Book listing state. `deployed-unminted` = Arc CA known, totalSupply 0, not tradeable. */
-export type ListingStatus = "queued" | "candidate" | "live" | "deployed-unminted";
+/**
+ * Book listing state. `announced` = the issuer has said it is coming to Arc but has published no Arc
+ * contract. Not tradeable. `live` is only for assets that are actually on Arc and tradeable.
+ */
+export type ListingStatus = "queued" | "candidate" | "live" | "announced";
 
 /** Arc mainnet (5042) ERC-20. Null until a public contract is confirmed — never invent. */
 export type ArcAddress = `0x${string}` | null;
@@ -16,55 +19,57 @@ export type Stock = {
   status: ListingStatus;
   color: string;
   letter: string;
+  /** xStocks symbol (Backed / Payward) for equities and index rows. Null for the cash sleeve. */
+  xSymbol: string | null;
   /**
    * Arc mainnet token when known.
-   * Equities/index: Dinari plain dShare on eip155:5042.
-   * Cash sleeve: Circle Earn Morpho vault. USDC in, vault shares out. Not Dinari.
+   * Equities/index: xStocks have no published Arc contract yet, so this stays null. Never invent one.
+   * Cash sleeve: Circle Earn Morpho vault. USDC in, vault shares out.
    * A non-null address is NOT enough to trade — gate on `tradeable`.
    */
   address: ArcAddress;
-  /** Dinari wrapped dShare (`.dw`) on Arc. Null for cash / unverified. */
+  /** Wrapped xStock on Arc, if the issuer ever publishes one. Null today. */
   wrappedAddress: ArcAddress;
   /**
    * Keeper / UI may treat as buyable only when true.
-   * Dinari Arc dShares stay false until totalSupply > 0 and a real venue exists.
+   * xStocks stay false until the issuer deploys on Arc, supply exists, and a real venue exists.
    */
   tradeable: boolean;
 };
 
 /** Human label for the book status badge. */
 export function listingLabel(s: Pick<Stock, "status" | "tradeable" | "address" | "kind">): string {
-  if (s.status === "deployed-unminted") return "On Arc, not yet minted";
+  if (s.status === "announced") return "Not yet on Arc";
   if (s.status === "queued") return "queued";
   if (s.status === "candidate") return "candidate";
-  if (s.kind !== "mmf" && s.address && !s.tradeable) return "On Arc, not yet minted";
+  if (s.kind !== "mmf" && !s.tradeable && s.status === "live") return "Not yet on Arc";
   return s.status;
 }
 
 /**
  * Creator-chosen book. Swap weights here — dashboard, keeper, and yield all read this list.
  *
- * 2026-09-24: Arc Dinari diamond 0xf60f689ec22fC2D485b3C734eFE58538cCc28766 registers dShares.
- * Plain + wrapped (.dw) CAs filled for verified book names. totalSupply is 0 on all of them;
- * no Uniswap v3 USDC pools. tradeable stays false until mint. AMD/COIN not found via diamond
- * CREATE enumeration (proxies not diamond-created; getDShares not on Arc facet) — left null.
- * BE stays queued (not in Dinari catalog). Cash sleeve is Circle Earn, not USYC or BUIDL.
+ * Equity and index rows are xStocks (Backed / Payward, xstocks.fi). Checked 2026-10-01: the public
+ * xStocks assets API (api.xstocks.fi/api/v2/public/assets) lists every book name below, but none of its
+ * ~1,270 products has an Arc deployment yet, and no Arc contract address has been published.
+ * So every xStock row has address null, status "announced" and tradeable false. Do not invent addresses.
+ * Fill `address` only from an issuer-published Arc deployment, then flip `tradeable` after supply and a
+ * real venue exist. Cash sleeve is Circle Earn, not USYC or BUIDL.
  */
 export const STOCKS: Stock[] = [
-  { ticker: "CRCL", name: "Circle Internet Group", issuer: "Dinari", kind: "equity", weight: 16, price: 124.0, status: "deployed-unminted", color: "#5b4dff", letter: "C", address: "0x2eBbD389bf504fA9f0600361ef70C15eb62Cc93B", wrappedAddress: "0x31323f4DB9a6EAB5cC149Ae43155B4756B5FFD7a", tradeable: false },
-  { ticker: "NVDA", name: "NVIDIA", issuer: "Dinari", kind: "equity", weight: 12, price: 218.29, status: "deployed-unminted", color: "#76b900", letter: "N", address: "0x4B16f5251cd4c853f28998809DcA61ccCBcB898B", wrappedAddress: "0x7BFdE9230dbDAD218671ED6556c767D6E214EB1C", tradeable: false },
-  { ticker: "AAPL", name: "Apple", issuer: "Dinari", kind: "equity", weight: 10, price: 332.52, status: "deployed-unminted", color: "#111111", letter: "", address: "0xB6b0149009eb78239213b97A960b5c793C03373b", wrappedAddress: "0x4C3556888fe97755B35f8b3EBE2a4C52b638a2fF", tradeable: false },
-  { ticker: "MSFT", name: "Microsoft", issuer: "Dinari", kind: "equity", weight: 9, price: 428.1, status: "deployed-unminted", color: "#00a4ef", letter: "M", address: "0x1831FdAC7Fcb9271f2E2FfB1bbba965CcAf8136B", wrappedAddress: "0x82d10e0e8C66de7b23B2F2230B279CDB0523B9Ba", tradeable: false },
-  { ticker: "GOOGL", name: "Alphabet", issuer: "Dinari", kind: "equity", weight: 8, price: 198.4, status: "deployed-unminted", color: "#4285f4", letter: "G", address: "0x7024f993A0781169E064346396c5F6139DC6d98A", wrappedAddress: "0x3D589A3c5dE0209d3Ca15A6e03266F7cC83f3F3E", tradeable: false },
-  { ticker: "AMZN", name: "Amazon", issuer: "Dinari", kind: "equity", weight: 8, price: 257.13, status: "deployed-unminted", color: "#ff9900", letter: "a", address: "0xAbA4a08C36404f6EFf79Dc85b0b4c5172A095504", wrappedAddress: "0xD6F02c18F5D0Ff2F688CFE80A199131ACE44b2Ce", tradeable: false },
-  { ticker: "META", name: "Meta Platforms", issuer: "Dinari", kind: "equity", weight: 6, price: 612.2, status: "deployed-unminted", color: "#0668e1", letter: "∞", address: "0x5183EfaBdDA4F872788307B705163982036ba962", wrappedAddress: "0xF7F6ACE1358b3FabD73959dc9cCbDfc36f974379", tradeable: false },
-  { ticker: "TSLA", name: "Tesla", issuer: "Dinari", kind: "equity", weight: 6, price: 367.6, status: "deployed-unminted", color: "#cc0000", letter: "T", address: "0x4193C2B9B176763f48B1eF5266aEd71f6348ba81", wrappedAddress: "0xff987C251de5E898058980915efB3eBC79C6605f", tradeable: false },
-  { ticker: "AMD", name: "AMD", issuer: "Dinari", kind: "equity", weight: 5, price: 515.94, status: "deployed-unminted", color: "#000000", letter: "▶", address: "0x2B7c9A6448576790aa6CE639E4c70BBb32E65c43", wrappedAddress: "0x693C563cCdb5A5C2432D6bb282a019c40F68E31F", tradeable: false },
-  { ticker: "COIN", name: "Coinbase", issuer: "Dinari", kind: "equity", weight: 4, price: 274.07, status: "deployed-unminted", color: "#0052ff", letter: "C", address: "0x7eE2c4BE439b9571FabC520dE92ad05582492A3D", wrappedAddress: "0x240fbB7E9bb65b2e11005DD5785f814587A1FF09", tradeable: false },
-  { ticker: "SPY", name: "S&P 500", issuer: "Dinari", kind: "index", weight: 8, price: 770.25, status: "deployed-unminted", color: "#1b4dff", letter: "S", address: "0x82E9e5725dA9050e121D12802fCC302752aBaA1A", wrappedAddress: "0xbf823fC3e6a9326e4ACb0756388d9FF2566Ca1cA", tradeable: false },
-  // Not in Dinari sandbox catalog (live /api/dinari/stocks missing BE). Queue until listed.
-  { ticker: "BE", name: "Bloom Energy", issuer: "Dinari", kind: "equity", weight: 3, price: 271.14, status: "queued", color: "#111111", letter: "BE", address: null, wrappedAddress: null, tradeable: false },
-  { ticker: "EARN", name: "Circle Earn USDC", issuer: "Morpho / Dialectic", kind: "mmf", weight: 5, price: 1, status: "live", color: "#4e2eff", letter: "E", address: "0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30", wrappedAddress: null, tradeable: true },
+  { ticker: "CRCL", name: "Circle xStock", issuer: "xStocks", kind: "equity", weight: 16, price: 124.0, status: "announced", color: "#5b4dff", letter: "C", xSymbol: "CRCLx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "NVDA", name: "NVIDIA xStock", issuer: "xStocks", kind: "equity", weight: 12, price: 218.29, status: "announced", color: "#76b900", letter: "N", xSymbol: "NVDAx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "AAPL", name: "Apple xStock", issuer: "xStocks", kind: "equity", weight: 10, price: 332.52, status: "announced", color: "#111111", letter: "", xSymbol: "AAPLx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "MSFT", name: "Microsoft xStock", issuer: "xStocks", kind: "equity", weight: 9, price: 428.1, status: "announced", color: "#00a4ef", letter: "M", xSymbol: "MSFTx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "GOOGL", name: "Alphabet xStock", issuer: "xStocks", kind: "equity", weight: 8, price: 198.4, status: "announced", color: "#4285f4", letter: "G", xSymbol: "GOOGLx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "AMZN", name: "Amazon.com xStock", issuer: "xStocks", kind: "equity", weight: 8, price: 257.13, status: "announced", color: "#ff9900", letter: "a", xSymbol: "AMZNx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "META", name: "Meta xStock", issuer: "xStocks", kind: "equity", weight: 6, price: 612.2, status: "announced", color: "#0668e1", letter: "∞", xSymbol: "METAx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "TSLA", name: "Tesla xStock", issuer: "xStocks", kind: "equity", weight: 6, price: 367.6, status: "announced", color: "#cc0000", letter: "T", xSymbol: "TSLAx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "AMD", name: "AMD xStock", issuer: "xStocks", kind: "equity", weight: 5, price: 515.94, status: "announced", color: "#000000", letter: "▶", xSymbol: "AMDx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "COIN", name: "Coinbase xStock", issuer: "xStocks", kind: "equity", weight: 4, price: 274.07, status: "announced", color: "#0052ff", letter: "C", xSymbol: "COINx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "SPY", name: "SP500 xStock", issuer: "xStocks", kind: "index", weight: 8, price: 770.25, status: "announced", color: "#1b4dff", letter: "S", xSymbol: "SPYx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "BE", name: "Bloom Energy xStock", issuer: "xStocks", kind: "equity", weight: 3, price: 271.14, status: "announced", color: "#111111", letter: "BE", xSymbol: "BEx", address: null, wrappedAddress: null, tradeable: false },
+  { ticker: "EARN", name: "Circle Earn USDC", issuer: "Morpho / Dialectic", kind: "mmf", weight: 5, price: 1, status: "live", color: "#4e2eff", letter: "E", xSymbol: null, address: "0x6bdfE1165D5165808d02dE05969c9a19e9b7cf30", wrappedAddress: null, tradeable: true },
 ];
 
 export const stockByTicker = Object.fromEntries(STOCKS.map((s) => [s.ticker, s])) as Record<string, Stock>;
@@ -76,7 +81,7 @@ export const SLEEVE_TONE: Record<StockKind, string> = {
 };
 
 export const SLEEVES: { id: StockKind; label: string; hint: string }[] = [
-  { id: "equity", label: "Equities", hint: "Dinari dShares on Arc. Deployed, not yet minted — keeper waits." },
+  { id: "equity", label: "Equities", hint: "xStocks. Announced for Arc, not yet deployed — keeper waits." },
   { id: "index", label: "Index", hint: "Broad book. Overnight cover." },
   { id: "mmf", label: "Cash", hint: "5% of fee USDC. Deposited in Circle Earn on Morpho." },
 ];
