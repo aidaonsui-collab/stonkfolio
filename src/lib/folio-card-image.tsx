@@ -108,8 +108,17 @@ export async function folioCardImage(card: FolioCard) {
         overflow: "hidden",
       }}
     >
-      <div style={{ position: "absolute", left: -120, top: -30, display: "flex", opacity: 0.14 }}>
-        <img src={emblem} width={760} height={766} alt="" />
+      <div
+        style={{
+          position: "absolute",
+          // Rewards end near x=310 and the holdings panel starts at x=684.
+          left: 372,
+          top: (folioCardSize.height - 302) / 2,
+          display: "flex",
+          opacity: 0.2,
+        }}
+      >
+        <img src={emblem} width={300} height={302} alt="" />
       </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center" }}>

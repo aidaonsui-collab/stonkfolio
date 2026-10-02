@@ -92,7 +92,7 @@ export function FolioShareCard() {
       <svg
         viewBox={ARC_ARCH_VIEWBOX}
         aria-hidden
-        className="pointer-events-none absolute -left-16 top-2 h-72 w-auto text-fg opacity-[0.12] sm:-left-10 sm:h-[22rem]"
+        className="pointer-events-none absolute top-1/2 left-1/2 h-40 w-auto -translate-x-1/2 -translate-y-1/2 text-fg opacity-[0.16] sm:h-48 lg:left-[42%] lg:h-52"
       >
         <path fill="currentColor" d={ARC_ARCH_PATH} />
       </svg>
