@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowDownUp, Search, Settings2, TriangleAlert } from "lucide-react";
 import type { Address } from "viem";
 import { useAccount, useConnect, useSwitchChain, useWriteContract } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TOKEN_LOGO } from "@/lib/brand-marks";
 import { ARC_CHAIN_ID, ARC_EXPLORER } from "@/lib/chain";
 import { cn } from "@/lib/utils";
 import { addOrSwitchArc } from "@/lib/wagmi";
@@ -55,7 +56,7 @@ type QuoteState =
   | { kind: "none" }
   | { kind: "error"; message: string };
 
-function TokenDot({ t, size = 28 }: { t: Pick<SwapToken, "symbol" | "color">; size?: number }) {
+function TokenLetters({ t, size }: { t: Pick<SwapToken, "symbol" | "color">; size: number }) {
   return (
     <span
       className="inline-flex shrink-0 items-center justify-center rounded-full font-mono text-[10px] font-semibold text-white"
@@ -65,6 +66,33 @@ function TokenDot({ t, size = 28 }: { t: Pick<SwapToken, "symbol" | "color">; si
       {t.symbol.slice(0, 2)}
     </span>
   );
+}
+
+function TokenLogo({ src, size, fallback }: { src: string; size: number; fallback: ReactNode }) {
+  const [failed, setFailed] = useState(false);
+  if (failed) return <>{fallback}</>;
+  return (
+    <span className="inline-flex shrink-0 overflow-hidden rounded-full" style={{ width: size, height: size }} aria-hidden>
+      {/* These icons are already circles, so they fill the tile. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={src}
+        alt=""
+        width={size}
+        height={size}
+        decoding="async"
+        onError={() => setFailed(true)}
+        className="size-full object-cover"
+      />
+    </span>
+  );
+}
+
+function TokenDot({ t, size = 28 }: { t: Pick<SwapToken, "symbol" | "color">; size?: number }) {
+  const logo = TOKEN_LOGO[t.symbol];
+  const letters = <TokenLetters t={t} size={size} />;
+  if (!logo) return letters;
+  return <TokenLogo key={logo} src={logo} size={size} fallback={letters} />;
 }
 
 export function SwapView() {

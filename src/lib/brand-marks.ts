@@ -1,3 +1,11 @@
+/** Circle's token icons, plus the WETH token-list mark. Marks belong to their owners and only identify the asset. */
+export const TOKEN_LOGO: Record<string, string> = {
+  USDC: "/logos/usdc.svg",
+  EURC: "/logos/eurc.svg",
+  cirBTC: "/logos/cirbtc.svg",
+  WETH: "/logos/weth.png",
+};
+
 /**
  * Company marks served from /public/logos/stocks. SPY has none: the SPDR S&P 500 ETF mark is not ours to ship,
  * so it keeps the ticker circle. Marks belong to their owners and are used only to identify the company.
