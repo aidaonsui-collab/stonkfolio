@@ -10,7 +10,7 @@ export function bookPayload() {
     chainId: ARC_CHAIN_ID,
     pair: LAUNCH.pair,
     uniswap: LAUNCH.uniswap,
-    venue: LAUNCH.venue,
+    pad: LAUNCH.venue,
     taxBps: LAUNCH.taxBps,
     poolFeeBps: LAUNCH.poolFeeBps,
     feeBps: LAUNCH.feeBps,
