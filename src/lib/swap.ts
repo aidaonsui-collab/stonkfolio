@@ -14,6 +14,7 @@ import {
   type Hex,
   type PublicClient,
 } from "viem";
+import { KNOWN_V4_POOLS } from "./v4-pools";
 
 /**
  * Swap on Arc (5042) through Uniswap v3 and v4. Stonkfolio takes no fee and never holds funds:
@@ -580,9 +581,15 @@ export function discoverPoolsV4(client: PublicClient, tokens: readonly SwapToken
   const hit = poolCacheV4.get(key);
   if (hit) return hit;
   const run = (async () => {
-    const combos = pairsFor(tokens).flatMap(([a, b]) =>
-      V4_POOL_SPECS.map((spec) => ({ a: a.address, b: b.address, ...spec, id: v4PoolId(v4PoolKey(a.address, b.address, spec.fee, spec.tickSpacing)) })),
-    );
+    const combos = pairsFor(tokens).flatMap(([a, b]) => {
+      const known = KNOWN_V4_POOLS.filter(
+        ([x, y]) => (x === a.symbol && y === b.symbol) || (x === b.symbol && y === a.symbol),
+      ).map(([, , fee, tickSpacing]) => ({ fee, tickSpacing }));
+      const specs = [...V4_POOL_SPECS, ...known].filter(
+        (sp, i, all) => all.findIndex((o) => o.fee === sp.fee && o.tickSpacing === sp.tickSpacing) === i,
+      );
+      return specs.map((spec) => ({ a: a.address, b: b.address, ...spec, id: v4PoolId(v4PoolKey(a.address, b.address, spec.fee, spec.tickSpacing)) }));
+    });
     const liq = await withRetry(() =>
       client.multicall({
         multicallAddress: MULTICALL3,
@@ -600,7 +607,8 @@ export function discoverPoolsV4(client: PublicClient, tokens: readonly SwapToken
         venue: "v4" as const,
         liquidity: liq[i].status === "success" ? (liq[i].result as bigint) : 0n,
       }))
-      .filter((p) => p.liquidity > 0n);
+      .filter((p) => p.liquidity > 0n)
+      .sort((x, y) => (y.liquidity > x.liquidity ? 1 : y.liquidity < x.liquidity ? -1 : 0));
   })().catch(() => {
     // Do not cache a failure (for example an RPC 429): the next quote tries again.
     poolCacheV4.delete(key);
@@ -629,7 +637,9 @@ export function findRoutes(pools: readonly Pool[], tokens: readonly SwapToken[],
   for (const p of edge(v3Pools, tokenIn, tokenOut)) {
     routes.push({ venue: "v3", hops: [{ tokenIn, tokenOut, fee: p.fee }] });
   }
-  for (const p of edge(v4Pools, tokenIn, tokenOut)) {
+  // Deepest v4 pools first; ask about at most 6 so one quote batch stays small.
+  const v4Edge = edge(v4Pools, tokenIn, tokenOut).sort((x, y) => (y.liquidity > x.liquidity ? 1 : y.liquidity < x.liquidity ? -1 : 0)).slice(0, 6);
+  for (const p of v4Edge) {
     routes.push({ venue: "v4", hops: [{ tokenIn, tokenOut, fee: p.fee, tickSpacing: p.tickSpacing }] });
   }
   for (const mid of tokens.filter((t) => t.hub)) {

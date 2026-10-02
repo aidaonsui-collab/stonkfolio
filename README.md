@@ -55,3 +55,10 @@ The keeper owes the creator wallet 10% of every launch-fee USDC that has ever re
 ## Stack
 
 Next.js 16 · Tailwind 4 · wagmi/viem on Arc (`5042`, gas USDC).
+
+## Swap (`/swap`)
+
+Routes through Uniswap v3 and v4 on Arc (5042) and picks the better output. No Stonkfolio fee, non-custodial.
+- v3: SwapRouter02 + QuoterV2 (direct and 2-hop). v4: V4Quoter + Universal Router (`V4_SWAP`: `SWAP_EXACT_IN_SINGLE`, `SETTLE_ALL`, `TAKE_ALL`) with Permit2 (exact-amount, 30-minute approvals). v4 is single-hop, no-hook pools only.
+- v4 has no factory: pools are found by asking StateView for the standard fee/tickSpacing pairs plus `src/lib/v4-pools.ts` (from `scripts/swap/v4-scan.mts`). If no v4 pool has liquidity, or v4 reads fail, the router silently uses v3 only.
+- Tests: `npm run test:swap` (offline), `npm run test:swap:live` (read-only Arc calls, no transactions).

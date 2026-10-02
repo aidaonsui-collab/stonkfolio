@@ -12,6 +12,7 @@
     "test:api": "node scripts/test-api.mjs",
     "keeper:tick": "node scripts/keeper/tick.mjs",
     "test:swap": "tsx --test scripts/swap/swap.test.ts",
+    "test:swap:live": "tsx --test scripts/swap/v4-live.test.ts",
     "swap:quotes": "tsx scripts/swap/quotes.mts"
   },
   "dependencies": {
