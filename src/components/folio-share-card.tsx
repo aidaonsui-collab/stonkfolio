@@ -13,6 +13,7 @@ import {
 } from "@/lib/folio-card";
 import { useFolio } from "@/lib/folio";
 import { qty, usd } from "@/lib/format";
+import { ARC_ARCH_PATH, ARC_ARCH_VIEWBOX } from "@/lib/arc-emblem";
 import { FolioMark } from "./logo";
 import { Button } from "./ui/button";
 import { markFor, StockMark } from "./stock-mark";
@@ -88,6 +89,13 @@ export function FolioShareCard() {
 
   return (
     <section className="relative mt-10 overflow-hidden rounded-xl bg-surface shadow-[var(--shadow-border)]">
+      <svg
+        viewBox={ARC_ARCH_VIEWBOX}
+        aria-hidden
+        className="pointer-events-none absolute -left-16 top-2 h-72 w-auto text-fg opacity-[0.12] sm:-left-10 sm:h-[22rem]"
+      >
+        <path fill="currentColor" d={ARC_ARCH_PATH} />
+      </svg>
       <div className="relative flex flex-col gap-8 p-5 sm:p-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
           <div className="flex items-center gap-3">

@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { ImageResponse } from "next/og";
 import sharp from "sharp";
+import { ARC_ARCH_PATH, ARC_ARCH_VIEWBOX } from "./arc-emblem";
 import { STOCK_LOGO } from "./brand-marks";
 import { folioBalanceLabel, type FolioCard } from "./folio-card";
 import { qty, usd } from "./format";
@@ -18,6 +19,16 @@ const fonts = Promise.all([
 const MARK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="#15243c"/><rect x="5.5" y="7" width="5" height="18" rx="1.2" fill="#8fa3c2"/><rect x="12.5" y="17.5" width="3.2" height="7.5" rx="0.9" fill="#e8eef8"/><rect x="16.6" y="14" width="3.2" height="11" rx="0.9" fill="#2ec9b0"/><rect x="20.7" y="10.4" width="3.2" height="14.6" rx="0.9" fill="#3d7eff"/><rect x="24.8" y="8" width="3.2" height="17" rx="0.9" fill="#e8eef8"/></svg>`;
 
 const folioMark = sharp(Buffer.from(MARK_SVG))
+  .png()
+  .toBuffer()
+  .then((png) => `data:image/png;base64,${png.toString("base64")}`);
+
+const arcEmblem = sharp(
+  Buffer.from(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${ARC_ARCH_VIEWBOX}"><path fill="#ffffff" d="${ARC_ARCH_PATH}"/></svg>`,
+  ),
+  { density: 216 },
+)
   .png()
   .toBuffer()
   .then((png) => `data:image/png;base64,${png.toString("base64")}`);
@@ -66,7 +77,7 @@ async function circleTile(input: Buffer) {
 
 export async function folioCardImage(card: FolioCard) {
   const [figtree, fraunces, frauncesItalic] = await fonts;
-  const [mark, logos] = await Promise.all([folioMark, stockMarks]);
+  const [mark, emblem, logos] = await Promise.all([folioMark, arcEmblem, stockMarks]);
 
   const rows = card.assets.length
     ? card.assets.map((asset) => ({
@@ -93,8 +104,13 @@ export async function folioCardImage(card: FolioCard) {
         color: "#e8eef8",
         padding: "52px 56px",
         fontFamily: "Figtree",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      <div style={{ position: "absolute", left: -120, top: -30, display: "flex", opacity: 0.14 }}>
+        <img src={emblem} width={760} height={766} alt="" />
+      </div>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <img src={mark} width={68} height={68} alt="" style={{ opacity: 0.55, marginRight: 16 }} />
