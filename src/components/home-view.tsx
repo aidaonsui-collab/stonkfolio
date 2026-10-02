@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { CREATOR_CUT_BPS, FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
 import { compactUsd } from "@/lib/format";
 import { useFolio } from "@/lib/folio";
 import { protocolPreview, SLEEVE_TONE, SLEEVES, sleeveWeight, STOCKS } from "@/lib/stocks";
@@ -15,12 +15,12 @@ const CHAPTERS = [
   {
     n: "01",
     title: "Funding.",
-    body: `Every buy and every sell takes ${pctOfFee(LAUNCH.taxBps)}, plus a ${pctOfFee(LAUNCH.poolFeeBps)} pool fee. ${pctOfFee(LAUNCH.split.creatorBps)} of what is collected is USDC and goes to the Circle agent wallet, the keeper.`,
+    body: `Every buy and every sell takes ${pctOfFee(LAUNCH.taxBps)}. ${pctOfFee(LAUNCH.split.creatorBps)} of what is collected is USDC and goes to the Circle agent wallet, the keeper.`,
   },
   {
     n: "02",
     title: "The buy.",
-    body: `The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of that USDC. The rest buys the stocks. 5% of that USDC farms in Circle Earn. Holders get the stocks in the same proportion as their $SFOLIO.`,
+    body: `The Circle Agent Wallet buys the stocks. 5% of that USDC farms in Circle Earn. Holders get the stocks in the same proportion as their $SFOLIO.`,
   },
   {
     n: "03",
