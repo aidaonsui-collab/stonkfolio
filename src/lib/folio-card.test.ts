@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { folioCardSearch, parseFolioCard, recordedAssets, shareText } from "./folio-card";
+import { folioCardSearch, parseFolioCard, recordedAssets, shareCardImageUrl, sharePageUrl, shareText } from "./folio-card";
 import { usd } from "./format";
 import { earnedValue, PREVIEW_HOLDER, STOCKS } from "./stocks";
 
@@ -23,6 +23,9 @@ test("preview holdings become a share card with rewards and assets", () => {
   assert.match(shareText(card), /Sample folio/);
   assert.match(shareText(card), /Rewards received/);
   assert.match(shareText(card), /Assets held/);
+  assert.doesNotMatch(shareText(card), /\$SFOLIO/);
+  assert.match(shareCardImageUrl(query), /^https:\/\/www\.stonkfolio\.me\/share\/card\.png\?/);
+  assert.match(sharePageUrl(query), /^https:\/\/www\.stonkfolio\.me\/share\?/);
 });
 
 test("bad query values do not invent a folio", () => {

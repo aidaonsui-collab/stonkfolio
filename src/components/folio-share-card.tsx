@@ -3,11 +3,11 @@
 import { useRef, useState } from "react";
 import { TOKEN } from "@/lib/chain";
 import {
-  folioBalanceLabel,
   folioCardSearch,
   holderLabel,
   recordedAssets,
   parseFolioCard,
+  sharePageUrl,
   shareText,
   type FolioCard,
 } from "@/lib/folio-card";
@@ -80,11 +80,18 @@ export function FolioShareCard() {
 
   function postOnX() {
     if (!seeing || busy.current) return;
-    const href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${shareText(card)}\nhttps://www.stonkfolio.me/portfolio`)}`;
+    const page = sharePageUrl(
+      folioCardSearch({
+        stonk,
+        sample: preview,
+        holder: holderLabel(address, preview),
+        assets,
+      }),
+    );
+    const href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${shareText(card)}\n${page}`)}`;
     const opened = window.open(href, "_blank");
     if (opened) opened.opener = null;
-    downloadUrl(cardUrl());
-    setNote(opened ? "Image saved. Attach it to the X post." : "Image saved. Allow pop-ups to open X, then attach the image.");
+    setNote(opened ? "Opened X. The preview is your folio card." : "Allow pop-ups to open X.");
   }
 
   return (
@@ -106,9 +113,11 @@ export function FolioShareCard() {
           <p className="mt-4 font-display text-5xl tracking-tight sm:text-6xl">
             {seeing ? usd(card.rewardsUsd) : "—"}
           </p>
-          <p className="mt-3 text-sm text-muted">
-            {seeing ? `${folioBalanceLabel(card.stonk)} · ${card.holder}` : `Connect to fill this card with your $${TOKEN.symbol}.`}
-          </p>
+          {seeing ? (
+            card.sample ? null : <p className="mt-3 text-sm text-muted">{card.holder}</p>
+          ) : (
+            <p className="mt-3 text-sm text-muted">Connect to fill this card with your ${TOKEN.symbol}.</p>
+          )}
           {card.sample ? <p className="mt-2 text-sm text-accent">Sample folio</p> : null}
         </div>
         <div className="w-full lg:max-w-sm">

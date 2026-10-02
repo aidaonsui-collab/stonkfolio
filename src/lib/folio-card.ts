@@ -1,4 +1,4 @@
-import { qty, usd } from "./format";
+import { usd } from "./format";
 import { STOCKS, type Stock } from "./stocks";
 
 /** Stocks shown on the share card. The cash sleeve stays on the book, not on this card. */
@@ -29,11 +29,15 @@ export function holderLabel(address: string | undefined, sample: boolean) {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-export function folioBalanceLabel(stonk: number) {
-  if (!Number.isFinite(stonk) || stonk < 0) return "—";
-  if (stonk >= 1_000_000) return `${(stonk / 1_000_000).toFixed(2)}M $SFOLIO`;
-  if (stonk === 0) return "0.00 $SFOLIO";
-  return `${qty(stonk, 2)} $SFOLIO`;
+const SHARE_ORIGIN = "https://www.stonkfolio.me";
+
+export function sharePageUrl(query: string) {
+  return `${SHARE_ORIGIN}/share?${query}`;
+}
+
+/** A .png address. X skips extensionless preview images that carry a query string. */
+export function shareCardImageUrl(query: string) {
+  return `${SHARE_ORIGIN}/share/card.png?${query}`;
 }
 
 export function heldAssets(earned: Record<string, number>, stocks: readonly Stock[] = STOCKS): HeldAsset[] {

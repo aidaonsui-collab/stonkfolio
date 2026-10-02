@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 import sharp from "sharp";
 import { ARC_ARCH_PATH, ARC_ARCH_VIEWBOX } from "./arc-emblem";
 import { STOCK_LOGO } from "./brand-marks";
-import { folioBalanceLabel, type FolioCard } from "./folio-card";
+import { type FolioCard } from "./folio-card";
 import { qty, usd } from "./format";
 import { STOCKS } from "./stocks";
 
@@ -146,11 +146,8 @@ export async function folioCardImage(card: FolioCard) {
           >
             {usd(card.rewardsUsd)}
           </div>
-          <div style={{ display: "flex", marginTop: 18, fontSize: 26, color: "#8b9bb3" }}>
-            {folioBalanceLabel(card.stonk)}
-          </div>
           {card.sample ? (
-            <div style={{ display: "flex", marginTop: 22, fontSize: 22, color: "#3d7eff" }}>Sample folio</div>
+            <div style={{ display: "flex", marginTop: 18, fontSize: 22, color: "#3d7eff" }}>Sample folio</div>
           ) : (
             <div style={{ display: "flex" }} />
           )}
