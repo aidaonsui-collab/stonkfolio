@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ARC_EXPLORER } from "@/lib/chain";
+import { LAUNCH, pctOfFee } from "@/lib/fees";
 import { Bullets, LegalPage } from "@/components/legal-page";
 import { LEGAL_ADDRESS, LEGAL_NAME, SUPPORT_EMAIL, X_URL } from "@/lib/site";
 
@@ -46,8 +47,9 @@ export default function Page() {
           body: (
             <>
               <p>
-                Stonkfolio is an Arc-native stock folio. The idea: trades of the $SFOLIO token pay a 1% pool fee, the
-                keeper uses that fee USDC to buy a curated book of tokenized stocks, and holders receive those stocks in
+                Stonkfolio is an Arc-native stock folio. The idea: trades of the $SFOLIO token pay a {pctOfFee(LAUNCH.taxBps)} tax
+                on buys and on sells, plus a {pctOfFee(LAUNCH.poolFeeBps)} pool fee. Argus keeps {pctOfFee(LAUNCH.split.platformBps)}.
+                The keeper uses the rest to buy a curated book of tokenized stocks, and holders receive those stocks in
                 proportion to the $SFOLIO they hold. See{" "}
                 <Link href="/docs" className="text-fg underline-offset-2 hover:underline">Docs</Link> for the full flow.
               </p>
@@ -108,7 +110,7 @@ export default function Page() {
               </ul>
               <Bullets
                 items={[
-                  "The 20% platform leg of the pool fee is paid to a destination set by the launch pad at launch.",
+                  `Argus keeps ${pctOfFee(LAUNCH.split.platformBps)} of the tax and of the pool fee. The other ${pctOfFee(LAUNCH.split.creatorBps)} is paid to the rewards wallet.`,
                   "Tokenized stock addresses: none yet. xStocks (Backed / Payward) will be listed here once the issuer publishes Arc deployments.",
                   "The $SFOLIO token address, LP lock details and audit reports will be published at launch.",
                 ]}

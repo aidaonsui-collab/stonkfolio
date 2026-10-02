@@ -1,10 +1,18 @@
 import Link from "next/link";
 import { TOKEN } from "@/lib/chain";
-import { CREATOR_CUT_BPS, FEE_LEGS, LAUNCH, pctOfFee } from "@/lib/fees";
+import { CREATOR_CUT_BPS, FEE_LEGS, LAUNCH, feeOnVolume, pctOfFee } from "@/lib/fees";
 
-/** On a $1 fee: the creator's share of the rewards leg, and what is left for the book. */
-const CREATOR_PER_DOLLAR = (LAUNCH.split.creatorBps * CREATOR_CUT_BPS) / 10_000 / 10_000;
-const BOOK_PER_DOLLAR = LAUNCH.split.creatorBps / 10_000 - CREATOR_PER_DOLLAR;
+/** On a $100 trade: rewards USDC, then the creator cut and what is left for the book. */
+const TRADE_USD = 100;
+const REWARDS_ON_TRADE = feeOnVolume(TRADE_USD, LAUNCH.split.creatorBps);
+const CREATOR_ON_TRADE = REWARDS_ON_TRADE * (CREATOR_CUT_BPS / 10_000);
+const BOOK_ON_TRADE = REWARDS_ON_TRADE - CREATOR_ON_TRADE;
+const TAX_ON_TRADE = (TRADE_USD * LAUNCH.taxBps) / 10_000;
+const POOL_ON_TRADE = (TRADE_USD * LAUNCH.poolFeeBps) / 10_000;
+
+function usd(amount: number) {
+  return `$${amount.toFixed(2)}`;
+}
 
 const STEPS = [
   {
@@ -15,9 +23,9 @@ const STEPS = [
   },
   {
     n: "02",
-    title: "1% comes off the trade",
-    body: `${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC to the keeper. The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of it. The rest is for the book. ${pctOfFee(LAUNCH.split.platformBps)} is the platform.`,
-    stat: "1%",
+    title: `${pctOfFee(LAUNCH.feeBps)} comes off the trade`,
+    body: `${pctOfFee(LAUNCH.taxBps)} is the tax and ${pctOfFee(LAUNCH.poolFeeBps)} is the pool fee. ${pctOfFee(LAUNCH.split.creatorBps)} of what is collected is USDC to the keeper. The creator gets ${pctOfFee(CREATOR_CUT_BPS)} of it. The rest is for the book. ${pctOfFee(LAUNCH.split.platformBps)} stays with Argus. The first three seconds also add an opening tax that fades.`,
+    stat: pctOfFee(LAUNCH.feeBps),
   },
   {
     n: "03",
@@ -107,17 +115,19 @@ export function DocsView() {
 
       <section className="mt-14">
         <h2 className="font-display text-2xl italic tracking-tight">On a $100 trade</h2>
-        <p className="mt-3 text-sm text-muted">You pay $1. It splits like this.</p>
+        <p className="mt-3 text-sm text-muted">
+          {`You pay ${usd(TAX_ON_TRADE + POOL_ON_TRADE)}. ${usd(TAX_ON_TRADE)} is the tax and ${usd(POOL_ON_TRADE)} is the pool fee.`}
+        </p>
         <ul className="mt-5 divide-y divide-border">
           {FEE_LEGS.map((leg) => (
             <li key={leg.key} className="flex justify-between gap-4 py-3 text-sm">
               <span className="text-muted">{leg.label}</span>
-              <span className="font-medium">${(leg.bps / 10_000).toFixed(2)}</span>
+              <span className="font-medium">{usd(feeOnVolume(TRADE_USD, leg.bps))}</span>
             </li>
           ))}
         </ul>
         <p className="mt-3 text-sm text-muted">
-          {`Of the $${(LAUNCH.split.creatorBps / 10_000).toFixed(2)}, $${CREATOR_PER_DOLLAR.toFixed(2)} goes to the creator and $${BOOK_PER_DOLLAR.toFixed(2)} buys the book.`}
+          {`Of the ${usd(REWARDS_ON_TRADE)}, ${usd(CREATOR_ON_TRADE)} goes to the creator and ${usd(BOOK_ON_TRADE)} buys the book.`}
         </p>
       </section>
 

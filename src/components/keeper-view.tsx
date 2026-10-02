@@ -48,7 +48,7 @@ export function KeeperView() {
       <p className="kicker text-accent">Circle agent wallet</p>
       <h1 className="display-md mt-3">The keeper.</h1>
       <p className="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-        {pctOfFee(LAUNCH.split.creatorBps)} of the trading fee is USDC to this Circle agent wallet. {pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator wallet. A buy waits until the rest reaches 150. Most of it buys the book. 5% of that USDC farms in Circle Earn. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays in Circle Earn. The rest buys the book for their holders.
+        A buy or a sell takes {pctOfFee(LAUNCH.taxBps)}, plus a {pctOfFee(LAUNCH.poolFeeBps)} pool fee. {pctOfFee(LAUNCH.split.creatorBps)} of what is collected is USDC to this Circle agent wallet. {pctOfFee(CREATOR_CUT_BPS)} of it goes to the creator wallet. A buy waits until the rest reaches 150. Most of it buys the book. 5% of that USDC farms in Circle Earn. The stocks are sent to people who hold $SFOLIO, in the same proportion. Another app can send USDC too. 5% of that stays in Circle Earn. The rest buys the book for their holders.
       </p>
 
       <div className="mt-10 grid gap-px overflow-hidden rounded-xl bg-border sm:grid-cols-3">

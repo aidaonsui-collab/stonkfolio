@@ -15,7 +15,7 @@ const CHAPTERS = [
   {
     n: "01",
     title: "Funding.",
-    body: `Every trade takes 1%. ${pctOfFee(LAUNCH.split.creatorBps)} of that fee is USDC and goes to the Circle agent wallet — the keeper.`,
+    body: `Every buy and every sell takes ${pctOfFee(LAUNCH.taxBps)}, plus a ${pctOfFee(LAUNCH.poolFeeBps)} pool fee. ${pctOfFee(LAUNCH.split.creatorBps)} of what is collected is USDC and goes to the Circle agent wallet, the keeper.`,
   },
   {
     n: "02",
@@ -74,7 +74,7 @@ export function HomeView() {
           <Kpi
             label="Keeper USDC"
             value={preview ? compactUsd(pulse.usdcRouted) : "—"}
-            hint={preview ? `${pctOfFee(LAUNCH.split.creatorBps)} of the 1% fee` : "Starts when the book lists."}
+            hint={preview ? `${pctOfFee(LAUNCH.split.creatorBps)} of the fee` : "Starts when the book lists."}
           />
           <Kpi
             label="Stocks bought"
@@ -162,7 +162,7 @@ export function HomeView() {
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="display-md">Where the cut goes.</h2>
           <p className="max-w-xs text-sm text-muted">
-            1% on every trade. {pctOfFee(LAUNCH.split.creatorBps)} rewards. {pctOfFee(LAUNCH.split.platformBps)} platform.
+            {pctOfFee(LAUNCH.taxBps)} tax on buys and sells, plus a {pctOfFee(LAUNCH.poolFeeBps)} pool fee. {pctOfFee(LAUNCH.split.creatorBps)} rewards. {pctOfFee(LAUNCH.split.platformBps)} Argus.
           </p>
         </div>
         <div className="mt-6">

@@ -1,11 +1,11 @@
 # Stonkfolio
 
-Arc-native stock folio. $SFOLIO launches on an Instant pad against USDC. Creator USDC buys a curated RWA book. 5% of that USDC farms in Circle Earn on Morpho. Holders see those stocks on the distributions board.
+Arc-native stock folio. $SFOLIO launches on Argus against USDC. A 4% tax on buys and on sells, plus Argus's 1% pool fee, is collected in USDC. Argus keeps 10%. The rest buys a curated RWA book. 5% of that USDC farms in Circle Earn on Morpho. Holders see those stocks on the distributions board.
 
 ## Loop
 
-1. Creator preset: 1B $SFOLIO / USDC, Uniswap **v4**, LP locked, 1% pool fee.
-2. Fee card: rewards **80** · platform **20**. Burn, holders, and auto-LP are 0.
+1. Creator preset: 1B $SFOLIO / USDC on Argus, Uniswap **v4**, LP locked in the Argus locker. Buy tax **4%**, sell tax **4%**, plus Argus's **1%** pool fee.
+2. Of what is collected: rewards **90** · Argus **10**. Buyback, dividends, and extra liquidity are 0.
 3. Creator rewards wallet = Eve's existing Circle Agent Wallet (`0x80aa…e3f`). Same SCA as x402. No second wallet.
 4. 10% of the launch-fee USDC that reaches the keeper goes to the creator wallet (`0x26bD…13c9`). The rest buys the book in `src/lib/stocks.ts`. 5% of that USDC farms in Circle Earn on Morpho. The keeper checks every 30 minutes on Jessica's Air (`com.stonkfolio.keeper`).
 5. `FolioTreasury` distributes stocks to holders. Holders farm on Morpho / Aave / Uniswap, or Circle Earn Kit USDC vaults on `/yield`.

@@ -1,18 +1,25 @@
-/** Uniswap v4 Instant fee card for $SFOLIO. 80% rewards, 20% platform. */
+/**
+ * Argus fee card for $SFOLIO. A 4% tax on buys and on sells, plus Argus's 1%
+ * pool fee. Of what is collected, 90% is rewards and 10% stays with Argus.
+ */
 
 export const LAUNCH = {
-  venue: "pad",
-  type: "Creator",
+  venue: "argus",
+  type: "Tax",
   pair: "SFOLIO / USDC",
   uniswap: "v4",
-  /** Pool fee in bps of notional. 100 = 1.0%. */
-  feeBps: 100,
+  /** Launch tax on each side, bps of notional. 400 = 4%. */
+  taxBps: 400,
+  /** Argus pool fee, bps of notional. 100 = 1%. Separate from the launch tax. */
+  poolFeeBps: 100,
+  /** Base schedule per side: tax plus pool fee. The opening surcharge is extra. */
+  feeBps: 500,
   split: {
-    creatorBps: 8_000,
+    creatorBps: 9_000,
     burnBps: 0,
     holdersBps: 0,
     autoLpBps: 0,
-    platformBps: 2_000,
+    platformBps: 1_000,
   },
 } as const;
 
@@ -28,7 +35,7 @@ export const FEE_LEGS = [
   },
   { key: "burn", label: "Burn", bps: LAUNCH.split.burnBps, hint: "Launch token to dead" },
   { key: "autoLp", label: "Auto-LP", bps: LAUNCH.split.autoLpBps, hint: "Stays in the SFOLIO/USDC pool" },
-  { key: "platform", label: "Platform", bps: LAUNCH.split.platformBps, hint: "Platform share." },
+  { key: "platform", label: "Argus", bps: LAUNCH.split.platformBps, hint: "Argus keeps this share of the tax and of the pool fee." },
 ].filter((leg) => leg.bps > 0);
 
 export function pctOfFee(bps: number) {
