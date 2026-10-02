@@ -13,6 +13,7 @@ import {
 } from "@/lib/folio-card";
 import { useFolio } from "@/lib/folio";
 import { qty, usd } from "@/lib/format";
+import { FolioMark } from "./logo";
 import { Button } from "./ui/button";
 import { markFor, StockMark } from "./stock-mark";
 
@@ -86,10 +87,13 @@ export function FolioShareCard() {
   }
 
   return (
-    <section className="mt-10 overflow-hidden rounded-xl bg-surface shadow-[var(--shadow-border)]">
-      <div className="flex flex-col gap-8 p-5 sm:p-8 lg:flex-row lg:items-start lg:justify-between">
+    <section className="relative mt-10 overflow-hidden rounded-xl bg-surface shadow-[var(--shadow-border)]">
+      <div className="relative flex flex-col gap-8 p-5 sm:p-8 lg:flex-row lg:items-start lg:justify-between">
         <div className="min-w-0">
-          <p className="kicker text-accent">Share card</p>
+          <div className="flex items-center gap-3">
+            <FolioMark className="size-9 opacity-60" />
+            <p className="kicker text-accent">Share card</p>
+          </div>
           <h2 className="font-display mt-3 text-3xl italic tracking-tight">Rewards received</h2>
           <p className="mt-4 font-display text-5xl tracking-tight sm:text-6xl">
             {seeing ? usd(card.rewardsUsd) : "—"}
