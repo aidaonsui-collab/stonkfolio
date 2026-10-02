@@ -9,6 +9,7 @@ import { STOCKS, stockByTicker } from "@/lib/stocks";
 import { Button } from "./ui/button";
 import { StockMark } from "./stock-mark";
 import { ConnectButton } from "./connect-button";
+import { FolioShareCard } from "./folio-share-card";
 import { RewardChoice } from "./reward-choice";
 
 export function PortfolioView() {
@@ -47,6 +48,8 @@ export function PortfolioView() {
           hint={`${pctOfFee(LAUNCH.split.creatorBps)} rewards, bought as xStocks once they are on Arc.`}
         />
       </div>
+
+      <FolioShareCard />
 
       <RewardChoice />
 
