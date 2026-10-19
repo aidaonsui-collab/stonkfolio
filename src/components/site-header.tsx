@@ -50,10 +50,6 @@ export function SiteHeader() {
           <Wordmark />
         </Link>
         <div className="ml-auto flex items-center gap-2">
-          <span className="hidden items-center gap-1.5 rounded-full bg-elevated px-2.5 py-1 font-mono text-xs tracking-wide text-up sm:inline-flex">
-            <span className="size-1.5 rounded-full bg-up" />
-            Arc live
-          </span>
           <Button
             variant={preview ? "accent" : "outline"}
             size="sm"
