@@ -6,7 +6,7 @@ import { ArrowLeftRight, BookOpen, Briefcase, FileText, Home, Landmark, Sprout }
 import { SiteHeader, LINKS, isActive } from "./site-header";
 import { FolioMark, Wordmark } from "./logo";
 import { cn } from "@/lib/utils";
-import { LEGAL_NAME } from "@/lib/site";
+import { LEGAL_NAME, SUPPORT_EMAIL } from "@/lib/site";
 
 const ICONS = {
   "/": Home,
@@ -73,7 +73,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               ))}
             </nav>
-            <p>© {new Date().getFullYear()} {LEGAL_NAME}</p>
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>
+                © {new Date().getFullYear()} {LEGAL_NAME}
+              </span>
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="font-medium text-fg hover:text-accent">
+                {SUPPORT_EMAIL}
+              </a>
+            </p>
           </div>
         </footer>
         <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-bg/90 pb-[env(safe-area-inset-bottom)] backdrop-blur-md lg:hidden">
